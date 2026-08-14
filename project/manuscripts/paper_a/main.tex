@@ -1,0 +1,659 @@
+\newif\ifelsarticle
+\ifdefined\ELSEVIERLAYOUT
+  \elsarticletrue\documentclass[final,5p,times,twocolumn]{elsarticle}
+\else
+  \elsarticlefalse\documentclass[10pt,twocolumn]{article}
+\fi
+\ifelsarticle\else\usepackage[a4paper,margin=15mm,columnsep=6mm]{geometry}\fi
+\usepackage{graphicx,booktabs,amsmath,amssymb,microtype,xcolor,url,tabularx,array}
+\ifelsarticle\biboptions{numbers,sort&compress}\else\usepackage[numbers,sort&compress]{natbib}\fi
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,decorations.pathreplacing,patterns,positioning,shapes.geometric}
+\usepackage[hidelinks]{hyperref}
+\usepackage{stfloats}
+\ifelsarticle
+  \usepackage{eso-pic}
+  \AtBeginDocument{\AddToShipoutPictureFG*{\AtPageUpperLeft{\put(\LenToUnit{\paperwidth-18mm},\LenToUnit{-12mm}){\includegraphics[height=8mm]{../../tex/elsevier/Elsevier_logo.pdf}}}}}
+\fi
+\graphicspath{{../../figures/paper_a/}{../../figures/common/}{../../checkpoints/}}
+\definecolor{engblue}{HTML}{143A5E}
+\definecolor{enggreen}{HTML}{B7D8C2}
+\newcommand{\keywordsline}{Corrugated board; NURBS; multi-objective optimization; MO-ETPSO; NSGA-II; reproducibility; geometric inertia}
+
+\begin{document}
+\ifelsarticle
+\begin{frontmatter}
+\title{Multi-Objective Size and Shape Optimization of Corrugated-Board Profiles Using NURBS and MO-ETPSO}
+\author[1,2]{Ricardo Fitas\corref{cor1}}
+\ead{rfitas99@gmail.com}
+\author[1]{S\'ergio Manuel Oliveira Tavares}
+\author[2]{Oliver Weeger}
+\address[1]{Centre for Mechanical Technology and Automation (TEMA), Department of Mechanical Engineering, University of Aveiro, Campus Universit\'ario de Santiago, 3810-193 Aveiro, Portugal}
+\address[2]{Cyber-Physical Simulation, Department of Mechanical Engineering, Technical University of Darmstadt, Dolivostrasse 15, 64293 Darmstadt, Germany}
+\cortext[cor1]{Corresponding author}
+\begin{abstract}
+A reproducible multi-objective workflow is developed for size and rational-quadratic B-spline shape optimization of corrugated-board profiles. The recovered public archive contains pitch/height/thickness cases, 4-, 8- and 15-control-point shapes and compact seven-variable rational designs; three newly executed cases couple seven shape variables with pitch, height and thickness. Material area per wavelength is minimized against geometric inertia or effective transverse stiffness, with a minimum physical curvature radius of 0.9~mm where declared. The work begins with a provenance audit of the public adapted MO-ETPSO repository. Saved fronts can be reconstructed with mean relative discrepancies of $2.7\times10^{-5}$ in inverse inertia, 0.136\% in area and 0.220\% in effective transverse modulus; however, the saved files correspond to a 0.50~mm, 5.65~mm-pitch configuration that is no longer the same as the current same-named evaluator. In addition, the published radius condition returns true in both branches, so only 70 of 256 archived final-front rows satisfy the stated 0.9~mm physical threshold. A corrected archive-based MO-ETPSO reproduction (MO-ETPSO-R) is compared with NSGA-II using ten paired seeds and 4000 function evaluations per run. Mean final normalized hypervolume is 4.0206 for MO-ETPSO-R and 4.0136 for NSGA-II; the paired Wilcoxon test is not significant ($p=0.105$), although MO-ETPSO-R has lower run-to-run variation. Both algorithms recover the same narrow Pareto band, $A/\lambda=1.723$--1.794~mm and $I/\lambda=3.936$--4.094~mm$^3$. The paper supplies a complete B1--B12 gallery with S1--S3 geometries and numerical vectors, demonstrating that objective labels, units, constraints and source versions must be frozen before optimization figures can serve as quantitative evidence.
+\end{abstract}
+\begin{keyword}\keywordsline\end{keyword}
+\end{frontmatter}
+\else
+\title{Multi-Objective Size and Shape Optimization of Corrugated-Board Profiles Using NURBS and MO-ETPSO}
+\author{Ricardo Fitas$^{1,2}$, S\'ergio Manuel Oliveira Tavares$^1$, Oliver Weeger$^2$\\[2pt]
+\small $^1$TEMA, Department of Mechanical Engineering, University of Aveiro, Portugal\\
+\small $^2$Cyber-Physical Simulation, Department of Mechanical Engineering, Technical University of Darmstadt, Germany\\
+\texttt{rfitas99@gmail.com}}
+\date{}
+\maketitle
+\begin{abstract}
+Archived size cases and several rational B-spline dimensionalities are combined with a new ten-variable coupled size--shape campaign. Material area is traded against inertia or transverse stiffness under explicit radius checks. A source-and-result audit recovers the saved public campaign but finds evaluator version drift and a disabled radius condition. A corrected MO-ETPSO reproduction and NSGA-II are compared over ten equal-budget runs; their final hypervolumes are statistically indistinguishable. The work supplies an auditable evaluator, complete case gallery, numerical selected-design vectors and benchmark protocol.
+\end{abstract}
+\noindent\textbf{Keywords:} \keywordsline
+\fi
+
+\section{Introduction}
+Corrugated board achieves useful bending and compression performance with little material by separating liners with a shaped paper medium. Standard flute families are historically tied to tooling and production practice, but numerical geometry permits a much larger design space. Parametric optimization can search this space before expensive tooling is made, and can explicitly trade stiffness against material consumption. Comparative studies of standard flute configurations already show that wave geometry changes box and board response \citep{DiRusso2023}; homogenization provides a route from detailed geometry to effective properties \citep{Talbi2009,Garbowski2021Shear}; and finite-element studies confirm that geometry and contact influence flat-crush behavior \citep{Park2021Flat}.
+
+The challenge is not only computational. An optimization result is meaningful only if the design variables, geometry mapping, material parameters, objective directions, normalization and manufacturing constraints are unambiguous. A figure labelled ``area per wavelength'' cannot be combined safely with a table containing raw two-dimensional section area unless the conversion is stated. Likewise, an archived Pareto front cannot be regenerated from a repository if the evaluator changed after the front was written. These issues are especially important for metaheuristics because the visual plausibility of a smooth front can obscure a disabled constraint or an unintended objective.
+
+The public MO-ETPSO method was introduced as an elitist multi-objective particle-swarm approach with enhanced termination \citep{Fitas2024MOETPSO}. The public optimization repository contains both a generic vehicle-routing implementation and an adapted corrugated-profile implementation. They share algorithmic scaffolding but do not share inputs: the generic version evaluates routing variables through a GVRP objective, whereas the adapted version calls a seven-variable NURBS/homogenization evaluator. This study audits that adaptation and builds a corrected, versioned reproduction.
+
+The objectives are fourfold: (i) state the exact rational B-spline geometry and engineering quantities; (ii) reconstruct the numerical configuration that generated the saved fronts; (iii) correct physical radius screening and Pareto selection; and (iv) compare corrected MO-ETPSO with a conventional NSGA-II baseline under equal evaluation budgets and paired random seeds. The emphasis is not to declare a universal algorithm winner, but to identify which conclusions survive independent regeneration.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{corrugated_board_system.pdf}
+\caption{Structural context and coordinate definitions. A corrugated board comprises a fluted medium between two liners (left), whereas the geometric optimizer acts on the periodic flute centreline and its section properties. The single-sheet configuration at right is introduced for continuity with the companion experimental and finite-element studies; Paper~A optimizes the board-profile geometry before nonlinear platen compression is considered.}
+\label{fig:board_system}
+\end{figure*}
+
+\section{Literature Review}
+Computational descriptions of paper and paperboard span fibre networks, anisotropic sheets and assembled structures \citep{Simon2021}. For corrugated board, early analytical and numerical studies replaced the periodic detailed cell by an equivalent continuum or sandwich plate \citep{Aboura2004,Buannic2003,Biancolini2005,Talbi2009}. Later plate reductions clarified when transverse shear and local waviness must be retained \citep{Garbowski2021Shear,Cheon2015,Park2020Equivalent}, and full-field or full-geometry studies showed that effective bending and compression cannot be inferred from grammage alone \citep{Garbowski2021Full,Garbowski2022Bending}. This hierarchy motivates the present separation between exact centreline geometry, section integrals and an effective transverse response.
+
+Local compression introduces phenomena that an elastic equivalent layer hides. Curved-member and refined finite-element models identify the influence of contact, glue lines, orthotropy, imperfections and material nonlinearity \citep{Lu2001,HajAli2009,Park2020Edge,Park2021Flat}. Experiments and detailed models also demonstrate sensitivity to ambient humidity, wave family and collapse mechanism \citep{Navaranjan2013,DiRusso2023,Bai2019}. Digital image correlation and full-field measurements expose localized buckling and strain redistribution that a single global stiffness cannot represent \citep{Viguie2011,Viguie2013,Fadiji2020}, while package-scale simulations connect those local mechanisms to structural performance \citep{Fadiji2018}. These findings justify reporting curvature and manufacturability together with area and inertia instead of optimizing one scalar stiffness in isolation.
+
+Free-form geometry requires a reproducible geometric language. Rational B-splines provide local control, polynomial order, knots and positive weights in a compact definition \citep{Piegl1997}; their use in analysis also underpins the CAD-to-discretization continuity developed in isogeometric analysis \citep{Hughes2005}. Existing corrugated-board comparisons have largely stayed near catalogue flute families \citep{DiRusso2023}, whereas recent open and parametric studies have begun to explore nonstandard profiles and data-driven rules \citep{Fitas2025Design,Metar2025}. What remains missing is a single atlas that distinguishes size-only, shape-only, control-point dimensionality and coupled size--shape cases under the same normalization.
+
+Particle swarm optimization originated as a population search driven by individual and neighbourhood experience \citep{Kennedy1995}; external archives and Pareto dominance subsequently extended it to multiple objectives \citep{Coello2004}. NSGA-II provides a well-established elitist nondominated-sorting comparator \citep{Deb2002}, and broader evolutionary design practice emphasizes diversity preservation and explicit constraint handling \citep{Deb2001}. Because apparent Pareto quality depends on scaling and the chosen indicator, optimizer assessment must use equal budgets, repeated seeds and declared performance measures \citep{Zitzler2003}. The adapted MO-ETPSO implementation adds an enhanced termination rule \citep{Fitas2024MOETPSO}, but that algorithmic contribution does not remove the need to freeze evaluator versions, physical units and radius constraints.
+
+The resulting gap is therefore methodological rather than merely algorithmic. Corrugated mechanics supplies the relevant physical quantities; NURBS supplies the design map; and multi-objective search supplies candidate trade-offs. The present work connects all three, audits the archived source, reconstructs the historical cases without relabelling them, and executes new coupled campaigns with numerical design vectors and source manifests. The experimental and graph-based protocols in the companion work provide an additional traceability precedent for raw curves and geometric labels \citep{Belfekih2024}.
+
+\section{Methodological Workflow}
+Figure~\ref{fig:workflow_a} separates historical reconstruction from new computation. Archived cases are never relabelled as newly optimized data: C001--C033 are regenerated from stored CSV vectors, whereas C034--C036 are new coupled runs with their own identifiers, seeds and manifests.
+
+\begin{figure*}[t]
+\centering
+\resizebox{0.98\textwidth}{!}{%
+\begin{tikzpicture}[node distance=7mm and 8mm,>=Latex,font=\small,
+  block/.style={draw=engblue,rounded corners,align=center,minimum height=9mm,text width=30mm,fill=enggreen!22},
+  decision/.style={draw=black,diamond,aspect=2.0,align=center,inner sep=1.5pt,fill=white},
+  arrow/.style={->,line width=0.7pt},
+  branch/.style={line width=0.7pt}]
+  \node[block] (archive) {Public source and\\C001--C033 CSV archive};
+  \node[block,right=of archive] (map) {Decode design space,\\units and objectives};
+  \node[decision,right=of map] (class) {Archived or\\new case?};
+  \node[block,above right=6mm and 10mm of class] (reconstruct) {Reconstruct front and\\selected geometries};
+  \node[block,below right=6mm and 10mm of class] (coupled) {Run C034--C036 coupled\\size--shape MO-ETPSO};
+  \node[block,right=38mm of class] (verify) {Re-evaluate radius,\\area, inertia and $E_z$};
+  \node[block,right=of verify] (report) {Pareto plate, S1--S3\\vectors and audit table};
+  \draw[arrow] (archive)--(map);
+  \draw[arrow] (map)--(class);
+  \draw[arrow] (class.north east)--node[above left]{archive}(reconstruct.west);
+  \draw[arrow] (class.south east)--node[below left]{new}(coupled.west);
+  \coordinate (merge) at ($(verify.west)+(-7mm,0)$);
+  \coordinate (upperroute) at ($(reconstruct.east)+(4mm,0)$);
+  \coordinate (lowerroute) at ($(coupled.east)+(4mm,0)$);
+  \draw[branch] (reconstruct.east)--(upperroute)|-(merge);
+  \draw[branch] (coupled.east)--(lowerroute)|-(merge);
+  \draw[arrow] (merge)--(verify.west);
+  \draw[arrow] (verify)--(report);
+\end{tikzpicture}
+}
+\caption{Methodological workflow. Historical reconstruction and new coupled optimization share the same final evaluator and reporting checks but remain provenance-separated.}
+\label{fig:workflow_a}
+\end{figure*}
+
+\section{Public Implementation Audit}
+\subsection{Repository separation and adapted inputs}
+The generic and adapted scripts were inspected as executable research objects. The generic script constructs a variable-length routing problem, calls the function \texttt{z12}, and uses 100 particles for 1000 iterations in its distributed example. The adapted script imports \texttt{Optimization\_CB\_v2\_prod}, assigns seven bounded variables,
+\begin{equation}
+ x_{1:5}\in[0.1,10],\qquad x_6,x_7\in[0,1],
+\end{equation}
+and uses 50 particles and 100 iterations in the archived production script. The adapted objective vector is explicitly \texttt{[obj1,obj2,obj4]}; \texttt{obj3}, the effective transverse modulus, is written to the CSV but is not optimized in that campaign. Thus the public adapted inputs are genuinely different from the generic repository, and a second, non-adapted MO-ETPSO repository cannot be substituted without replacing its objective and bounds.
+
+\subsection{Recovering the archived configuration}
+The archive contains four runs and one CSV per iteration. The final iteration contains 256 reported Pareto rows across the four runs. Re-evaluation initially failed to match those rows using either current evaluator found in the repository: one uses $t=0.20$~mm at pitch 5.65~mm, while the scaled copy uses $t=0.50$~mm at pitch 21.32~mm. The saved objectives are matched by the otherwise undocumented combination $t=0.50$~mm, $\lambda=5.65$~mm and amplitude 2.65~mm. This inference is not based on visual fitting: substituting those values reconstructs every archived row with the errors in Table~\ref{tab:audit}.
+
+\begin{table}[t]
+\centering\small
+\caption{Numerical reconstruction of 256 archived final-front rows.}
+\label{tab:audit}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrr}
+\toprule
+Quantity & Mean relative error & Maximum\\
+\midrule
+Inverse inertia objective & $2.67\times10^{-5}$ & $1.67\times10^{-4}$\\
+Section area & $1.36\times10^{-3}$ & $2.39\times10^{-3}$\\
+Effective $E_z$ & $2.20\times10^{-3}$ & $2.82\times10^{-2}$\\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+The small area discrepancy results from resampling resolution; inverse inertia is essentially exact. This establishes which numerical model generated the archive but also demonstrates source-version drift: the final CSV is a stronger record of the run configuration than the current same-named source file.
+
+\subsection{Constraint and ranking findings}
+The public evaluator calculates two local curvature radii and contains the intended condition $R_1>0.9$ and $R_2>0.9$~mm. Both conditional branches, however, return \texttt{True}. The archived campaign was therefore unconstrained. Recalculation in physical profile coordinates finds that only 70/256 archived final rows satisfy $\min(R_1,R_2)\ge0.9$~mm.
+
+The original ranking also uses strict improvement in every objective to define domination. Standard Pareto domination requires no-worse performance in every objective and strict improvement in at least one. Weakly dominated points can therefore survive the public ranking. The corrected reproduction applies standard non-domination, normalized crowding and continuous constraint violation for infeasible designs. To avoid retroactively changing published data, the corrected method is denoted MO-ETPSO-R; the original archive remains unchanged and auditable.
+
+\section{Geometry and engineering model}
+\subsection{Rational quadratic B-spline}
+Five positive spacing variables are normalized,
+\begin{equation}
+ d_i=\frac{x_i}{\sum_{j=1}^{5}x_j},\quad i=1,\ldots,5.
+\end{equation}
+They define ten control-point abscissae over two repeated normalized periods:
+\begin{align}
+ X=[&0,d_1,d_1+d_2,d_1+d_2+d_3,\nonumber\\
+ &d_1+\cdots+d_4,1+d_1,1+d_1+d_2,\nonumber\\
+ &1+d_1+d_2+d_3,1+d_1+\cdots+d_4,2],
+\end{align}
+with ordinates $Y=[0,0,1,1,0,0,1,1,0,0]$. The two rational factors are
+\begin{equation}
+ r_k=0.0103\exp(9.17x_{5+k})+0.1,\quad k=1,2,
+\end{equation}
+and weights are $[1,r_1,r_1,r_2,r_2,r_1,r_1,r_2,r_2,1]$. A clamped uniform degree-two knot vector completes the NURBS definition. One period is extracted and independently scaled to target pitch and amplitude.
+
+For degree $p$, the non-rational B-spline basis follows the Cox--de Boor recursion
+\begin{align}
+N_{i,0}(u)&=\begin{cases}
+1,&u\in[\xi_i,\xi_{i+1}),\\
+0,&\text{otherwise},
+\end{cases}\label{eq:cox0}\\
+N_{i,p}(u)&=\frac{u-\xi_i}{\xi_{i+p}-\xi_i}N_{i,p-1}(u)\nonumber\\
+&\quad+\frac{\xi_{i+p+1}-u}{\xi_{i+p+1}-\xi_{i+1}}
+N_{i+1,p-1}(u),\label{eq:coxrec}
+\end{align}
+where a zero denominator contributes zero. With control points $\mathbf P_i=(X_i,Y_i)^\mathsf T$ and positive weights $w_i$, the rational basis and centreline are
+\begin{align}
+ W(u)&=\sum_jw_jN_{j,p}(u),\qquad
+ R_{i,p}(u)=\frac{w_iN_{i,p}(u)}{W(u)},\nonumber\\
+ \mathbf c(u)&=\sum_iR_{i,p}(u)\mathbf P_i. \label{eq:nurbs}
+\end{align}
+For $n+1=10$ control points and $p=2$, the open uniform knot vector contains $p+1$ repeated end knots and $n-p$ equally spaced internal knots,
+\begin{equation}
+ \boldsymbol\Xi=(\underbrace{0,0,0}_{p+1},\xi_3,\ldots,\xi_n,
+ \underbrace{1,1,1}_{p+1}).
+\end{equation}
+The rational derivatives required for tangent and curvature are evaluated without finite differencing:
+\begin{align}
+R'_{i,p}&=\frac{w_iN'_{i,p}W-w_iN_{i,p}W'}{W^2},\\
+R''_{i,p}&=\frac{w_iN''_{i,p}}{W}
+-\frac{w_iN_{i,p}W''}{W^2}
+-\frac{2w_iN'_{i,p}W'}{W^2}\nonumber\\
+&\quad+\frac{2w_iN_{i,p}(W')^2}{W^3},\\
+\mathbf c'&=\sum_iR'_{i,p}\mathbf P_i,\qquad
+\mathbf c''=\sum_iR''_{i,p}\mathbf P_i. \label{eq:nurbs_derivatives}
+\end{align}
+After extracting a complete period $u\in[u_a,u_b]$, independent affine maps impose pitch $\lambda$ and centreline amplitude $h_c$,
+\begin{align}
+x(u)&=\lambda\frac{c_x(u)-c_x(u_a)}{c_x(u_b)-c_x(u_a)},\nonumber\\
+y(u)&=h_c\frac{c_y(u)-c_{y,\min}}
+ {c_{y,\max}-c_{y,\min}}+y_0.\label{eq:physical_map}
+\end{align}
+This design has useful invariances: multiplying all $x_{1:5}$ by the same constant does not change the curve; $x_6$ and $x_7$ independently redistribute rational influence; and exact periodic continuation avoids a geometry gap at cell boundaries. Search uses 300 samples for inexpensive integration, whereas final members use 800 samples and analytic NURBS derivatives for the radius check.
+
+\begin{figure*}[t]
+\centering
+\begin{minipage}{0.54\textwidth}
+\centering
+\begin{tikzpicture}[x=0.63cm,y=0.63cm,>=Latex,font=\small]
+  \fill[enggreen!45] (0,-0.12) rectangle (12,0.12);
+  \fill[enggreen!45] (0,2.88) rectangle (12,3.12);
+  \draw[engblue,line width=1.15pt] (0,0)--(12,0) (0,3)--(12,3);
+  \draw[black,line width=1.0pt,domain=0:12,samples=180,smooth]
+    plot (\x,{1.5+1.32*sin(60*\x-90)});
+  \draw[->] (0,-0.55)--(2.2,-0.55) node[midway,below] {$x$};
+  \draw[->] (0,-0.55)--(0,1.05) node[left] {$y$};
+  \draw[<->] (3,0.34)--(3,2.66) node[midway,right] {$h_c$};
+  \draw[<->] (3,-0.36)--(9,-0.36) node[midway,below] {$\lambda$};
+  \draw[<->] (11.45,2.88)--(11.45,3.12) node[right] {$t_\ell$};
+  \draw[engblue,->,line width=0.8pt] (7.1,2.22)--(8.1,2.72) node[right] {$\mathbf t$};
+  \draw[engblue,->,line width=0.8pt] (7.1,2.22)--(6.65,3.05) node[above] {$\mathbf n$};
+  \draw[engblue,dashed] (7.1,2.22) arc[start angle=205,end angle=290,radius=1.15];
+  \node[engblue] at (6.15,1.72) {$R=1/|\kappa|$};
+  \node at (10.4,1.18) {$t_f$};
+\end{tikzpicture}
+\end{minipage}\hfill
+\begin{minipage}{0.43\textwidth}
+\centering
+\begin{tikzpicture}[x=0.68cm,y=0.68cm,>=Latex,font=\small]
+  \draw[gray,dashed] (0,0)--(1,0)--(2,2)--(3,2)--(4,0)--(5,0)--(6,2)--(7,2)--(8,0)--(9,0)--(10,2);
+  \draw[black,line width=1pt,domain=0:10,samples=200,smooth]
+    plot (\x,{1+0.92*sin(40*\x-90)+0.13*sin(80*\x)});
+  \foreach \x/\y in {0/0,1/0,2/2,3/2,4/0,5/0,6/2,7/2,8/0,9/0,10/2}
+    \filldraw[fill=enggreen,draw=engblue] (\x,\y) circle (1.7pt);
+  \foreach \xa/\xb/\lab in {0/1/d_1,1/2/d_2,2/3/d_3,3/4/d_4,4/5/d_5,5/6/d_1,6/7/d_2,7/8/d_3,8/9/d_4,9/10/d_5}{
+    \draw[<->] (\xa,-0.48)--(\xb,-0.48) node[midway,below,font=\scriptsize] {$\lab$};
+  }
+  \node[align=center] at (5,2.62) {control polygon, $\mathbf P_i$;\\rational curve, $\mathbf c(u)$};
+\end{tikzpicture}
+\end{minipage}
+\caption{Geometric definitions used throughout the optimization. Left: physical one-dimensional construction per unit board width, showing pitch, flute height, liner and flute thickness, local frame and curvature radius. Right: two-period rational-quadratic construction; the dashed control polygon is not the paper centreline. Colours are confined to this LaTeX-generated schematic; numerical result plots are monochrome except for explicitly selected candidates.}
+\label{fig:geometry_definition}
+\end{figure*}
+
+The public repository contains several related but non-identical design spaces. Figure~\ref{fig:parameterizations} separates pure envelope sizing from shape refinement and from the coupled problem. The control-point count is a model-resolution choice, not an optimization budget: increasing $n_c$ increases geometric freedom and decision-space dimension, while $\lambda$, $h$ and $t$ determine physical size. The final seven-variable family uses normalized spacings and rational factors instead of unconstrained ordinate motion, making periodicity and bounds easier to preserve.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{optimization_parameterizations.pdf}
+\caption{Optimization cases distinguished in the numerical archive. Size-only cases vary the physical envelope; shape-only cases vary 4, 8 or 15 control points at fixed envelope; the seven-variable rational construction varies five normalized spacings and two weights; and coupled cases vary size and shape together. Control polygons are schematic, while the objective fronts reported later are read directly from the archived CSV files.}
+\label{fig:parameterizations}
+\end{figure*}
+
+\subsection{Area and inertia per wavelength}
+Let $s$ denote centreline arc length, $J_s(u)=\|\mathbf c'(u)\|$, $t_f$ flute thickness, $t_b,t_t$ liner thicknesses and unit out-of-plane width. The material area of one flute plus two liners is
+\begin{equation}
+ A=t_f\int_{u_a}^{u_b}J_s\,\mathrm du+\lambda(t_b+t_t),\qquad A_\lambda=\frac{A}{\lambda}.
+ \label{eq:area}
+\end{equation}
+$A_\lambda$ has units of length and is reported in millimetres. The first moment and centroid are
+\begin{equation}
+ Q_y=t_f\int yJ_s\,\mathrm du+\lambda(t_by_b+t_ty_t),\qquad \bar y=Q_y/A.\label{eq:centroid}
+\end{equation}
+Writing $n_y=x'/J_s$ for the vertical component of the centreline normal, exact integration across the thin flute strip adds the local thickness term $t_f^3n_y^2/12$. The geometric inertia per wavelength and width is therefore
+\begin{align}
+ I_\lambda=\frac{1}{\lambda}\bigg[&\int_{u_a}^{u_b}\left\{t_f(y-\bar y)^2+\frac{t_f^3}{12}n_y^2\right\}J_s\,\mathrm du\nonumber\\
+ &+\sum_{\ell\in\{b,t\}}\left\{\frac{\lambda t_\ell^3}{12}+\lambda t_\ell(y_\ell-\bar y)^2\right\}\bigg],
+ \label{eq:inertia}
+\end{align}
+reported in mm$^3$. The legacy optimizer minimizes $10^{-6}/(I/\lambda)$ in SI units and raw $A$ in m$^2$. The plotted Pareto representation uses the equivalent, more interpretable pair: minimize $A/\lambda$ and maximize $I/\lambda$.
+
+\subsection{Effective transverse modulus}
+The evaluator rotates the orthotropic paper compliance $\mathbf S^{(123)}$ into the global axes through the local angle $\theta(u)=\operatorname{atan2}(y',x')$,
+\begin{align}
+ \mathbf S^{(xyz)}(u)&=\mathbf T(\theta)\mathbf S^{(123)}
+ \mathbf T(\theta)^\mathsf T,\nonumber\\
+ \mathbf Q(u)&=\left[\mathbf S^{(xyz)}_{\mathcal I\mathcal I}(u)\right]^{-1}.
+ \label{eq:compliance_transform}
+\end{align}
+where $\mathcal I$ selects the normal and coupled shear components retained by the two-dimensional homogenization. With vertical projected thickness $t_v=t_f/|\cos\theta|$, the wavelength-averaged extensional and bending matrices are
+\begin{align}
+ \mathbf A_h&=\frac{1}{\lambda}\int_0^\lambda t_v(x)\mathbf Q(x)\,\mathrm dx,\\
+ \mathbf D_h&=\frac{1}{\lambda}\int_0^\lambda
+ \left[(y-\bar y)^2t_v+\frac{t_v^3}{12}\right]\mathbf Q(x)\,\mathrm dx.\label{eq:AD}
+\end{align}
+The legacy equivalent layer is recovered from
+\begin{equation}
+ t_{\mathrm{eff}}=\sqrt{\frac{12\operatorname{tr}\mathbf D_h}{\operatorname{tr}\mathbf A_h}},
+ \qquad E_{z,\mathrm{eff}}=\frac{12}{t_{\mathrm{eff}}^3(\mathbf D_h^{-1})_{zz}}.\label{eq:effective_modulus}
+\end{equation}
+This output is retained for post hoc analysis but is not an objective in the corrected area--inertia benchmark. The distinction matters: a gallery containing $E_z$ does not imply that every archived case optimized $E_z$.
+
+\subsection{Physical radius}
+Curvature is evaluated in final millimetre coordinates directly from Eq.~\eqref{eq:nurbs_derivatives},
+\begin{equation}
+ \kappa(u)=\frac{x'y''-y'x''}{(x'^2+y'^2)^{3/2}},\qquad
+ R_{\min}=\left(\max_{u\in[u_a,u_b]}|\kappa(u)|\right)^{-1}.\label{eq:curvature}
+\end{equation}
+The archival audit also repeats the historical smoothed finite-difference calculation to reproduce its stored decision. Two profile zones are screened, and total violation is
+\begin{equation}
+ g(\mathbf x)=\max(0,0.9-R_1)+\max(0,0.9-R_2).
+\end{equation}
+Feasible points dominate infeasible points; among infeasible points smaller $g$ is preferred.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.93\textwidth]{archived_constraint_audit.pdf}
+\caption{Independent audit of the 256 archived final-front rows. Left: reconstructed objective plane, separating open-circle rows that satisfy the physical radius threshold from cross-marked violations. Right: distribution of the smaller reconstructed local radius. Because infeasible points influenced the original search history, the feasible subset is evidence for the audit and is not presented as a corrected Pareto run.}
+\label{fig:constraint_audit}
+\end{figure*}
+
+\section{Optimization benchmark}
+\subsection{Algorithms and budget}
+MO-ETPSO-R retains the constricted PSO update with inertia $w=0.7$, $c_1=c_2=2.05$, personal bests and an elitist archive. Leaders are sampled from the non-dominated archive with crowding preference. Parents and trials are combined, then reduced to 50 points by Pareto fronts and crowding.
+
+For particle $i$, coordinate $j$ and iteration $k$, the stochastic state update is
+\begin{align}
+v_{ij}^{k+1}&=\chi\left[w v_{ij}^{k}+c_1r_{1,ij}^{k}(p_{ij}^{k}-x_{ij}^{k})
++c_2r_{2,ij}^{k}(\ell_{ij}^{k}-x_{ij}^{k})\right],\label{eq:velocity}\\
+x_{ij}^{k+1}&=\mathcal P_{[l_j,u_j]}\left(x_{ij}^{k}+v_{ij}^{k+1}\right),\label{eq:position}
+\end{align}
+where $r_1,r_2\sim\mathcal U(0,1)$ independently, $\mathbf p_i$ is the constraint-compatible personal best, $\boldsymbol\ell_i$ is an archive leader and $\mathcal P$ projects to the decision bounds. For $\phi=c_1+c_2>4$, the classical constriction is
+\begin{equation}
+ \chi=\frac{2}{\left|2-\phi-\sqrt{\phi^2-4\phi}\right|}.
+\end{equation}
+The implemented campaign keeps the public inertia and acceleration convention, while the archive is rebuilt with standard domination. Within front $F_m$, normalized crowding is
+\begin{equation}
+ d_i=\sum_{q=1}^{n_f}\frac{f_{q,i+1}-f_{q,i-1}}
+ {f_{q,\max}-f_{q,\min}},\qquad i\in F_m,\label{eq:crowding}
+\end{equation}
+with infinite distance at objective extremes. This expression also supplies leader preference and last-front truncation.
+
+NSGA-II uses simulated binary crossover, polynomial mutation, standard fast non-dominated sorting and crowding. Both methods start from independent uniform samples within identical bounds. Each algorithm receives 50 candidates for 80 generations, exactly 4000 evaluator calls. Ten paired seeds are used. Hypervolume is calculated after scaling legacy objectives to $[10^{-3}(10^{-6}/I),10^{6}A]$, with common reference point $(1,15)$. Because both scale factors are positive, Pareto dominance is unchanged.
+
+Final hypervolume distributions are compared by a paired Wilcoxon signed-rank test. Ten runs provide an engineering benchmark rather than a universal performance ranking; the paired design removes initial-seed variation from the algorithm contrast.
+
+\subsection{MO-ETPSO hyperparameter sensitivity}
+Population size and inertia were studied separately from the algorithm comparison. A fixed budget of 1200 calls was imposed for every configuration: $N_p\in\{20,40,80\}$ therefore used 60, 30 and 15 generations, respectively. The inertia coefficient was $w\in\{0.4,0.7,0.9\}$, and each of the nine combinations used five paired seeds. Acceleration coefficients, constraint treatment, bounds, integration resolution and reference point were unchanged. This design separates the effect of distributing a budget across particles and generations from the trivial advantage of more function calls.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{mo_etpso_hyperparameter_study.pdf}
+\caption{Fixed-budget MO-ETPSO-R sensitivity over five seeds per setting. Error bars are one standard deviation. Population size and inertia are encoded redundantly by marker and line style; the figure remains interpretable in monochrome. All 45 runs ended with a fully feasible population, so the more informative archive-size statistic is shown in the middle panel.}
+\label{fig:moetpso_hyperparameters}
+\end{figure*}
+
+The nine mean hypervolumes occupy a narrow interval, 4.013--4.071 (Fig.~\ref{fig:moetpso_hyperparameters}). At $N_p=20$, increasing $w$ from 0.4 to 0.9 increased the standard deviation from 0.031 to 0.125 and reduced the mean number of non-dominated final members from 20.0 to 17.4. The best mean was obtained for $N_p=80,w=0.9$ ($4.0713\pm0.0035$), but $N_p=40,w=0.4$ reached $4.0678\pm0.0046$ in 1.80 rather than 3.00~s per run. The practical conclusion is therefore not a unique optimum: $N_p=40$ gives nearly the same front quality at lower wall time, whereas the small high-inertia swarm is least repeatable under the same call budget. Wall times are hardware- and implementation-specific and are reported only for relative comparison within this run.
+
+\subsection{Results}
+Figure~\ref{fig:pareto} shows the pooled feasible fronts and hypervolume history. Both optimizers converge rapidly to the same almost linear material--inertia trade-off. The front is narrow because adding arc length and redistributing paper farther from the centroid generally increases both area and inertia. The optimization task is therefore chiefly one of locating the feasible envelope under curvature, not discovering disconnected objective basins.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{pareto_and_convergence.pdf}
+\caption{Left: pooled feasible final Pareto members over ten seeds. Right: median normalized hypervolume and interquartile range against logarithmic function evaluations; both methods use 50 evaluations per generation.}
+\label{fig:pareto}
+\end{figure*}
+
+MO-ETPSO-R reached mean hypervolume $4.0206\pm0.0024$ (median 4.0202); NSGA-II reached $4.0136\pm0.0111$ (median 4.0155). The paired Wilcoxon statistic was $W=11$ with $p=0.105$. Accordingly, the observed mean advantage and lower variance of MO-ETPSO-R are not evidence of a statistically significant algorithm difference at ten seeds. The final feasible fractions were 0.992 and 0.994, respectively; marginal losses arise because designs close to $R=0.9$~mm can change classification when re-evaluated from 300 to 800 samples.
+
+Across all feasible final Pareto members, MO-ETPSO-R spanned $A/\lambda=1.7229$--1.7937~mm and $I/\lambda=3.9375$--4.0939~mm$^3$. NSGA-II spanned 1.7227--1.7865~mm and 3.9356--4.0935~mm$^3$. Effective transverse modulus varied much more, 3.61--30.84~MPa, even though the plotted objectives form a narrow band. This confirms that a two-objective area--inertia front does not control transverse compression stiffness uniquely.
+
+Representative knee profiles are visually similar, which is consistent with objective overlap. Optimizer-specific claims are therefore based on convergence statistics and numerical design vectors rather than an additional profile-only illustration.
+
+\section{Discussion}
+\subsection{What the audit changes}
+The archived figures remain useful evidence that the adapted optimizer ran and generated a structured front. They cannot, however, be treated as a constrained manufacturing front because the radius flag was disabled. Removing 186/256 archived rows after the fact would also be misleading: those points were allowed to influence personal bests, leaders and termination throughout the run. The correct remedy is a new constrained run, which is supplied here.
+
+Evaluator version drift has a similar implication. The current scaled evaluator uses the experimental 21.32~mm pitch and 10~mm height, while the archived values encode 5.65~mm and 2.65~mm. Both are legitimate geometry scales, but their areas, curvatures and stiffnesses are not interchangeable. Reproducibility requires a configuration manifest stored beside each run, including source commit, pitch, height, thickness, material constants, curve resolution, objective transforms and random seed.
+
+\subsection{Engineering interpretation}
+The area--inertia front is dominated by a basic section-design principle: more material placed farther from the centroid increases bending inertia. NURBS variables make the transition manufacturable by distributing curvature rather than creating polygonal corners. The radius constraint is active for much of the front, so manufacturing feasibility limits further improvement.
+
+The broad $E_{z,\mathrm{eff}}$ range along a narrow area--inertia band is a warning against substituting geometric inertia for transverse compression performance. A design intended for flat crush should either include $E_z$ or a nonlinear contact/FEM response as a third objective. Likewise, actual paper thickness and directional stiffness should be separated from scale-free shape variables. The present campaign intentionally reproduces the archived geometric problem; it is not a calibrated material optimization for the later single-sheet experiments.
+
+\subsection{Algorithm comparison}
+MO-ETPSO-R converged earlier on median hypervolume and exhibited smaller final variance, but NSGA-II achieved the largest single-run hypervolume. At this budget their fronts are engineering-equivalent. Additional seeds, alternative budgets and reference-free indicators would be needed for a formal algorithm ranking. More importantly, an algorithm comparison cannot rescue a misspecified evaluator: the constraint correction changes the scientific validity more than the small hypervolume difference between optimizers.
+
+\subsection{Limitations}
+The newer Opt\_CBv2 archive adds machine-readable histories for the complete 15-case shape matrix (C019--C033), which is reported in Appendix~\ref{sec:case_atlas}. Those historical cases differ in parameterization and objective pair and are not pooled into the corrected algorithm test: most predate the fixed radius implementation, use different archive sizes, or do not share a frozen evaluator manifest. The benchmark itself still uses ten seeds and one physical scale. Curvature classification close to the limit remains resolution dependent. Finally, the homogenized $E_z$ model is linear elastic and does not represent large-deformation contact or paper damage.
+
+\section{Reproducibility requirements for future campaigns}
+Each optimization release should contain: (i) an immutable evaluator with unit tests; (ii) a human-readable objective table stating physical direction and units; (iii) constraint values and continuous violations for every design; (iv) initial and final populations rather than plots alone; (v) algorithm seed and evaluation count; (vi) a run manifest containing geometry and material scale; and (vii) vector figures regenerated from raw tables. These requirements are lightweight compared with the cost of reconstructing a front after code drift.
+
+\section{Conclusions}
+A corrected, auditable NURBS optimization of corrugated-board geometry was reconstructed from the public implementation. The main conclusions are:
+\begin{enumerate}
+\item The adapted corrugated MO-ETPSO uses seven NURBS variables and a board evaluator; it is not input-equivalent to the generic GVRP implementation.
+\item The saved front was generated at 5.65~mm pitch, 2.65~mm amplitude and 0.50~mm paper thickness, a configuration recoverable exactly from its objective values but no longer represented by the current same-named source.
+\item The public radius condition was disabled. Only 70/256 archived final-front rows satisfy the stated physical 0.9~mm minimum radius.
+\item Under a corrected constraint and equal 4000-evaluation budgets, MO-ETPSO-R and NSGA-II recover the same area--inertia front. Their final hypervolume difference is not significant at ten paired seeds.
+\item Area--inertia optimality does not uniquely determine effective transverse modulus; future crush-oriented optimization should add a validated nonlinear mechanical objective.
+\end{enumerate}
+
+\section*{Data and code availability}
+The reproducibility package contains the numerical B-spline evaluator, archived-front audit, corrected MO-ETPSO-R, independent NSGA-II implementation, all ten-seed populations, hypervolume histories and vector figures. The public optimization implementations and archived cases are available at \url{https://github.com/ricardofitas/Opt_CBv2} and \url{https://github.com/ricardofitas/Opt_CorrugatedBoards_Sim}. An archival DOI has not yet been assigned.
+
+\section*{Author declarations}
+\textbf{Funding:} This work was supported by a University of Aveiro research grant (BI/PRR/13036/2026) within Agenda ATE---Alliance for the Energy Transition, project C644914747-00000023, funded by the Portuguese Recovery and Resilience Plan (PRR) and European Funds NextGenerationEU through the Agendas for Business Innovation programme. \textbf{Competing interests:} The authors declare no competing interests. \textbf{Author contributions:} R.F.: conceptualization, methodology, software, formal analysis, data curation, visualization and writing---original draft. S.M.O.T.: supervision, validation and writing---review and editing. O.W.: methodology, supervision, validation and writing---review and editing. All authors should confirm the final CRediT statement before submission. \textbf{Declaration of generative AI:} OpenAI Codex was used for code assistance, figure-layout iteration and language editing. The authors reviewed and edited all generated material and take full responsibility for the manuscript.
+
+\appendix
+\section{Repository and result provenance}
+\subsection{Files treated as primary evidence}
+The reconstruction uses three evidence layers and does not give them equal weight. Executable source defines the current algorithm and evaluator. Machine-readable iteration CSV files define what was actually written during the archived runs. Raster images are secondary visual records. When source and CSV values conflict, numerical re-evaluation is used to identify the parameter combination that reproduces the CSV; no current source file is silently assumed to be historical ground truth.
+
+The generic implementation imports a vehicle-routing objective and creates decision arrays whose length depends on the routing instance. It uses route feasibility and cost components unrelated to corrugated geometry. The adapted file replaces that problem constructor with a seven-variable call to the board evaluator, changes bounds, writes board-specific quantities and uses the three-component vector \texttt{[obj1,obj2,obj4]}. The two repositories therefore establish algorithm lineage but not input equivalence. Copying only the particle update from the generic repository would omit the geometry, physical units, constraints and objective transform that define the engineering problem.
+
+The archived final rows store all seven decisions, inverse inertia, area and effective transverse modulus. Candidate parameter configurations were evaluated against all rows, not against selected points in a plot. The recovered configuration minimizes the mean and maximum relative errors simultaneously. Changing $t$ from 0.50 to 0.20~mm or changing $\lambda$ from 5.65 to 21.32~mm creates order-one discrepancies, whereas the recovered scale produces errors at or below the numerical-resampling level (Table~\ref{tab:audit}). This sharp separation is why the historical scale can be inferred rather than merely guessed.
+
+\begin{table*}[t]
+\centering\small
+\caption{Input and semantics audit across the public implementations and the reconstructed campaign.}
+\label{tab:source_matrix}
+\begin{tabularx}{\textwidth}{p{0.16\textwidth}XXX}
+\toprule
+Item & Generic MO-ETPSO & Adapted corrugated script & Reconstructed campaign used here\\
+\midrule
+Decision vector & Variable-length routing representation & Seven real variables; five spacings and two rational controls & Same seven-variable board representation\\
+Bounds & Routing-instance dependent & $x_{1:5}\in[0.1,10]$; $x_{6:7}\in[0,1]$ & Identical bounds\\
+Evaluator & GVRP function \texttt{z12} & Corrugated NURBS/homogenization evaluator & Independent, unit-explicit NURBS/geometric evaluator\\
+Population/budget & Example: 100 by 1000 iterations & Public production default: 50 by 100 & 50 by 80 generations; 4000 calls\\
+Optimized values & Route objectives/constraints & \texttt{obj1}, \texttt{obj2}, \texttt{obj4}; $E_z$ logged separately & Area and inverse inertia; $E_z$ retained diagnostically\\
+Physical scale & Not applicable & Current copies disagree & $\lambda=5.65$~mm, amplitude 2.65~mm, $t=0.50$~mm\\
+Radius condition & Not applicable & Both branches return true & Continuous violation with $R_{\min}=0.9$~mm\\
+Pareto rule & Generic implementation convention & Strict improvement in every objective & Standard no-worse/all and better/one rule\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\subsection{Opt\_CBv2 extension and case identity}
+Repository commit \texttt{70836b8c} contains the later website gallery and the underlying final-iteration CSV files. Unlike the earlier raster-only record, each member retains its objective coordinates and full decision vector. This permits direct regeneration rather than plot digitization. The 15 shape cases form a deliberate $5\times3$ factorial display: five geometry parameterizations by three two-objective pairs. C019--C021 use four control points; C022--C024 use eight; C025--C027 use fifteen; C028--C030 use the compact seven-variable rational form without a positive manufacturing threshold; and C031--C033 apply $R_{\min}>0.9$~mm. Within every row, the columns respectively combine $(E_{z,\mathrm{eff}},I/\lambda)$, $(I/\lambda,A/\lambda)$ and $(A/(\lambda E_{z,\mathrm{eff}}),A/I)$.
+
+The atlas is reported as historical evidence rather than a pooled statistical experiment. A front can change because the objective pair, dimensionality, radius condition, hyperparameters or evaluator version changed. Panel labels therefore preserve case identity; connecting lines aid visual tracing but do not interpolate an engineering response. The constrained C031--C033 selections are shown with their geometries in Fig.~\ref{fig:case_plate_11}.
+
+\section{Complete Size and Shape Optimization Atlas}\label{sec:case_atlas}
+\renewcommand{\thefigure}{B\arabic{figure}}\setcounter{figure}{0}
+\renewcommand{\thetable}{B\arabic{table}}\setcounter{table}{0}
+Figures~\ref{fig:case_plate_01}--\ref{fig:case_plate_12} report the full gallery in provenance order. Every plate combines the Pareto projection with three explicitly keyed solutions: blue circle S1 is the first-objective extreme, red diamond S2 is the log-normalized knee and green triangle S3 is the second-objective extreme. The front itself remains black, so none of the selected states can be confused with an ordinary front member. A numerical vector table follows every plate. High-dimensional vectors are shortened on the page, while the released CSV retains every component.
+
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_01.pdf}
+\caption{Archived five-variable size cases C001--C004. Thicknesses, pitch and height vary simultaneously.}\label{fig:case_plate_01}\end{figure*}
+\input{generated_tables/case_plate_01}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_02.pdf}
+\caption{Archived envelope-only size cases C005--C008. The decision vector contains pitch and height, with fixed sheet thickness.}\label{fig:case_plate_02}\end{figure*}
+\input{generated_tables/case_plate_02}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_03.pdf}
+\caption{Archived four-control-point shape cases C009--C011 at fixed physical envelope.}\label{fig:case_plate_03}\end{figure*}
+\input{generated_tables/case_plate_03}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_04.pdf}
+\caption{Archived eight-control-point shape cases C012--C014.}\label{fig:case_plate_04}\end{figure*}
+\input{generated_tables/case_plate_04}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_05.pdf}
+\caption{Archived fifteen-control-point shape cases C015--C017.}\label{fig:case_plate_05}\end{figure*}
+\input{generated_tables/case_plate_05}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_06.pdf}
+\caption{Legacy compact rational-shape case C018. It is retained separately because it predates the later production compact campaign.}\label{fig:case_plate_06}\end{figure*}
+\input{generated_tables/case_plate_06}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_07.pdf}
+\caption{Compact rational-shape cases C028--C030.}\label{fig:case_plate_07}\end{figure*}
+\input{generated_tables/case_plate_07}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_08.pdf}
+\caption{Production four-control-point cases C019--C021.}\label{fig:case_plate_08}\end{figure*}
+\input{generated_tables/case_plate_08}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_09.pdf}
+\caption{Production eight-control-point cases C022--C024.}\label{fig:case_plate_09}\end{figure*}
+\input{generated_tables/case_plate_09}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_10.pdf}
+\caption{Production fifteen-control-point cases C025--C027.}\label{fig:case_plate_10}\end{figure*}
+\input{generated_tables/case_plate_10}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_11.pdf}
+\caption{Radius-constrained compact cases C031--C033 with $R_{\min}>0.9$~mm.}\label{fig:case_plate_11}\end{figure*}
+\input{generated_tables/case_plate_11}
+\clearpage
+\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_12.pdf}
+\caption{New coupled size--shape cases C034--C036. The ten variables comprise seven rational-shape coordinates, pitch, centreline height and common paper thickness; all candidates satisfy the 0.9~mm radius condition.}\label{fig:case_plate_12}\end{figure*}
+\input{generated_tables/case_plate_12}
+\clearpage
+
+\renewcommand{\thefigure}{C\arabic{figure}}\setcounter{figure}{0}
+\renewcommand{\thetable}{C\arabic{table}}\setcounter{table}{0}
+
+\section{Objective dictionary and dimensional trace}
+\subsection{Raw, optimization and reporting forms}
+Multiple equivalent forms appear in the project, so Table~\ref{tab:objective_dictionary} fixes direction and units. Let $I_\lambda=I/\lambda$ and $A_\lambda=A/\lambda$. Positive multiplication and reciprocal transformation preserve the intended trade-off only if direction is changed consistently. In particular, minimizing $1/I_\lambda$ is equivalent to maximizing $I_\lambda$, while plotting $I_\lambda$ on an increasing axis reverses the visual direction of improvement relative to the stored objective.
+
+\begin{table*}[t]
+\centering\small
+\caption{Objective dictionary used to prevent label, unit and direction ambiguity.}
+\label{tab:objective_dictionary}
+\begin{tabularx}{\textwidth}{p{0.17\textwidth}p{0.22\textwidth}p{0.11\textwidth}p{0.10\textwidth}X}
+\toprule
+Symbol/file field & Physical meaning & Unit & Direction & Use\\
+\midrule
+$A$ / section area & Paper section area per unit board width over one wavelength & mm$^2$ & Minimize & Legacy stored quantity; depends on wavelength\\
+$A_\lambda$ & Material area normalized by wavelength and width & mm & Minimize & Primary engineering report; comparable at fixed construction definition\\
+$I_\lambda$ & Second moment per wavelength and board width & mm$^3$ & Maximize & Primary geometric stiffness proxy\\
+$10^{-6}/I_\lambda$ & Scaled reciprocal inertia & numerical scaled unit & Minimize & Legacy optimization coordinate\\
+$E_{z,\mathrm{eff}}$ & Linear homogenized transverse modulus & MPa & Diagnostic & Logged in archive but absent from \texttt{[obj1,obj2,obj4]} optimization vector\\
+$R_1,R_2$ & Local physical curvature radii & mm & Both $\ge0.9$ & Manufacturing feasibility\\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+For a unit-width sheet, $t\,\mathrm ds$ has area units. Dividing its period integral by $\lambda$ leaves length, which explains why normalized area $A/\lambda$ is reported in millimetres. Similarly, $t(y-\bar y)^2\,\mathrm ds$ has length to the fourth power per unit width; division by wavelength leaves mm$^3$. These normalized quantities are sometimes loosely called area and inertia in figures, but their units must accompany those abbreviated labels.
+
+Geometric scaling also matters. If wavelength, amplitude and thickness were all multiplied by a common factor $s$, then $A_\lambda$ would scale as $s$ and $I_\lambda$ as $s^3$. The archived and experimental configurations do not use a common $s$: the archived pitch/amplitude pair is near a quarter-scale copy while thickness remains 0.50~mm. Consequently, neither similarity law nor a simple axis rescaling maps every objective and curvature constraint between the two configurations.
+
+\subsection{Numerical quadrature and final re-evaluation}
+During search, 300 points sample the rational curve. Arc length and section integrals are calculated by stable numerical quadrature on that polyline; curvature is obtained from smoothed derivatives in physical coordinates. Every final population is re-evaluated using 800 samples. Reported Pareto membership, physical quantities and feasibility come from that final pass. This produces a conservative distinction between the optimizer's internal approximation and the data used for figures.
+
+The small feasibility loss at final resolution is expected near an active inequality. A design with a coarse estimate just above 0.9~mm may move just below it after refinement. It is not appropriate to force such a point back to feasible by rounding the displayed radius. For manufacturing use, a buffer (for example, $R\ge0.95$~mm) or a convergence-tested robust constraint would be preferable.
+
+\section{Corrected optimizer specification}
+\subsection{Constraint-domination and archive update}
+Let $g_i\ge0$ be total radius violation. Candidate $i$ constraint-dominates candidate $j$ if: (a) $i$ is feasible and $j$ is infeasible; (b) both are infeasible and $g_i<g_j$; or (c) both are feasible and $i$ Pareto-dominates $j$. Pareto domination is
+\begin{equation}
+ \mathbf f_i\preceq\mathbf f_j\quad\text{and}\quad \exists k:f_{ik}<f_{jk},
+\end{equation}
+after expressing both objectives as minimization. This definition retains equality in one objective and improvement in another, which the strict-all-objectives legacy check can miss.
+
+At every generation, parent and trial populations are combined. Constraint-compatible non-dominated sorting creates fronts; complete fronts are admitted until the size limit would be exceeded. The last admitted front is sorted by normalized crowding distance. Infinite boundary crowding preserves extremes. The external archive is updated by the same rule and truncated to 50 members, preventing leader sampling from growing without bound.
+
+Particle velocities use a constricted PSO-style update with inertia $w=0.7$ and $c_1=c_2=2.05$. A leader is sampled from sparsely occupied archive regions; position bounds are enforced after every update. Personal best replacement uses constraint-domination, with crowding-based tie handling for mutually non-dominating candidates. This retains the public method's swarm character while correcting only the engineering admissibility and ranking semantics.
+
+\subsection{Independent baseline}
+NSGA-II is implemented independently rather than wrapping the particle code. Simulated binary crossover and polynomial mutation operate directly on the seven bounded real variables. Selection uses standard non-dominated fronts and crowding under the same constraint-domination rule. Both algorithms therefore share evaluator, initialization bounds, final re-evaluation and hypervolume code, but not variation or state update. This is important: comparing two labels that share the same erroneous Pareto or constraint routine would reproduce a common bug rather than provide an independent baseline.
+
+Ten paired seeds initialize equal-size populations. Pairing means that algorithm contrasts are computed for seed 0 against seed 0, and so forth; it does not mean that subsequent random draws or populations remain identical. The Wilcoxon signed-rank calculation uses the ten final paired hypervolume differences and makes no normality assumption. With only ten pairs, a non-significant result should be read as insufficient evidence of a difference, not proof that the algorithms are identical.
+
+\begin{table}[t]
+\centering\small
+\caption{Final normalized hypervolume by paired seed.}
+\label{tab:seed_hv}
+\begin{tabular}{rrr}
+\toprule
+Seed & MO-ETPSO-R & NSGA-II\\
+\midrule
+0 & 4.02341 & 3.98613\\
+1 & 4.02326 & 4.01298\\
+2 & 4.02007 & 4.01883\\
+3 & 4.02040 & 4.01526\\
+4 & 4.02264 & 4.01283\\
+5 & 4.01858 & 4.00652\\
+6 & 4.01990 & 4.02290\\
+7 & 4.01844 & 4.01583\\
+8 & 4.01643 & 4.01958\\
+9 & 4.02314 & 4.02542\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:seed_hv} shows why the distribution summary is preferable to a selected best run. MO-ETPSO-R is higher for seven pairs, but NSGA-II is higher for three and obtains the overall largest value. Seed 0 also creates much of NSGA-II's larger variance. Removing that seed after inspecting the values would be unjustified; it is retained in every statistic.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.93\textwidth]{reconstruction_and_paired_seeds.pdf}
+\caption{Reproducibility evidence. Left: row-wise relative-error distributions for the recovered archived evaluator configuration. Right: paired final hypervolume values, retaining all ten seeds. Lines link equal-seed outcomes and are not statistical confidence intervals.}
+\label{fig:reproducibility}
+\end{figure*}
+
+\subsection{Fixed algorithm and indicator parameters}
+Table~\ref{tab:algorithm_parameters} freezes the settings that affect comparison. Population size is counted once per generation, including the initial evaluated population, so 80 generations correspond to 4000 evaluator calls rather than 4050. Hypervolume is computed on the current feasible non-dominated set; a population with no feasible non-dominated point has zero recorded hypervolume. The same physical re-evaluation is applied after the final generation for reported engineering ranges.
+
+\begin{table*}[t]
+\centering\small
+\caption{Corrected benchmark parameter manifest.}
+\label{tab:algorithm_parameters}
+\begin{tabular}{lll}
+\toprule
+Category & Setting & Value or rule\\
+\midrule
+Shared & Decision bounds & $[0.1,10]^5\times[0,1]^2$\\
+ & Population; generations & 50; 80\\
+ & Evaluations per seed & 4000\\
+ & Search/final curve samples & 300/800\\
+ & Seeds & integers 0--9, paired by label\\
+ & Feasibility & $R_1,R_2\ge0.9$~mm; continuous violation\\
+ & Physical scale & $\lambda=5.65$~mm; amplitude 2.65~mm; $t=0.50$~mm\\
+\addlinespace
+MO-ETPSO-R & Inertia & $w=0.7$\\
+ & Acceleration coefficients & $c_1=c_2=2.05$\\
+ & Archive capacity & 50; standard fronts and crowding\\
+ & Leader selection & crowding preference from feasible archive\\
+\addlinespace
+NSGA-II & Variation & simulated binary crossover; polynomial mutation\\
+ & Environmental selection & standard fronts and normalized crowding\\
+\addlinespace
+Indicator & Objective coordinates & $10^{-3}(10^{-6}/I)$ and $10^6A$\\
+ & Reference point & $(1,15)$ in those scaled minimization coordinates\\
+ & Paired test & two-sided Wilcoxon signed rank\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The reference point is fixed before seed comparison and is dominated by the final front. It is not claimed to provide an absolute engineering utility scale. Hypervolume changes if the objective scaling or reference changes; Pareto membership does not. The stored final populations therefore remain the primary reusable output, while hypervolume is the experiment-specific convergence statistic.
+
+\subsection{Convergence speed versus terminal quality}
+Median MO-ETPSO-R hypervolume reaches 99\% of its own final median after 300 evaluations and 99.9\% after 550. NSGA-II reaches the corresponding fractions after 850 and 3300 evaluations. These within-algorithm thresholds support the visual impression that the swarm archive stabilizes earlier under the selected parameters. They do not establish that one method will converge faster under another budget, population size or geometry scale, because each fraction is referenced to that algorithm's terminal median.
+
+Terminal differences are much smaller than early-history differences. This explains how MO-ETPSO-R can exhibit an early median advantage and lower variance while the paired terminal test remains non-significant. A practical screening workflow might value early envelope discovery; a formal optimizer ranking would need multiple budgets and problems. Reporting only the terminal $p$ value would discard useful computational behavior, while reporting only the early curve would exaggerate an advantage that is largely gone by 4000 calls.
+
+The history table stores one indicator value per algorithm, seed and generation. Evaluations, not wall-clock time, are placed on the horizontal axis because both methods call the same dominant geometry evaluator but differ in Python control overhead. Wall time would additionally depend on hardware and vectorization. If a future FEM objective dominates runtime, both evaluation count and elapsed time should be reported because failed nonlinear solves may have topology-dependent cost.
+
+\section{Engineering interpretation of representative designs}
+The plotted representative members are chosen by a normalized compromise score in the pooled feasible front, not by visual preference. The selected NSGA-II member has $A/\lambda=1.7227$~mm, $I/\lambda=3.9356$~mm$^3$, $E_{z,\mathrm{eff}}=3.63$~MPa and limiting radius 0.902~mm. The selected MO-ETPSO-R member has $A/\lambda=1.7870$~mm, $I/\lambda=4.0917$~mm$^3$, $E_{z,\mathrm{eff}}=27.41$~MPa and limiting radius 0.901~mm. The two reported knee choices therefore occupy different locations along the same narrow geometric trade-off, even if their smooth periodic silhouettes look related.
+
+This comparison exposes the limitation of a knee defined only in the two plotted objectives. The second member uses about 3.7\% more normalized material and delivers about 4.0\% more normalized inertia, yet its homogenized transverse modulus is more than seven times larger. $E_z$ changes through tangent orientation and local compliance integration, neither of which is captured uniquely by global second moment. A designer concerned with out-of-plane compression might strongly prefer the second point, whereas a material--bending trade-off alone treats the choice as a conventional knee.
+
+There is no contradiction between high geometric inertia and a narrow minimum radius. The radius constraint acts locally; inertia depends on the complete material distribution about the centroid. A rational curve can place long segments at favorable ordinates while using short transition zones near the curvature limit. This is precisely where manufacturing uncertainty matters: a nominal radius of 0.901~mm leaves almost no allowance for tool tolerance, moisture-induced spring-back or numerical derivative error.
+
+For physical prototyping, Pareto selection should therefore include a feasibility margin and robustness analysis. One simple approach is to require $R\ge0.9+\Delta_R$ for a chosen tolerance $\Delta_R$. A more defensible approach samples uncertain thickness, pitch, amplitude and control-point perturbations, then optimizes an expected response and failure probability. The current deterministic front supplies candidates and sensitivities for that study but cannot quantify process capability by itself.
+
+\section{Uncertainty, sensitivity and claims supported by the data}
+\subsection{Numerical uncertainty}
+Three numerical approximations affect reported quantities: curve sampling, derivative regularization for curvature, and quadrature of the homogenized matrices. Final 800-point re-evaluation reduces but does not eliminate them. The archived reconstruction errors provide an empirical check on the geometric quantities because the same decisions are available under an independently written evaluator. The effective modulus has the largest maximum discrepancy, 2.82\%, consistent with its dependence on several integrated matrices and post-processing operations.
+
+The reconstruction errors are not measurement uncertainty and should not be used as confidence intervals. They measure agreement between executable interpretations of an archived numerical campaign. Likewise, variation across optimizer seeds is algorithmic stochasticity, not uncertainty in paper properties. Keeping those two sources separate prevents a small standard deviation in hypervolume from being misread as high confidence in a physical modulus.
+
+Curvature is the most delicate constraint because it involves second derivatives. Smoothing suppresses isolated polyline differentiation spikes but introduces a bandwidth choice. The corrected evaluator applies the same fixed rule to every candidate and rechecks at higher resolution. A future manufacturing release should compare analytic NURBS derivatives with the numerical estimate and store both local radius locations, not only the Boolean result.
+
+\subsection{Model-form uncertainty}
+Area and geometric inertia are exact geometric summaries under the idealized centre-line/thickness construction, but they are proxies for structural performance. The homogenized $E_z$ is linear elastic and inherits assumed orthotropic paper constants, perfect geometry and the absence of damage/contact evolution. It is useful for ranking candidate compliance within that theory; it is not validated flat-crush strength.
+
+Paper C of the project adds a nonlinear beam/contact calculation and shows why this distinction matters. Even a mechanics-based model with measured longitudinal modulus can miss topology-specific experimental forces if friction, formed geometry and self-contact are absent. The present optimization should therefore not replace its inertia objective with an unvalidated FEM output and call the result physically optimal. The correct sequence is verification, independent calibration/validation, then use of the response as an objective with solver-failure handling.
+
+\subsection{Statistical claim boundaries}
+The paired Wilcoxon result addresses one question: whether the ten terminal hypervolume differences provide evidence of a systematic location shift under this fixed benchmark. It does not establish algorithm equivalence, universal superiority or identical fronts. The descriptive result that both pooled populations occupy nearly the same engineering band is separate and directly visible in the stored physical quantities.
+
+The archived 70/256 feasibility count is deterministic under the reconstructed evaluator and threshold; it is not an estimate of the probability that an archived design can be manufactured. The count shows that the saved front cannot be described as radius constrained. Actual manufacturability would require tooling, process and tolerance data.
+
+Finally, the recovered source scale is an inference supported by near-exact numerical reconstruction. It should be described as recovered or reconstructed, not as metadata read from the historical source. The manuscript consistently makes that distinction so future discovery of an immutable historical commit can confirm or revise the provenance without altering the corrected benchmark.
+
+\section{Recommended decision workflow}
+For a new geometry campaign, the user should first freeze a physical construction and objective dictionary. Second, unit tests should verify NURBS invariance, area/inertia dimensions, analytic/numerical curvature agreement and deliberately infeasible designs. Third, at least two independent optimizers should be run under equal evaluator budgets, storing every final population and convergence indicator. Fourth, final candidates should be re-evaluated at higher resolution and with a feasibility margin. Fifth, a mechanically meaningful third objective should be admitted only after its solver has analytical verification and profile-wise experimental validation.
+
+When selecting from the resulting front, engineering units should be used rather than optimizer transforms. A compact shortlist should include the material-saving extreme, inertia extreme, a normalized knee, and at least one design selected for transverse modulus or nonlinear crush response. Printing or forming only one visually attractive curve risks hiding a flat region of the front or a local manufacturing constraint.
+
+This workflow also clarifies termination. An enhanced termination rule may stop when archive movement becomes negligible, but it should monitor both objective change and feasibility. The present equal-budget benchmark deliberately disables claims based on algorithm-specific stopping so every run has the same number of calls. Once behavior is established, a production campaign may restore stopping and report saved evaluations as an outcome rather than silently giving algorithms unequal budgets.
+
+\section{Reproduction checklist and failure tests}
+The released evaluator can be checked without rerunning all optimizers. First, evaluate the archived decision rows at the recovered scale and confirm the error statistics in Table~\ref{tab:audit}. Second, set either radius below 0.9~mm and verify positive constraint violation; this regression test specifically prevents the two-branch Boolean defect from returning. Third, construct two points equal in one objective and better in the other and confirm standard domination. Fourth, multiply $x_{1:5}$ by a common positive constant and confirm an unchanged geometry. Fifth, re-evaluate final populations at 800 samples and regenerate figures directly from the resulting CSV rather than serialized plot objects.
+
+Run manifests should additionally record software versions, the immutable source identifier and the raw command line. Random seed without code version is insufficient; code version without physical scale is insufficient; and an objective table without the transform actually passed to the optimizer is insufficient. The package stores all three layers so a future change to the mechanical objective can be compared with, rather than confused for, the present geometric campaign.
+
+\ifelsarticle\bibliographystyle{elsarticle-num}\else\bibliographystyle{unsrtnat}\fi
+\bibliography{../references}
+\end{document}

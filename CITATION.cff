@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software or its data products, please cite the accompanying manuscript."
+title: "Corrugated-Board Size and Shape Optimization"
+type: software
+authors:
+  - family-names: Fitas
+    given-names: Ricardo
+  - family-names: Tavares
+    given-names: Sergio Manuel Oliveira
+  - family-names: Weeger
+    given-names: Oliver
+version: 1.0.0
+date-released: 2026-08-11
+license: MIT

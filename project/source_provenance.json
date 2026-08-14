@@ -1,0 +1,35 @@
+{
+  "captured_on": "2026-08-11",
+  "repositories": [
+    {
+      "role": "experimental workbooks, tooling geometry, adapted MO-ETPSO and archived optimization outputs",
+      "url": "https://github.com/ricardofitas/Opt_CB.git",
+      "commit": "8a3941c0132e1b404b8d42ef48509d91145ece7e"
+    },
+    {
+      "role": "original optimization figures",
+      "url": "https://github.com/ricardofitas/Opt_CorrugatedBoards_Sim.git",
+      "commit": "716372b5e7e622732af459b70eb43114fa8ccac3"
+    },
+    {
+      "role": "previous non-classical corrugated-board mechanical model",
+      "url": "https://github.com/ricardofitas/FEM_Corrugated_Boards.git",
+      "commit": "6264c13dd01c780bf21e2f5cf0cda15ef56ac9f1"
+    },
+    {
+      "role": "generic non-adapted MO-ETPSO comparison source",
+      "url": "https://github.com/ricardofitas/MO-ETPSO-GVRP.git",
+      "commit": "ff4e5a7a9f7c0cacdced1783a1e70367194202a8"
+    }
+  ],
+  "publication_context": {
+    "url": "https://www.mdpi.com/1996-1944/17/24/6083",
+    "doi": "10.3390/ma17246083",
+    "use": "same compression apparatus and controlled laboratory conditions; not the same test geometry"
+  },
+  "notes": [
+    "The package contains consolidated raw force-displacement points and exact copied profile coordinate files so the principal analyses do not require the Git repositories.",
+    "Regenerating the historical optimization audit from original per-iteration CSV files still requires the Opt_CB repository at the recorded commit.",
+    "Representative photographs are included as a group-level panel only; no specimen-to-photo mapping is claimed."
+  ]
+}

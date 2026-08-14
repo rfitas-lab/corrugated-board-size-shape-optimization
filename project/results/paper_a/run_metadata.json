@@ -1,0 +1,18 @@
+{
+  "seeds": 10,
+  "population": 50,
+  "generations": 80,
+  "evaluations_per_run": 4000,
+  "sample_size_during_search": 300,
+  "final_re_evaluation_sample_size": 800,
+  "radius_limit_mm": 0.9,
+  "wavelength_mm": 5.65,
+  "amplitude_mm": 2.65,
+  "paper_thickness_mm": 0.5,
+  "archive_parameter_source": "inferred exactly from saved objectives; repository source later changed",
+  "hypervolume_reference_normalized": [
+    1.0,
+    15.0
+  ],
+  "archive_front_rows": 256
+}

@@ -173,8 +173,8 @@
       "bytes": 29069
     },
     "manuscripts/paper_a/main.tex": {
-      "sha256": "ae06987a0f407423a1f599163e1bce1fc678762aa7f5eea76912dc42838415b2",
-      "bytes": 75529
+      "sha256": "d1d1d37daf681cfa08393a2ac6af70e5c9e0b0e0dc3b5da1f5b5d05484244211",
+      "bytes": 75646
     },
     "manuscripts/references.bib": {
       "sha256": "60759977f3eb17b882f3c411f034878c843dee8b33aebfdeb47a90daae57fc7e",
@@ -559,11 +559,11 @@
       "bytes": 50294
     },
     "figures/paper_a/dimensionless_performance_map.pdf": {
-      "sha256": "cce3083d1e1c805453a10db4024de1885be9fc89e716c2d8dd22f758ee752dab",
+      "sha256": "606576b415bfed988c3659fb7690b2e6a0cf2bb46b78b8f98ab5dfdad8619a73",
       "bytes": 31890
     },
     "figures/paper_a/fem_energy_surrogate_validation.pdf": {
-      "sha256": "1f5f154f43c5cc95c09178db3a338e02e2e2ccd56a384d88bdd730ab47779d2c",
+      "sha256": "0ab123c1dd55b668ec6766d170722f8bd8300392673fda5bf1cfd1555fdffdd9",
       "bytes": 29792
     },
     "figures/paper_a/optimization_parameterizations.pdf": {
@@ -571,7 +571,7 @@
       "bytes": 82672
     },
     "figures/paper_a/optimized_fem_stress_gallery.pdf": {
-      "sha256": "e46a6d75eb5a2a91c124275604e433a463aea3616ee19864f8c7a837445fa866",
+      "sha256": "372b059a987b5d727dfa627d32205f3c04ddf43916c497ba119708848dca4c2a",
       "bytes": 39995
     },
     "figures/paper_a/pareto_and_convergence.pdf": {
@@ -587,11 +587,11 @@
       "bytes": 17545
     },
     "figures/paper_a/physics_pareto_fronts.pdf": {
-      "sha256": "6cb5ff7039d3e182434c82f4f9ccbf2a572842679f0666fdff2ff9e2d1a7bf04",
+      "sha256": "df80e3dbd3047d2fb37186713b1160f6f88fc7f35d692b6c4e156b213d805c39",
       "bytes": 36362
     },
     "figures/paper_a/representative_mesh_convergence.pdf": {
-      "sha256": "2660591c2e164f0fe0770b30f461dbcc16f3c593e4ee50447008b219eb1edc86",
+      "sha256": "04945bc97a125d6c5845297d63b2755d8e9dde82d333b1863a702aded3c19d16",
       "bytes": 22473
     },
     "manuscripts/paper_a/generated_tables/decision_fidelity_fast.tex": {

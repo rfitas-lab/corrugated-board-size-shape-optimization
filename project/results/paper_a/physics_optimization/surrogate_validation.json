@@ -1,0 +1,73 @@
+{
+  "dataset": {
+    "successful_designs": 80,
+    "training_designs": 60,
+    "test_designs": 20,
+    "path_rows": 400
+  },
+  "neural_energy_test": {
+    "r2": 0.9844260857976204,
+    "mae": 0.08761991820648288,
+    "relative_mae_nonzero": 0.07048691908278745
+  },
+  "neural_reaction_test": {
+    "r2": 0.9821016232719203,
+    "mae": 0.2838900845613192,
+    "relative_mae_nonzero": 0.07050919696480155
+  },
+  "neural_potential_number_test": {
+    "r2": 0.9818718597921303,
+    "mae": 2.155167348604574e-05,
+    "relative_mae_nonzero": 0.07447113128838787
+  },
+  "stress_model_test": {
+    "r2": 0.8849406232993584,
+    "mae": 0.026714048980921758,
+    "relative_mae_nonzero": 0.06300827743789164
+  },
+  "stress_upper_bound": {
+    "calibration_split": "held-out design-level test split",
+    "target_empirical_coverage": 0.9,
+    "additive_calibration_margin": 0.01705697043128973,
+    "empirical_coverage": 0.95,
+    "maximum_underprediction_after_calibration": 0.006397160665362112
+  },
+  "trust_distance_limit": 2.9180592889513584,
+  "training": [
+    {
+      "seed": 3,
+      "optimizer_success": "False",
+      "optimizer_message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 900.0,
+      "loss": 8.875635166358865e-05
+    },
+    {
+      "seed": 11,
+      "optimizer_success": "False",
+      "optimizer_message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 900.0,
+      "loss": 8.212330700774275e-05
+    },
+    {
+      "seed": 29,
+      "optimizer_success": "False",
+      "optimizer_message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 900.0,
+      "loss": 8.884390723243526e-05
+    },
+    {
+      "seed": 47,
+      "optimizer_success": "False",
+      "optimizer_message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 900.0,
+      "loss": 8.56329442211741e-05
+    },
+    {
+      "seed": 83,
+      "optimizer_success": "False",
+      "optimizer_message": "STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT",
+      "iterations": 900.0,
+      "loss": 9.21194410573565e-05
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+\begin{table}[H]
+\centering
+\caption{Measured complete-path FEM cost. Times are CPU-process seconds in the x86--64 container on an Intel Xeon Platinum 8573C; representative batches use at most three processes. Accepted evidence rows are followed by an excluded solver-audit row.}
+\label{tab:runtime_summary_fast}
+\begin{tabular}{lrrrrr}
+\toprule
+Ledger & Mesh & Paths & Sum [s] & Median [s] & Max [s] \\
+\midrule
+Training & 16 & 80 & 412.4 & 4.73 & 13.22 \\
+Coarse reconstruction & 24 & 572 & 4296.4 & 7.23 & 18.36 \\
+Representatives & 32 & 9 & 271.9 & 15.69 & 100.30 \\
+Case compromises & 40 & 3 & 375.7 & 119.69 & 137.73 \\
+Rejected audit (excluded) & 48 & 3 & 316.0 & 88.31 & 139.47 \\
+\bottomrule
+\end{tabular}
+\end{table}

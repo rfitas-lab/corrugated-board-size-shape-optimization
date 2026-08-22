@@ -1,659 +1,842 @@
-\newif\ifelsarticle
-\ifdefined\ELSEVIERLAYOUT
-  \elsarticletrue\documentclass[final,5p,times,twocolumn]{elsarticle}
-\else
-  \elsarticlefalse\documentclass[10pt,twocolumn]{article}
-\fi
-\ifelsarticle\else\usepackage[a4paper,margin=15mm,columnsep=6mm]{geometry}\fi
-\usepackage{graphicx,booktabs,amsmath,amssymb,microtype,xcolor,url,tabularx,array}
-\ifelsarticle\biboptions{numbers,sort&compress}\else\usepackage[numbers,sort&compress]{natbib}\fi
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{amsmath,amssymb,bm}
+\usepackage[numbers,sort&compress]{natbib}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,calc,decorations.pathreplacing,patterns,positioning,shapes.geometric}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pdflscape}
+\usepackage{longtable}
+\usepackage{placeins}
+\usepackage{float}
 \usepackage[hidelinks]{hyperref}
-\usepackage{stfloats}
-\ifelsarticle
-  \usepackage{eso-pic}
-  \AtBeginDocument{\AddToShipoutPictureFG*{\AtPageUpperLeft{\put(\LenToUnit{\paperwidth-18mm},\LenToUnit{-12mm}){\includegraphics[height=8mm]{../../tex/elsevier/Elsevier_logo.pdf}}}}}
-\fi
-\graphicspath{{../../figures/paper_a/}{../../figures/common/}{../../checkpoints/}}
-\definecolor{engblue}{HTML}{143A5E}
-\definecolor{enggreen}{HTML}{B7D8C2}
-\newcommand{\keywordsline}{Corrugated board; NURBS; multi-objective optimization; MO-ETPSO; NSGA-II; reproducibility; geometric inertia}
+\hypersetup{
+  pdftitle={Dimensionless Multi-Objective Size--Shape Optimization of Corrugated-Board Profiles with Nonlinear FEM and an Energy-Consistent Neural Potential},
+  pdfauthor={Ricardo Fitas, Sergio Manuel Oliveira Tavares, Oliver Weeger}
+}
+
+\graphicspath{{../../figures/paper_a/}{../../figures/common/}}
+\definecolor{engblue}{HTML}{17365D}
+\definecolor{enggreen}{HTML}{DCEBD9}
+\newcommand{\Rmin}{R_{\min}}
+\newcommand{\phib}{\phi_{b}}
+\newcommand{\phic}{\phi_{c}}
+\newcommand{\PsiU}{\Psi_{U}}
+\newcommand{\PsiW}{\Psi_{W}}
+\newcommand{\Om}{\Omega_{8}}
+\newcommand{\Ommax}{\Omega_{\max}}
+\newcommand{\Iws}{\mathcal I_{WMS}}
+
+\title{Dimensionless Multi-Objective Size--Shape Optimization\\of Corrugated-Board Profiles with Nonlinear FEM\\and an Energy-Consistent Neural Potential}
+\author{Ricardo Fitas$^{1,2}$, S\'ergio Manuel Oliveira Tavares$^1$, Oliver Weeger$^2$\\[3pt]
+\small $^1$Centre for Mechanical Technology and Automation (TEMA),\\
+\small Department of Mechanical Engineering, University of Aveiro,\\
+\small Campus Universit\'ario de Santiago, 3810--193 Aveiro, Portugal\\
+\small $^2$Cyber-Physical Simulation, Department of Mechanical Engineering,\\
+\small Technical University of Darmstadt, Dolivostrasse 15, 64293 Darmstadt, Germany\\[2pt]
+\small Correspondence: \texttt{rfitas99@gmail.com}}
+\date{}
 
 \begin{document}
-\ifelsarticle
-\begin{frontmatter}
-\title{Multi-Objective Size and Shape Optimization of Corrugated-Board Profiles Using NURBS and MO-ETPSO}
-\author[1,2]{Ricardo Fitas\corref{cor1}}
-\ead{rfitas99@gmail.com}
-\author[1]{S\'ergio Manuel Oliveira Tavares}
-\author[2]{Oliver Weeger}
-\address[1]{Centre for Mechanical Technology and Automation (TEMA), Department of Mechanical Engineering, University of Aveiro, Campus Universit\'ario de Santiago, 3810-193 Aveiro, Portugal}
-\address[2]{Cyber-Physical Simulation, Department of Mechanical Engineering, Technical University of Darmstadt, Dolivostrasse 15, 64293 Darmstadt, Germany}
-\cortext[cor1]{Corresponding author}
-\begin{abstract}
-A reproducible multi-objective workflow is developed for size and rational-quadratic B-spline shape optimization of corrugated-board profiles. The recovered public archive contains pitch/height/thickness cases, 4-, 8- and 15-control-point shapes and compact seven-variable rational designs; three newly executed cases couple seven shape variables with pitch, height and thickness. Material area per wavelength is minimized against geometric inertia or effective transverse stiffness, with a minimum physical curvature radius of 0.9~mm where declared. The work begins with a provenance audit of the public adapted MO-ETPSO repository. Saved fronts can be reconstructed with mean relative discrepancies of $2.7\times10^{-5}$ in inverse inertia, 0.136\% in area and 0.220\% in effective transverse modulus; however, the saved files correspond to a 0.50~mm, 5.65~mm-pitch configuration that is no longer the same as the current same-named evaluator. In addition, the published radius condition returns true in both branches, so only 70 of 256 archived final-front rows satisfy the stated 0.9~mm physical threshold. A corrected archive-based MO-ETPSO reproduction (MO-ETPSO-R) is compared with NSGA-II using ten paired seeds and 4000 function evaluations per run. Mean final normalized hypervolume is 4.0206 for MO-ETPSO-R and 4.0136 for NSGA-II; the paired Wilcoxon test is not significant ($p=0.105$), although MO-ETPSO-R has lower run-to-run variation. Both algorithms recover the same narrow Pareto band, $A/\lambda=1.723$--1.794~mm and $I/\lambda=3.936$--4.094~mm$^3$. The paper supplies a complete B1--B12 gallery with S1--S3 geometries and numerical vectors, demonstrating that objective labels, units, constraints and source versions must be frozen before optimization figures can serve as quantitative evidence.
-\end{abstract}
-\begin{keyword}\keywordsline\end{keyword}
-\end{frontmatter}
-\else
-\title{Multi-Objective Size and Shape Optimization of Corrugated-Board Profiles Using NURBS and MO-ETPSO}
-\author{Ricardo Fitas$^{1,2}$, S\'ergio Manuel Oliveira Tavares$^1$, Oliver Weeger$^2$\\[2pt]
-\small $^1$TEMA, Department of Mechanical Engineering, University of Aveiro, Portugal\\
-\small $^2$Cyber-Physical Simulation, Department of Mechanical Engineering, Technical University of Darmstadt, Germany\\
-\texttt{rfitas99@gmail.com}}
-\date{}
 \maketitle
+
 \begin{abstract}
-Archived size cases and several rational B-spline dimensionalities are combined with a new ten-variable coupled size--shape campaign. Material area is traded against inertia or transverse stiffness under explicit radius checks. A source-and-result audit recovers the saved public campaign but finds evaluator version drift and a disabled radius condition. A corrected MO-ETPSO reproduction and NSGA-II are compared over ten equal-budget runs; their final hypervolumes are statistically indistinguishable. The work supplies an auditable evaluator, complete case gallery, numerical selected-design vectors and benchmark protocol.
+Corrugated-board design is commonly reduced to geometric area, inertia, or a linear homogenized modulus, even though local stress and nonlinear platen response can reverse the preference between shapes with similar geometric proxies. This work combines a ten-variable rational-quadratic B-spline size--shape description, a corrected multi-objective particle-swarm optimizer, a geometrically nonlinear corotational assumed-strain beam model, and a supervised energy-consistent neural potential. Five positive spacing variables (four independent after normalization), two bounded rational-weight parameters, pitch, height, and thickness define a genuinely periodic crown-to-crown cell; a 0.9~mm minimum-radius constraint is enforced in physical coordinates. New dimensionless responses include board material fraction $\phib$, crush-load number $C_F$, stored-potential number $\PsiU$, external-work number $\PsiW$, length-weighted stress utilization $\Om$, stress-localization number $\mathcal L_\sigma$, and a study-defined work--material--stress selector $\Iws$. The forming-yield index $\mathcal C_y$ is reported as a derived manufacturing indicator rather than a redundant neural input.
+
+Eighty feasible designs and five load states per design generate 400 accepted nonlinear finite-element states on a contact-conforming 16-element mesh. A geometry-level 60/20 split gives held-out full-path $R^2=0.984$ for dimensional potential and $0.982$ for compression reaction; at 20\% strain, a separate stress ensemble gives $R^2=0.885$ for $\Om$. Three two-objective problems and five independent optimizer seeds produce 540 terminal particles. Merging them with all FEM designs gives 732 case classifications representing 572 unique geometries. Direct FEM reconstruction at 24 elements per period yields pooled-candidate nondominated sets with 58, 31, and 121 members for C037, C038, and C039; these are not claims of global Pareto completeness. Three representatives per case are then checked at 32 elements, and the three normalized utopia-nearest compromises are refined at 40 elements. Across the nine representatives, the largest 24--32 changes are 0.59\% in $\PsiU$ and 0.21\% in $\Om$; across the three compromises, the corresponding 32--40 changes are 0.22\% and 0.088\%. Neural models guide the search; direct nonlinear FEM determines every reported mechanical objective and nondominated classification.
 \end{abstract}
-\noindent\textbf{Keywords:} \keywordsline
-\fi
+
+\noindent\textbf{Keywords:} corrugated board; NURBS; multi-objective optimization; nonlinear finite elements; energy-consistent surrogate; dimensionless mechanics; stress-constrained design
 
 \section{Introduction}
-Corrugated board achieves useful bending and compression performance with little material by separating liners with a shaped paper medium. Standard flute families are historically tied to tooling and production practice, but numerical geometry permits a much larger design space. Parametric optimization can search this space before expensive tooling is made, and can explicitly trade stiffness against material consumption. Comparative studies of standard flute configurations already show that wave geometry changes box and board response \citep{DiRusso2023}; homogenization provides a route from detailed geometry to effective properties \citep{Talbi2009,Garbowski2021Shear}; and finite-element studies confirm that geometry and contact influence flat-crush behavior \citep{Park2021Flat}.
 
-The challenge is not only computational. An optimization result is meaningful only if the design variables, geometry mapping, material parameters, objective directions, normalization and manufacturing constraints are unambiguous. A figure labelled ``area per wavelength'' cannot be combined safely with a table containing raw two-dimensional section area unless the conversion is stated. Likewise, an archived Pareto front cannot be regenerated from a repository if the evaluator changed after the front was written. These issues are especially important for metaheuristics because the visual plausibility of a smooth front can obscure a disabled constraint or an unintended objective.
+Corrugated board achieves a high bending and compression performance per unit mass by placing a shaped medium between two liners. Industrial flute families provide robust manufacturing solutions, but they occupy a small part of the geometrically admissible space. Rational parametric curves allow pitch, height, crown shape, transition shape, and thickness to vary continuously, making it possible to search for nonstandard material--performance compromises before committing to tooling. The difficulty is that the most convenient objectives are not necessarily the most physically informative. Material area and geometric inertia are inexpensive and transparent, whereas crushing involves contact, large rotations, localization, yielding, and a load path.
 
-The public MO-ETPSO method was introduced as an elitist multi-objective particle-swarm approach with enhanced termination \citep{Fitas2024MOETPSO}. The public optimization repository contains both a generic vehicle-routing implementation and an adapted corrugated-profile implementation. They share algorithmic scaffolding but do not share inputs: the generic version evaluates routing variables through a GVRP objective, whereas the adapted version calls a seven-variable NURBS/homogenization evaluator. This study audits that adaptation and builds a corrected, versioned reproduction.
+Equivalent-layer and sandwich descriptions remain useful for board-scale analysis \citep{Aboura2004,Buannic2003,Biancolini2005,Talbi2009,Garbowski2021Shear}. Detailed studies nevertheless show that wave geometry, glue constraints, contact, and material directionality govern local compression and failure \citep{Lu2001,HajAli2009,Park2020Edge,Park2021Flat}. Catalogue-flute comparisons confirm that geometry changes bending and box response \citep{DiRusso2023}, while full-field measurements expose strain localization that a single global modulus cannot represent \citep{Viguie2011,Viguie2013,Fadiji2020}. A design method therefore needs both levels: fast geometric quantities for broad exploration and a nonlinear mechanical response for the final engineering decision.
 
-The objectives are fourfold: (i) state the exact rational B-spline geometry and engineering quantities; (ii) reconstruct the numerical configuration that generated the saved fronts; (iii) correct physical radius screening and Pareto selection; and (iv) compare corrected MO-ETPSO with a conventional NSGA-II baseline under equal evaluation budgets and paired random seeds. The emphasis is not to declare a universal algorithm winner, but to identify which conclusions survive independent regeneration.
+Free-form geometry also creates a numerical reliability problem. A metaheuristic can find a visually smooth Pareto front even when a curvature constraint is evaluated at insufficient resolution, when objective units are mixed, or when a surrogate is queried far outside its training set. These risks are amplified for local stress because maximum stress is sensitive to discretization and to small geometric features. They motivate three safeguards adopted here: all objective directions are expressed as dimensionless minimization quantities; search-stage peak stress is replaced by a length-weighted $p$-norm; and the complete pooled candidate universe is reconstructed by direct FEM before representative nondominated members receive targeted refinement.
 
-\begin{figure*}[t]
+Structured response surrogates can preserve mechanical identities that unconstrained tabular regression may violate. Energy-based learning is particularly useful for conservative mechanics because reaction can be obtained by differentiating one learned potential \citep{Samaniego2020,NguyenThanh2020,Rezaei2022}. The model used here is supervised on finite-element energy and reaction; it does not minimize a strong-form PDE residual or a variational equilibrium residual. For design, even high prediction $R^2$ does not establish reliable decisions: small response errors can change ranks, feasibility, knees, and nondominated membership. The neural potential therefore accelerates screening but has no authority over a reported nondominated set.
+
+This paper makes five contributions:
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item a unified ten-variable NURBS size--shape model with explicit physical-radius screening and geometric board quantities;
+\item a nonlinear periodic compression evaluator using a corotational assumed-strain Timoshenko energy, exact crown/trough mesh nodes, and a declared 0--20\% platen path;
+\item a minimal independent dimensionless input basis, scale-aware response numbers, and study-defined efficiency selectors separating material, work, load, stress localization, and forming severity;
+\item an in-domain, energy-consistent supervised neural potential and a separate stress-screening ensemble, with held-out design validation and a standardized trust distance;
+\item three five-seed multi-objective campaigns whose complete terminal populations and all training geometries enter a 572-geometry direct reconstruction, followed by 9 targeted mesh-32 checks and 3 mesh-40 compromise refinements.
+\end{enumerate}
+
+The paper first defines the geometric benchmark and nonlinear model. It then derives the dimensionless groups, neural potential, and constrained optimization problems. The results distinguish geometric-proxy behavior, surrogate prediction quality, surrogate decision fidelity, pooled-candidate direct-FEM nondominated sets, and mesh-refined selected geometries. The final discussion states the physical and model-form limits of the claims.
+
+\section{Related work and design gap}
+
+\subsection{Corrugated-board mechanics}
+
+Corrugated-board models span fibre networks, anisotropic sheet laws, periodic unit cells, equivalent plates, and package-scale structures \citep{Simon2021,Beex2009,Stenberg2001,Stenberg2003}. Homogenized models reduce computational expense and provide effective membrane, bending, and shear properties \citep{Talbi2009,Garbowski2021Shear,Park2020Equivalent}. Full-geometry calculations demonstrate the limits of those reductions near concentrated loads, local waviness, and collapse \citep{Garbowski2021Full,Garbowski2022Bending}. Edge and flat-crush studies further show sensitivity to contact, orthotropy, imperfections, and nonlinear material response \citep{HajAli2009,Park2020Edge,Park2021Flat}.
+
+Environmental and production variability are equally important. Humidity affects paper properties and assembled response \citep{Navaranjan2013}; forming and flute family change local mechanisms \citep{DiRusso2023}; and full-field experiments reveal localized buckling and redistribution \citep{Viguie2011,Viguie2013}. The present study does not attempt to replace those experimental layers. It isolates a periodic medium between rigid horizontal surfaces so the effect of shape can be studied under one reproducible mechanical protocol.
+
+\subsection{Parametric geometry and multi-objective search}
+
+NURBS offer positive weights, local control, compact parameterization, and exact differentiation within a CAD-compatible language \citep{Piegl1997,Hughes2005}. For corrugated media, the design vector must do more than create attractive curves: it must remain periodic, preserve a declared pitch and height, avoid degeneracy, and satisfy a forming-radius threshold. Parameterizations with too many independent control coordinates create many infeasible shapes; parameterizations that are too restrictive merely reproduce standard sinusoidal families.
+
+Particle-swarm optimization originates from collective search driven by personal and social information \citep{Kennedy1995}. Multi-objective variants use Pareto dominance and an external nondominated set to preserve multiple trade-offs \citep{Coello2004}. NSGA-II provides a conventional comparator based on elitist sorting and crowding \citep{Deb2002}, while indicator-based assessment emphasizes that scaling, reference points, budgets, and repeated seeds must be fixed before interpreting algorithm differences \citep{Zitzler2003,Deb2001}. The MO-ETPSO formulation used here follows the corrected elitist and crowding-based implementation associated with the original method \citep{Fitas2024MOETPSO}.
+
+\subsection{Energy-consistent response models}
+
+Energy-based networks can encode conservative structure and obtain forces by differentiating a learned potential \citep{Samaniego2020,NguyenThanh2020}. That useful structure alone does not make a supervised surrogate a differential-equation solver. Moreover, local contact activation and topology changes introduce nonsmooth response, and stress is not determined by a network trained only on global energy. This study therefore uses two explicitly different approximations: a dimensionless supervised energy potential for energy and reaction, and an auxiliary tree ensemble for the smooth terminal stress norm. Both are screened by an in-domain distance; neither replaces direct FEM verification.
+
+The design gap addressed here is the absence of one workflow that couples NURBS size--shape search, nonlinear platen mechanics, dimensionless objective construction, neural acceleration, rank-fidelity reporting, and direct-FEM reconstruction of the nondominated sets over an explicitly declared pooled candidate universe.
+
+\section{Overall methodology}
+
+Figure~\ref{fig:workflow} summarizes the sequence. Geometry and manufacturability are evaluated for every queried design. Maximin designs from a feasible cloud provide complete FEM paths for the neural potential and stress ensemble. The optimizer searches only within a standardized distance of this set. Direct verification merges every terminal particle with all 80 FEM designs, solves the 572 shared geometries at 24 elements per period, and reclassifies the resulting mechanics under all applicable cases. Two extremes and one normalized utopia-nearest compromise are selected from each pooled-candidate nondominated set. All nine representatives are checked at 32 elements, while the three compromises are refined at 40 elements. This separation keeps the full decision audit while avoiding an unnecessary all-candidate fine-mesh sweep.
+
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.98\textwidth]{corrugated_board_system.pdf}
-\caption{Structural context and coordinate definitions. A corrugated board comprises a fluted medium between two liners (left), whereas the geometric optimizer acts on the periodic flute centreline and its section properties. The single-sheet configuration at right is introduced for continuity with the companion experimental and finite-element studies; Paper~A optimizes the board-profile geometry before nonlinear platen compression is considered.}
-\label{fig:board_system}
-\end{figure*}
-
-\section{Literature Review}
-Computational descriptions of paper and paperboard span fibre networks, anisotropic sheets and assembled structures \citep{Simon2021}. For corrugated board, early analytical and numerical studies replaced the periodic detailed cell by an equivalent continuum or sandwich plate \citep{Aboura2004,Buannic2003,Biancolini2005,Talbi2009}. Later plate reductions clarified when transverse shear and local waviness must be retained \citep{Garbowski2021Shear,Cheon2015,Park2020Equivalent}, and full-field or full-geometry studies showed that effective bending and compression cannot be inferred from grammage alone \citep{Garbowski2021Full,Garbowski2022Bending}. This hierarchy motivates the present separation between exact centreline geometry, section integrals and an effective transverse response.
-
-Local compression introduces phenomena that an elastic equivalent layer hides. Curved-member and refined finite-element models identify the influence of contact, glue lines, orthotropy, imperfections and material nonlinearity \citep{Lu2001,HajAli2009,Park2020Edge,Park2021Flat}. Experiments and detailed models also demonstrate sensitivity to ambient humidity, wave family and collapse mechanism \citep{Navaranjan2013,DiRusso2023,Bai2019}. Digital image correlation and full-field measurements expose localized buckling and strain redistribution that a single global stiffness cannot represent \citep{Viguie2011,Viguie2013,Fadiji2020}, while package-scale simulations connect those local mechanisms to structural performance \citep{Fadiji2018}. These findings justify reporting curvature and manufacturability together with area and inertia instead of optimizing one scalar stiffness in isolation.
-
-Free-form geometry requires a reproducible geometric language. Rational B-splines provide local control, polynomial order, knots and positive weights in a compact definition \citep{Piegl1997}; their use in analysis also underpins the CAD-to-discretization continuity developed in isogeometric analysis \citep{Hughes2005}. Existing corrugated-board comparisons have largely stayed near catalogue flute families \citep{DiRusso2023}, whereas recent open and parametric studies have begun to explore nonstandard profiles and data-driven rules \citep{Fitas2025Design,Metar2025}. What remains missing is a single atlas that distinguishes size-only, shape-only, control-point dimensionality and coupled size--shape cases under the same normalization.
-
-Particle swarm optimization originated as a population search driven by individual and neighbourhood experience \citep{Kennedy1995}; external archives and Pareto dominance subsequently extended it to multiple objectives \citep{Coello2004}. NSGA-II provides a well-established elitist nondominated-sorting comparator \citep{Deb2002}, and broader evolutionary design practice emphasizes diversity preservation and explicit constraint handling \citep{Deb2001}. Because apparent Pareto quality depends on scaling and the chosen indicator, optimizer assessment must use equal budgets, repeated seeds and declared performance measures \citep{Zitzler2003}. The adapted MO-ETPSO implementation adds an enhanced termination rule \citep{Fitas2024MOETPSO}, but that algorithmic contribution does not remove the need to freeze evaluator versions, physical units and radius constraints.
-
-The resulting gap is therefore methodological rather than merely algorithmic. Corrugated mechanics supplies the relevant physical quantities; NURBS supplies the design map; and multi-objective search supplies candidate trade-offs. The present work connects all three, audits the archived source, reconstructs the historical cases without relabelling them, and executes new coupled campaigns with numerical design vectors and source manifests. The experimental and graph-based protocols in the companion work provide an additional traceability precedent for raw curves and geometric labels \citep{Belfekih2024}.
-
-\section{Methodological Workflow}
-Figure~\ref{fig:workflow_a} separates historical reconstruction from new computation. Archived cases are never relabelled as newly optimized data: C001--C033 are regenerated from stored CSV vectors, whereas C034--C036 are new coupled runs with their own identifiers, seeds and manifests.
-
-\begin{figure*}[t]
-\centering
-\resizebox{0.98\textwidth}{!}{%
-\begin{tikzpicture}[node distance=7mm and 8mm,>=Latex,font=\small,
-  block/.style={draw=engblue,rounded corners,align=center,minimum height=9mm,text width=30mm,fill=enggreen!22},
-  decision/.style={draw=black,diamond,aspect=2.0,align=center,inner sep=1.5pt,fill=white},
-  arrow/.style={->,line width=0.7pt},
-  branch/.style={line width=0.7pt}]
-  \node[block] (archive) {Public source and\\C001--C033 CSV archive};
-  \node[block,right=of archive] (map) {Decode design space,\\units and objectives};
-  \node[decision,right=of map] (class) {Archived or\\new case?};
-  \node[block,above right=6mm and 10mm of class] (reconstruct) {Reconstruct front and\\selected geometries};
-  \node[block,below right=6mm and 10mm of class] (coupled) {Run C034--C036 coupled\\size--shape MO-ETPSO};
-  \node[block,right=38mm of class] (verify) {Re-evaluate radius,\\area, inertia and $E_z$};
-  \node[block,right=of verify] (report) {Pareto plate, S1--S3\\vectors and audit table};
-  \draw[arrow] (archive)--(map);
-  \draw[arrow] (map)--(class);
-  \draw[arrow] (class.north east)--node[above left]{archive}(reconstruct.west);
-  \draw[arrow] (class.south east)--node[below left]{new}(coupled.west);
-  \coordinate (merge) at ($(verify.west)+(-7mm,0)$);
-  \coordinate (upperroute) at ($(reconstruct.east)+(4mm,0)$);
-  \coordinate (lowerroute) at ($(coupled.east)+(4mm,0)$);
-  \draw[branch] (reconstruct.east)--(upperroute)|-(merge);
-  \draw[branch] (coupled.east)--(lowerroute)|-(merge);
-  \draw[arrow] (merge)--(verify.west);
-  \draw[arrow] (verify)--(report);
+\begin{tikzpicture}[node distance=5mm,>=Latex,font=\small,
+block/.style={draw=engblue,rounded corners,align=center,minimum height=9mm,text width=62mm,fill=enggreen!45},
+decision/.style={draw=engblue,diamond,aspect=2.5,align=center,inner sep=1.5pt,fill=white},
+arrow/.style={->,line width=0.7pt}]
+\node[block] (g) {Ten-variable NURBS geometry\\physical radius and material fractions};
+\node[block,below=of g] (f) {Maximin designs and nonlinear FEM paths\\energy, reaction, stress, convergence};
+\node[block,below=of f] (n) {Dimensionless neural potential and stress ensemble\\held-out validation and trust distance};
+\node[block,below=of n] (o) {Five-seed multi-objective searches C037--C039};
+\node[decision,below=7mm of o] (d) {Candidate inside trust region\\and geometrically feasible?};
+\node[block,below=7mm of d] (v) {Terminal plus training pool:\\572 unique FEM paths at mesh 24};
+\node[block,below=of v] (m) {Nine representatives at mesh 32\\three case compromises at mesh 40};
+\draw[arrow] (g)--(f); \draw[arrow] (f)--(n); \draw[arrow] (n)--(o);
+\draw[arrow] (o)--(d); \draw[arrow] (d)--node[right]{yes}(v); \draw[arrow] (v)--(m);
+\draw[arrow] (d.east)--++(14mm,0)|-node[pos=0.18,right]{no}(o.east);
 \end{tikzpicture}
-}
-\caption{Methodological workflow. Historical reconstruction and new coupled optimization share the same final evaluator and reporting checks but remain provenance-separated.}
-\label{fig:workflow_a}
-\end{figure*}
+\caption{Computation and verification workflow. The neural layer proposes designs; direct finite-element solutions determine every mechanical quantity and pooled-candidate nondominated classification, with targeted refinement of selected members.}
+\label{fig:workflow}
+\end{figure}
 
-\section{Public Implementation Audit}
-\subsection{Repository separation and adapted inputs}
-The generic and adapted scripts were inspected as executable research objects. The generic script constructs a variable-length routing problem, calls the function \texttt{z12}, and uses 100 particles for 1000 iterations in its distributed example. The adapted script imports \texttt{Optimization\_CB\_v2\_prod}, assigns seven bounded variables,
+\section{Geometric design model}
+
+\subsection{Decision variables and rational profile}
+
+The coupled vector is
 \begin{equation}
- x_{1:5}\in[0.1,10],\qquad x_6,x_7\in[0,1],
+\bm x=(x_1,\ldots,x_5,x_6,x_7,P,H,t)\in\mathbb R^{10},
+\label{eq:vector}
 \end{equation}
-and uses 50 particles and 100 iterations in the archived production script. The adapted objective vector is explicitly \texttt{[obj1,obj2,obj4]}; \texttt{obj3}, the effective transverse modulus, is written to the CSV but is not optimized in that campaign. Thus the public adapted inputs are genuinely different from the generic repository, and a second, non-adapted MO-ETPSO repository cannot be substituted without replacing its objective and bounds.
+with bounds
+\begin{align}
+x_{1:5}&\in[0.1,10], & x_{6:7}&\in[0,1],\nonumber\\
+P&\in[4.8,7.9]\;\text{mm}, & H&\in[2.2,4.0]\;\text{mm},\nonumber\\
+t&\in[0.15,0.25]\;\text{mm}. &&
+\label{eq:bounds}
+\end{align}
+The first five positive variables are normalized,
+\begin{equation}
+d_i=\frac{x_i}{\sum_{j=1}^{5}x_j},\qquad i=1,\ldots,5,
+\end{equation}
+so common scaling of $x_{1:5}$ does not change the geometry. They define ten control-point abscissae over two normalized periods,
+\begin{align}
+X=&[0,d_1,d_1+d_2,d_1+d_2+d_3,d_1+\cdots+d_4,\nonumber\\
+&1+d_1,1+d_1+d_2,1+d_1+d_2+d_3,\nonumber\\
+&1+d_1+\cdots+d_4,2],
+\end{align}
+with ordinates $Y=[0,0,1,1,0,0,1,1,0,0]$. The rational factors are
+\begin{equation}
+r_k=0.0103\exp(9.17x_{5+k})+0.1,\qquad k=1,2,
+\label{eq:weight_mapping}
+\end{equation}
+and the weights are $\bm w=[1,r_1,r_1,r_2,r_2,r_1,r_1,r_2,r_2,1]$. A clamped uniform degree-two knot vector completes the curve definition. The sampling grid includes $u=1/4$, $1/2$, and $3/4$ exactly. The crown-to-crown interval $u\in[1/4,3/4]$ is the mechanical cell; its endpoint ordinates and tangents agree, so the extracted geometry is $C^1$ periodic before independent affine maps impose $P$ and $H$.
 
-\subsection{Recovering the archived configuration}
-The archive contains four runs and one CSV per iteration. The final iteration contains 256 reported Pareto rows across the four runs. Re-evaluation initially failed to match those rows using either current evaluator found in the repository: one uses $t=0.20$~mm at pitch 5.65~mm, while the scaled copy uses $t=0.50$~mm at pitch 21.32~mm. The saved objectives are matched by the otherwise undocumented combination $t=0.50$~mm, $\lambda=5.65$~mm and amplitude 2.65~mm. This inference is not based on visual fitting: substituting those values reconstructs every archived row with the errors in Table~\ref{tab:audit}.
+Figure~\ref{fig:param} shows how the study moves from size-only and control-point families to the compact coupled representation. The ten-variable form retains enough freedom to change crown flatness and transition curvature while allowing exact size bounds and a manageable feasible region.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{optimization_parameterizations.pdf}
+\caption{Geometric parameterizations considered in the geometric benchmark. The nonlinear mechanical campaigns use the compact seven-variable rational profile augmented by pitch, height, and thickness.}
+\label{fig:param}
+\end{figure}
+
+\subsection{Physical profile, arc length, and curvature}
+
+For control points $\bm P_i$ and quadratic basis $N_{i,2}$, the rational basis and centreline are
+\begin{equation}
+R_i(u)=\frac{w_iN_{i,2}(u)}{\sum_jw_jN_{j,2}(u)},\qquad
+\bm c(u)=\sum_iR_i(u)\bm P_i.
+\label{eq:nurbs}
+\end{equation}
+After physical scaling, the period arc length is
+\begin{equation}
+L_s=\int_{u_a}^{u_b}\sqrt{x'(u)^2+y'(u)^2}\,\mathrm du.
+\label{eq:arc}
+\end{equation}
+The geometric evaluator uses at least 800 physical-curve samples for selection and reporting, while retaining the three exact cell-defining parameters. Curvature is obtained from first and second numerical gradients with a fixed Gaussian regularization applied identically to every profile,
+\begin{equation}
+\kappa=\frac{|x'y''-y'x''|}{(x'^2+y'^2)^{3/2}},\qquad
+\Rmin=\frac{1}{\max\kappa}.
+\label{eq:curvature}
+\end{equation}
+The manufacturing constraint is
+\begin{equation}
+g_R=\max(0,0.9-R_1)+\max(0,0.9-R_2)=0,
+\label{eq:radius_constraint}
+\end{equation}
+where $R_1$ and $R_2$ are limiting radii in the two transition zones. For FEM, the exact $u\in[1/4,3/4]$ cell is retained in curve order rather than sorted on $x$. The two periodic crowns and central trough are mandatory nodes, and remaining nodes are distributed by arc length within the two intervening branches. Thus every resolution preserves near-vertical portions, identical endpoint ordinates and tangents, and zero initial free travel at both platens. Across all 1200 profiles in the feasible cloud, the computed endpoint-ordinate gap is identically zero at floating-point precision and the largest unit-tangent mismatch is $3.04\times10^{-14}$.
+
+\input{generated_tables/periodicity_audit.tex}
+
+\subsection{Geometric board quantities}
+
+For a unit out-of-plane width, the corrugated medium contributes $tL_s$ of material area per period. With two liners of the same thickness, the board material fraction within the bounding rectangle is
+\begin{equation}
+\phib=\frac{t(L_s+2P)}{PH},
+\qquad
+\phic=\frac{tL_s}{PH}
+\label{eq:material_fraction}
+\end{equation}
+for the complete board proxy and core-only fraction, respectively. The geometric benchmark also evaluates material area per wavelength, second moment per wavelength, and an effective linear transverse modulus. The section quantities follow
+\begin{align}
+A&=\int t\,\mathrm ds+2Pt,\nonumber\\
+\bar y&=\frac{1}{A}\int y\,\mathrm dA,\nonumber\\
+I&=\int (y-\bar y)^2\,\mathrm dA,
+\end{align}
+including two liner contributions for $A$ and $I$. Orientation-dependent paper compliance is rotated along the local tangent before period integration to obtain the diagnostic $E_{z,\mathrm{eff}}$. These quantities remain geometric or linear-elastic proxies; they are not identified with nonlinear crush strength.
+
+\section{Nonlinear finite-element compression model}
+
+\subsection{Scope and boundary protocol}
+
+The mechanical calculation represents one stress-free, pre-formed corrugated medium between rigid horizontal surfaces. The surfaces idealize rigid liners. Their local normal attachments are kinematic: the central trough follows the stationary lower surface, while the two periodic crown nodes share vertical displacement and rotation and follow the moving upper surface. Flexible liner bending, adhesive constitutive thickness, debonding, and friction are not resolved. Physical liner surfaces are placed one half-thickness outside the initial centreline extrema, at $-t/2$ and $H+t/2$, so equivalent centreline bounds are $0$ and $H$ initially. Tangential slip is free: the left crown supplies the horizontal gauge, while the horizontal period can contract through the right-crown degree of freedom. All other nodes retain unilateral vertical bounds and cannot cross either surface. Surface resultants are signed sums over constrained roots: a local normal-attachment contribution opposing the net compression is retained rather than clipped.
+
+The load parameter is engineering platen-travel strain
+$\epsilon=\delta/H=[(H+t)-H_p]/H$, where $\delta$ is upper-platen travel and $H_p$ is current physical surface separation. Thus the $t/2$ surface offsets define contact geometry without changing the prescribed travel $\delta=\epsilon H$. Every path uses
+\begin{equation}
+\epsilon\in\{0,0.05,0.10,0.15,0.20\},
+\label{eq:path}
+\end{equation}
+with continuation from the previous converged displacement. The material and section parameters are listed in Table~\ref{tab:fem_protocol}.
 
 \begin{table}[t]
 \centering\small
-\caption{Numerical reconstruction of 256 archived final-front rows.}
-\label{tab:audit}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lrr}
+\caption{Nonlinear FEM and optimization protocol.}
+\label{tab:fem_protocol}
+\begin{tabularx}{\textwidth}{lX}
 \toprule
-Quantity & Mean relative error & Maximum\\
+Quantity & Value or rule \\
 \midrule
-Inverse inertia objective & $2.67\times10^{-5}$ & $1.67\times10^{-4}$\\
-Section area & $1.36\times10^{-3}$ & $2.39\times10^{-3}$\\
-Effective $E_z$ & $2.20\times10^{-3}$ & $2.82\times10^{-2}$\\
+Longitudinal modulus $E$ & 2899 MPa \\
+Shear modulus $G$ & $E/55$ \\
+Yield stress $\sigma_y$ & 60 MPa \\
+Hardening ratio & 0.02 \\
+Out-of-plane width $b$ & 25 mm \\
+Training mesh & 16 elements per period \\
+Complete reconstruction mesh & 24 elements per period \\
+Representative check mesh & 32 elements per period \\
+Compromise refinement mesh & 40 elements per period \\
+Path & Eq.~\eqref{eq:path} \\
+Solver & L-BFGS-B; alternate SLSQP solution of the same energy and KKT check \\
+Radius threshold & 0.9 mm \\
+Neural-potential seeds & 3, 11, 29, 47, 83 \\
+Optimizer seeds & 3, 11, 29, 47, 83 \\
+Swarm size; generations & 36; 56 \\
 \bottomrule
-\end{tabular}
-}
+\end{tabularx}
 \end{table}
 
-The small area discrepancy results from resampling resolution; inverse inertia is essentially exact. This establishes which numerical model generated the archive but also demonstrates source-version drift: the final CSV is a stronger record of the run configuration than the current same-named source file.
+The fixed nominal values in Table~\ref{tab:fem_protocol} isolate geometric effects in this study; they are not calibrated to a particular commercial paper grade.
 
-\subsection{Constraint and ranking findings}
-The public evaluator calculates two local curvature radii and contains the intended condition $R_1>0.9$ and $R_2>0.9$~mm. Both conditional branches, however, return \texttt{True}. The archived campaign was therefore unconstrained. Recalculation in physical profile coordinates finds that only 70/256 archived final rows satisfy $\min(R_1,R_2)\ge0.9$~mm.
+\subsection{Corotational beam energy}
 
-The original ranking also uses strict improvement in every objective to define domination. Standard Pareto domination requires no-worse performance in every objective and strict improvement in at least one. Weakly dominated points can therefore survive the public ranking. The corrected reproduction applies standard non-domination, normalized crowding and continuous constraint violation for infeasible designs. To avoid retroactively changing published data, the corrected method is denoted MO-ETPSO-R; the original archive remains unchanged and auditable.
-
-\section{Geometry and engineering model}
-\subsection{Rational quadratic B-spline}
-Five positive spacing variables are normalized,
+Each node carries global translations and a section rotation. For element $e$ of initial length $L_e$, the corotated axial extension is $\Delta L_e$ and the end rotations relative to the current chord are $\theta_{1e}$ and $\theta_{2e}$. The constant assumed strains are
 \begin{equation}
- d_i=\frac{x_i}{\sum_{j=1}^{5}x_j},\quad i=1,\ldots,5.
+\varepsilon_{0e}=\frac{\Delta L_e}{L_e},\qquad
+\kappa_e=\frac{\theta_{2e}-\theta_{1e}}{L_e},\qquad
+\gamma_e=\frac{\theta_{1e}+\theta_{2e}}{2}.
+\label{eq:assumed_strains}
 \end{equation}
-They define ten control-point abscissae over two repeated normalized periods:
+The element deformation energy used in both elastic and smoothly yielding calculations is
+\begin{equation}
+\Pi_e=bL_e\int_{-t/2}^{t/2}
+W_f(\varepsilon_{0e}-\kappa_e z)\,\mathrm dz
++\frac{1}{2}k_sGA L_e\gamma_e^2,
+\qquad A=bt,\quad k_s=\frac{5}{6}.
+\label{eq:beam_energy}
+\end{equation}
+The thickness integral is evaluated by five-point Gauss quadrature, whereas the constant mean shear strain is integrated once. This assumed/reduced shear treatment avoids locking of a fully integrated two-node shear field. In the small-strain elastic limit it recovers the expected axial, bending, and mean-shear energies. Large rotations enter through the current chord, so the model is geometrically nonlinear \citep{Crisfield1991}. The same scalar energy in Eq.~\eqref{eq:beam_energy} is differentiated by automatic differentiation for equilibrium and post-processing; no alternative condensed stiffness expression is used. Unilateral bounds are handled directly in constrained minimization, avoiding a contact penalty. Active-set interpretation follows standard nonlinear contact mechanics \citep{Wriggers2006}.
+
+If $\varepsilon_f=\varepsilon_{0e}-\kappa_ez$ is longitudinal fibre strain and $q=E\varepsilon_f/\sigma_y$, the smooth density is
+\begin{equation}
+W_f=h_r\frac{E\varepsilon_f^2}{2}
++(1-h_r)\frac{E\varepsilon_f^2}{\sqrt{1+q^2}+1},
+\label{eq:smooth_yield}
+\end{equation}
+with hardening ratio $h_r=0.02$. The law approaches linear elasticity near zero, saturates toward the declared yield level, and retains a small tangent. It is a deformation-potential regularization, not an incremental damage or dissipation model. Consequently, terminal potential is called stored potential, not absorbed crash energy.
+
+\subsection{Reaction, work, stress, and solver acceptance}
+
+The top reaction $F$ is recovered from active unilateral constraints. Reaction-integrated external work is evaluated independently,
+\begin{equation}
+W=\int_0^{0.2H}F(\delta)\,\mathrm d\delta,
+\label{eq:external_work}
+\end{equation}
+using the five path states. Extreme-fibre stresses are recovered at both ends of every element. Search-stage stress uses a length-weighted $p$-norm with $p=8$,
+\begin{equation}
+\sigma_{8}=\left(
+\frac{\sum_eL_e\sigma_e^8}{\sum_eL_e}
+\right)^{1/8},
+\label{eq:stress_pnorm}
+\end{equation}
+where $\sigma_e$ is the maximum absolute extreme-fibre stress in element $e$. Length-weighted 99th-percentile and raw maximum stresses are retained for verification.
+
+A state satisfies the numerical equilibrium check when
+\begin{equation}
+\frac{\lVert\bm g_{\mathrm{proj}}\rVert_\infty}{\sigma_ybt}
+\leq5\times10^{-4},
+\label{eq:solver_acceptance}
+\end{equation}
+where $\bm g_{\mathrm{proj}}$ is the bound-aware projected gradient. Raw L-BFGS-B success and this check accept the primary state. If the primary flag is negative, the same bound-constrained energy is minimized by the alternate SLSQP optimization algorithm from the primary endpoint; this is an algorithmic cross-check, not an independent mechanical model. The fallback must return raw success and satisfy the same projected-KKT threshold. If neither algorithm does so, the load interval is retried with 2, 4, and then 8 subdivisions. A path is accepted only if all published load states pass one of the two algorithms. Signed surface resultants provide an independent dimensionless force-balance audit,
+\begin{equation}
+\mathcal E_R=\max_{\epsilon>0}
+\frac{|F_{\mathrm{upper}}(\epsilon)-F_{\mathrm{lower}}(\epsilon)|}
+{\sigma_ybt}.
+\label{eq:reaction_balance}
+\end{equation}
+The ledgers preserve the primary and fallback status, messages, iteration counts, projected gradients, upper and lower reactions, $\mathcal E_R$, contact positions, subdivision count, and protocol fingerprint. Exceptions, non-finite states, failed paths, radius violation, and trust-region violation receive dominated objectives plus continuous constraint violation rather than being silently discarded.
+
+\section{Dimensionless formulation}
+
+\subsection{Input and manufacturing groups}
+
+Only independent groups are used as neural inputs. Because $\sum_i d_i=1$, $d_5$ is determined by the first four spacings. With the two rational-weight parameters $x_6,x_7$, the eight-entry geometric basis is
+\begin{equation}
+\bm z_g=\left(d_1,d_2,d_3,d_4,x_6,x_7,
+\eta,\tau_H\right),
+\quad
+\eta=\frac{H}{P},\quad
+\tau_H=\frac{t}{H}.
+\label{eq:input_groups}
+\end{equation}
+The state coordinate is $\epsilon$, while $G/E$ and $\sigma_y/E$ are fixed material parameters. Curvature and pitch slenderness remain useful derived reports,
+\begin{equation}
+\tau_P=\frac{t}{P}=\eta\tau_H,\qquad
+\Pi_\kappa=\frac{t}{\Rmin},\qquad
+\mathcal C_y=\frac{t/(2\Rmin)}{\sigma_y/E}
+=\frac{E}{2\sigma_y}\Pi_\kappa.
+\label{eq:derived_groups}
+\end{equation}
+The final relation compares nominal outer-fibre forming strain with elastic yield strain. Both $\Pi_\kappa$ and $\mathcal C_y$ are deterministic functions of the eight independent descriptors and the fixed material ratio, so they are manufacturing-severity reports rather than additional neural coordinates or objectives.
+The pre-formed geometry is taken as stress free in the service-load model, so $\mathcal C_y$ is not a residual-stress prediction.
+
+\subsection{Mechanical response numbers}
+
+The terminal load and potential are normalized by yield-scale section quantities,
 \begin{align}
- X=[&0,d_1,d_1+d_2,d_1+d_2+d_3,\nonumber\\
- &d_1+\cdots+d_4,1+d_1,1+d_1+d_2,\nonumber\\
- &1+d_1+d_2+d_3,1+d_1+\cdots+d_4,2],
+C_F&=\frac{F}{\sigma_ybt},\label{eq:load_number}\\
+\PsiU&=\frac{U}{\sigma_ybtL_s},\label{eq:potential_number}\\
+\PsiW&=\frac{W}{\sigma_ybtL_s}.\label{eq:work_number}
 \end{align}
-with ordinates $Y=[0,0,1,1,0,0,1,1,0,0]$. The two rational factors are
-\begin{equation}
- r_k=0.0103\exp(9.17x_{5+k})+0.1,\quad k=1,2,
-\end{equation}
-and weights are $[1,r_1,r_1,r_2,r_2,r_1,r_1,r_2,r_2,1]$. A clamped uniform degree-two knot vector completes the NURBS definition. One period is extracted and independently scaled to target pitch and amplitude.
+Stress utilization, localization, and last-interval tangent are
+\begin{align}
+\Om&=\frac{\sigma_8}{\sigma_y},
+&\Omega_{99}&=\frac{\sigma_{99,L}}{\sigma_y},
+&\Ommax&=\frac{\sigma_{\max}}{\sigma_y},\label{eq:stress_numbers}\\
+\mathcal L_\sigma&=\frac{\sigma_{99,L}bt}{F},
+&\Theta&=\frac{H}{Ebt}\frac{\Delta F}{\Delta\delta}.
+\label{eq:localization_tangent}
+\end{align}
+The tangent is a scalar path indicator over the 15--20\% interval; it is not a complete stability eigenvalue.
 
-For degree $p$, the non-rational B-spline basis follows the Cox--de Boor recursion
+Three dimensionless selectors are introduced for ranking an already computed front,
+\begin{equation}
+\mathcal I_{WM}=\frac{\PsiW}{\phib},\qquad
+\mathcal I_{WS}=\frac{\PsiW}{\Om},\qquad
+\Iws=\frac{\PsiW}{\phib\Om}.
+\label{eq:selectors}
+\end{equation}
+They are not additional optimization objectives because they are algebraically correlated with existing quantities. They provide a compact way to compare work per material, work per stress utilization, and their combined balance.
+
+\begin{table}[t]
+\centering\small
+\caption{Dimensionless response dictionary and use in the study.}
+\label{tab:dimensionless_dictionary}
+\begin{tabularx}{\textwidth}{lXll}
+\toprule
+Quantity & Interpretation & Search use & Direction \\
+\midrule
+$\phic$ & medium material fraction & report & minimize \\
+$\phib$ & medium plus two-liner material proxy & objective/constraint & minimize \\
+$\mathcal C_y$ & forming strain relative to yield strain & report & lower \\
+$C_F$ & crush reaction relative to yield load & report & higher \\
+$\PsiU$ & terminal stored potential & neural screen/FEM objective & higher \\
+$\PsiW$ & reaction-integrated external work & FEM report & higher \\
+$\Om$ & smooth length-weighted stress utilization & objective & minimize \\
+$\Omega_{99}$ & robust local stress indicator & verify & lower \\
+$\Ommax$ & raw peak stress & mesh study & lower \\
+$\mathcal L_\sigma$ & local-to-nominal stress concentration & report & lower \\
+$\Theta$ & last-interval dimensionless tangent & verify & positive \\
+$\mathcal E_R$ & signed surface-force imbalance/yield load & solver audit & lower \\
+$\Iws$ & work/material/stress selector & shortlist & higher \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Energy-consistent neural potential and stress screen}
+
+\subsection{FEM design set}
+
+The coupled geometric populations define feasible starting neighborhoods. Local multiplicative perturbations of $x_{1:5}$ and additive perturbations of weights and size variables create a cloud of 1200 profiles. Each is re-evaluated at 800 curve samples and retained only if $\Rmin\ge0.905$~mm. Descriptors are standardized, and farthest-point sampling selects 80 designs that span the cloud. Every fourth selected design is held out, producing 60 training and 20 test geometries. Because all five load states from one geometry remain in the same split, the test does not leak adjacent states from a training geometry.
+
+The neural descriptor is exactly Eq.~\eqref{eq:input_groups}: four independent normalized spacings, two rational-weight variables, $H/P$, and $t/H$. The last network input is normalized strain $\bar\epsilon=\epsilon/0.25$. The derived curvature ratio is deliberately omitted so it cannot redundantly reweight the standardized trust distance. Fixed material ratios $G/E$ and $\sigma_y/E$ are omitted because they do not vary in this study.
+
+\subsection{Energy-consistent architecture}
+
+The neural potential uses two tanh hidden layers of 14 units. Let $s_\Psi$ be the 95th percentile of training-set $\Psi_U$. Its dimensionless output is parameterized as
+\begin{equation}
+\frac{\widehat\Psi_U(\bm z,\bar\epsilon)}{s_\Psi}
+=\bar\epsilon^2\operatorname{softplus}[g_{\bm\theta}(\bm z,\bar\epsilon)],
+\label{eq:energy_architecture}
+\end{equation}
+which imposes zero potential and zero force at zero compression and prevents negative potential. The conjugate dimensionless force is obtained by differentiation,
+\begin{equation}
+\widehat q_F=\frac{\partial\widehat\Psi_U}{\partial\epsilon}
+=\frac{FH}{\sigma_ybtL_s}.
+\label{eq:force_conjugacy}
+\end{equation}
+For adjacent path states, define the predicted secant conjugate force $\widehat{\bar q}_{F,k}=(\widehat\Psi_{U,k}-\widehat\Psi_{U,k-1})/(\epsilon_k-\epsilon_{k-1})$ and let $\bar q_{F,k}$ be the corresponding average of the two FEM reactions after the scaling in Eq.~\eqref{eq:force_conjugacy}. With $s_q$ equal to the 95th percentile of the training conjugate forces, the loss combines scaled potential error, average-reaction error, a non-negative-reaction penalty, and mean parameter regularization,
+\begin{align}
+\mathcal J(\bm\theta)=&\frac{1}{N}\sum_i
+\left(\frac{\widehat\Psi_{U,i}-\Psi_{U,i}}{s_\Psi}\right)^2
++\frac{1}{N_p}\sum_k
+\left(\frac{\widehat{\bar q}_{F,k}-\bar q_{F,k}}{s_q}\right)^2\nonumber\\
+&+\frac{2}{N_p}\sum_k
+\left[\frac{\max(-\widehat{\bar q}_{F,k},0)}{s_q}\right]^2
++\frac{10^{-3}}{N_\theta}\|\bm\theta\|_2^2.
+\label{eq:energy_loss}
+\end{align}
+Five networks with seeds 3, 11, 29, 47, and 83 form an ensemble. All reach the predeclared 900-iteration L-BFGS-B cap; held-out error, not optimizer termination text, determines model acceptance. The five parameter sets are serialized separately so predictions can be reproduced without retraining.
+
+\subsection{Stress emulator and trust distance}
+
+Local stress is not derived from the global neural potential. A separate 160-tree extra-trees ensemble maps the same eight geometry descriptors to terminal $\Om$. Let $\overline\Omega_{\mathrm{tree}}$ denote its tree-average prediction. For descriptive error calibration only, define
+\begin{equation}
+\widehat\Om_{c}=\overline\Omega_{\mathrm{tree}}+\Delta\Omega,
+\qquad \Delta\Omega=0.01706,
+\label{eq:conservative_stress}
+\end{equation}
+where $\Delta\Omega$ is the higher-method 90th percentile of held-out residuals $\Omega_8-\overline\Omega_{\mathrm{tree}}$. It covers 19 of 20 held-out targets (95\% empirical coverage). Because an additive constant changes neither within-case ranks nor nondominated membership, the optimization uses the unshifted mean $\overline\Omega_{\mathrm{tree}}$; $\Delta\Omega$ is not presented as an optimization safeguard. The same 20 designs supply the reported test metrics, so coverage is descriptive rather than an independent generalization estimate. The ensemble, feature scaler, and nearest-neighbor model are serialized. This stress model is explicitly statistical rather than mechanically constrained.
+
+For each candidate, standardized nearest-neighbor distance $D$ to the 60 training designs is computed. The trust limit is
+\begin{equation}
+D_{\max}=1.5Q_{0.95}(D_{\mathrm{LOO}})=2.918,
+\label{eq:trust}
+\end{equation}
+where $D_{\mathrm{LOO}}$ is the training leave-one-out nearest-neighbor distance. A candidate outside this region is infeasible even if its predicted objectives appear attractive.
+
+\section{Multi-objective optimization and FEM reconstruction}
+
+\subsection{Three physics cases}
+
+The new problems use minimization coordinates:
+\begin{align}
+\mathrm{C037}:&\quad \min(\phib,1/\widehat\Psi_U),\label{eq:c037}\\
+\mathrm{C038}:&\quad \min(\phib,\overline\Omega_{\mathrm{tree}}),
+\quad \widehat\Psi_U\ge4.555\times10^{-4},\label{eq:c038}\\
+\mathrm{C039}:&\quad \min(1/\widehat\Psi_U,\overline\Omega_{\mathrm{tree}}),
+\quad \phib\le0.217537.
+\label{eq:c039}
+\end{align}
+All cases also enforce Eqs.~\eqref{eq:radius_constraint} and \eqref{eq:trust}. The C038 potential floor is the 40th percentile and the C039 material cap is the 65th percentile of the 60 training designs; held-out designs and optimizer outputs do not set either threshold. C037 exposes the broad material--mechanical envelope. C038 asks how stress can be reduced while retaining a lower-quantile potential. C039 isolates the potential--stress exchange under a material cap. Alternative training quantiles are evaluated after optimization to expose threshold dependence.
+
+\subsection{Seeded MO-ETPSO}
+
+Random sampling in the complete ten-dimensional box yields very few radius-feasible shapes. Each run is therefore initialized from 36 feasible maximin or coupled designs. A small initial velocity, 2.5\% of each variable range, avoids immediately leaving the feasible manifold. The swarm uses inertia $0.7$, $c_1=c_2=2.05$, a constriction factor, standard Pareto domination, normalized crowding, and continuous constraint violation. Five seeds and 56 generations give $36\times56=2016$ surrogate calls per run and 15 runs in total. A fixed hypervolume reference is used within each case. Complete terminal populations are pooled by case, duplicates are removed, and surrogate nondomination is recalculated across seeds; terminal populations themselves are retained for direct verification.
+
+\subsection{Direct mechanical reconstruction}
+
+All 540 terminal particles are considered, not only the surrogate-nondominated subset. The 80 FEM designs are also classified under every case and merged with the terminal populations. Exact case--vector deduplication leaves 732 classifications representing 572 unique geometries. Each unique geometry is solved once along the complete path at 24 elements per wavelength, after which its raw mechanical record is reclassified under every applicable case. This larger universe prevents the optimizer trajectory alone from defining direct nondomination; in particular, a training design can displace a terminal point.
+
+Direct objectives replace $\widehat\Psi_U$ and $\overline\Omega_{\mathrm{tree}}$ with $\PsiU$ and $\Om$; solver and case constraints are recomputed from raw mechanics. Pareto membership is then reconstructed separately for C037, C038, and C039 by exact pairwise minimization over successful, case-feasible mesh-24 classifications. The CSV round trip is joined with a ten-coordinate geometry key rounded to ten decimals rather than raw binary floating-point equality. The code asserts one mechanics record for every classification and rejects any missing match before dominance is evaluated. This safeguard is consequential: a missing Boolean cannot be interpreted as a successful path.
+
+Within each pooled-candidate nondominated set, the two objective extremes and the point nearest the normalized utopia point are selected. All nine unique representatives are re-solved at 32 elements per wavelength. The three case compromises are also solved at 40 elements and supply the refined stress-field figures. For any response $q$, the reported paired mesh change from level $a$ to finer level $b$ is
+\begin{equation}
+\delta_{a\rightarrow b}(q)=
+\frac{|q_b-q_a|}{\max(|q_b|,10^{-12})},
+\label{eq:mesh_change}
+\end{equation}
+so the finer-mesh value is the denominator. The 24--32 changes measure the complete representative set; the 32--40 changes provide a finer check on one central trade-off per case. Three exploratory 48-element paths reached optimizer iteration limits at one or more substeps and failed the predeclared strict path criterion; their values are excluded from every table, figure, nondominated set, and conclusion. Mechanics caches are keyed by rounded geometry coordinates and full protocol fingerprints. The execution manifest binds the fixed 9+3 verification budget, all effective source and trained-model files, numerical inputs and outputs, and every table and figure included in the manuscript using SHA-256 hashes. A separate two-state mesh-8 path is used only for the formulation check in Table~\ref{tab:formulation_verification}; it is not a design candidate.
+
+\input{generated_tables/verification_pool_fast.tex}
+
+\section{Geometric benchmark results}
+
+Before introducing nonlinear objectives, the geometric evaluator and optimizer are assessed on the fixed seven-variable shape problem. Material area per wavelength is minimized against reciprocal inertia under the 0.9~mm radius constraint. MO-ETPSO and NSGA-II use equal populations, 4000 evaluator calls, and ten paired seeds. Using the fixed reference $(1,15)$ in the scaled optimization coordinates, mean final hypervolume is 4.0206 for MO-ETPSO and 4.0136 for NSGA-II; the paired Wilcoxon result is $p=0.105$. Thus the fixed terminal experiment does not support a statistically resolved difference, although the swarm exhibits lower run-to-run variation and earlier median envelope discovery.
+
+Both pooled algorithms occupy the narrow band
+\begin{equation}
+A/P=1.723\text{--}1.794~\mathrm{mm},\qquad
+I/P=3.936\text{--}4.094~\mathrm{mm^3}.
+\end{equation}
+Figure~\ref{fig:geometric_front} reports fronts and convergence. Figure~\ref{fig:geometric_selected} shows that visible shape changes remain possible within a narrow pair of global geometric objectives, motivating the nonlinear extension.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{pareto_and_convergence.pdf}
+\caption{Equal-budget geometric benchmark. Pareto coordinates are evaluated in physical units after optimization; convergence is reported over paired seeds.}
+\label{fig:geometric_front}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{constrained_selected_designs.pdf}
+\caption{Representative radius-feasible geometric designs. Similar area--inertia performance does not imply the same local curvature or nonlinear compression response.}
+\label{fig:geometric_selected}
+\end{figure}
+
+The broader parameterization study is summarized in Fig.~\ref{fig:atlas}. Size-only, shape-only, and coupled cases create different objective envelopes. These results remain geometric baselines, while C037--C039 replace dimensional scalings with Eqs.~\eqref{eq:c037}--\eqref{eq:c039}.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.98\textwidth]{pareto_atlas_5x3.pdf}
+\caption{Geometric case atlas across size and shape parameterizations. The atlas establishes the diversity available before nonlinear mechanical screening.}
+\label{fig:atlas}
+\end{figure}
+
+\FloatBarrier
+\section{FEM and surrogate validation results}
+
+All 80 selected geometries complete their five-state 16-element paths, giving 400 accepted states. Figure~\ref{fig:validation} compares held-out predictions with FEM. Across the complete path, the five-network ensemble attains $R^2=0.984$ for dimensional potential, $0.982$ for potential number, and $0.982$ for reaction. The terminal stress model attains $R^2=0.885$. Table~\ref{tab:physics_validation} reports both path-level and 20\% target-state validation without mixing geometries across the split.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.97\textwidth]{fem_energy_surrogate_validation.pdf}
+\caption{Held-out design-level validation for potential, reaction, and smooth stress utilization. The diagonal is equality. The stress panel is an auxiliary tree ensemble; the first two panels come from the differentiated neural potential.}
+\label{fig:validation}
+\end{figure}
+
+\input{generated_tables/physics_validation.tex}
+
+\input{generated_tables/energy_training_diagnostics.tex}
+
+Path-level mean relative errors are 7.0\% for potential and 7.1\% for reaction after excluding near-zero states; terminal stress mean relative error is 6.3\%. These errors support in-domain screening but not final ranking near a Pareto front. Table~\ref{tab:stress_calibration} reports the additive residual diagnostic and explains why it does not alter the optimizer.
+
+\input{generated_tables/stress_calibration.tex}
+
+The custom element implementation is checked independently of the design campaign in Table~\ref{tab:formulation_verification}. Constant-shear and pure-bending states are compared with their closed-form Timoshenko energies, and the automatic energy gradient is compared with a centred finite difference. A small two-state, eight-element corrugated contact path then checks zero initial platen gap, reaction balance, and the same projected-gradient acceptance rule used in the main ledgers. These are implementation checks rather than experimental validation of the board model.
+
+\input{generated_tables/formulation_verification.tex}
+
+Solver acceptance is audited separately from surrogate accuracy. Table~\ref{tab:solver_audit_fast} separates unique mechanical geometries from repeated case classifications and reports accepted complete paths, alternate-algorithm fallback states, and measured runtime. Every accepted initial state has zero upper and lower contact gap, confirming that refinement changes resolution rather than free platen travel.
+
+\input{generated_tables/solver_audit_fast.tex}
+
+\subsection{Optimizer convergence}
+
+The five-seed convergence histories use a fixed reference within each case. Figure~\ref{fig:physics_optimizer_convergence} and Table~\ref{tab:optimizer_convergence} compare the 42-generation checkpoint with the final 56-generation budget. The largest remaining normalized-hypervolume gain is 1.284\% (C039); median gains are at most 0.541\%. This is evidence of budget stabilization within each seeded campaign, not proof of a global front.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{physics_optimizer_convergence.pdf}
+\caption{Median normalized hypervolume over five seeds; shading spans the interquartile range. The dashed line marks generation 42 and all campaigns continue to generation 56. References are fixed within cases.}
+\label{fig:physics_optimizer_convergence}
+\end{figure}
+
+\input{generated_tables/optimizer_convergence_summary.tex}
+
+\FloatBarrier
+\section{Dimensionless Pareto results}
+
+\subsection{FEM-rebuilt fronts}
+
+The 15 searches produce 540 terminal particles. Merging them with the 80 FEM geometries gives 732 unique case--vector classifications and 572 unique mechanical geometries. All 572 complete their mesh-24 paths. Table~\ref{tab:physics_front_summary_fast} gives the direct objective ranges and member counts after float-safe mechanical reconstruction. These are nondominated sets over this pooled 572-geometry universe, not globally complete fronts over the continuous design domain. Figure~\ref{fig:physics_fronts} overlays every successful, case-feasible direct classification, the resulting sets, and the nine selected representatives.
+
+\input{generated_tables/physics_front_summary_fast.tex}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{physics_pareto_fronts.pdf}
+\caption{Dimensionless direct-FEM results at 24 elements per period over the pooled candidate universe. Open grey circles are successful case-feasible classifications, red curves are reconstructed nondominated sets, and gold markers are the two extremes and normalized compromise selected in each case.}
+\label{fig:physics_fronts}
+\end{figure}
+
+C037 spans the broad material--potential exchange: increasing board material fraction can raise stored potential strongly, but the gain is neither proportional nor determined by thickness alone. Crown width, transition curvature, and contact path distinguish designs with similar $\phib$.
+
+C038 intersects the potential floor in a narrow material--stress band. Its 31 direct members span $\phib=0.1308$--$0.1802$ and $\Om=0.4272$--$0.4721$. Because this range is narrow, the C038 extremes and compromise are all included in the nine mesh-32 checks rather than inferring numerical stability from surrogate rank.
+
+C039 is especially informative because its material cap admits profiles with comparable material accounting but very different potential and stress responses. Global material fraction therefore cannot identify the preferred local compression mechanism.
+
+The constraint thresholds are training-defined modelling choices rather than universal material constants. Table~\ref{tab:threshold_sensitivity_fast} rebuilds the strict mesh-24 nondominated sets at nearby quantiles without rerunning mechanics. C038 changes from 49 to 7 members as the stored-potential floor moves from the 30th to the 50th training percentile; C039 changes from 81 to 122 members as the material cap moves from the 55th to the 75th percentile. The nominal 40th and 65th percentiles remain the predeclared cases used elsewhere.
+
+\input{generated_tables/threshold_sensitivity_fast.tex}
+
+\subsection{Surrogate decision fidelity}
+
+Table~\ref{tab:decision_fidelity_fast} compares screening objectives with direct FEM over every successful, case-feasible mesh-24 classification. In C037 and C038 the first objective is exact geometry, hence its correlation is one and its error is zero. Mechanical rank fidelity is the relevant quantity for optimization, and the C039 stress objective has a 9.56\% median relative error despite a Spearman correlation of 0.953. These results show why the red fronts in Fig.~\ref{fig:physics_fronts} cannot be replaced by the surrogate screen.
+
+\input{generated_tables/decision_fidelity_fast.tex}
+
+\subsection{Representative mesh sensitivity}
+
+Figure~\ref{fig:representative_mesh_verification} and Table~\ref{tab:representative_mesh_convergence} report targeted refinement rather than an all-candidate fine sweep. All nine nondominated-set representatives are paired at 24 and 32 elements; the three case compromises are paired at 32 and 40. Relative change uses the finer-mesh denominator in Eq.~\eqref{eq:mesh_change}. The largest 24--32 relative changes are 0.59\% for $\PsiU$, 0.21\% for $\Om$, and 2.25\% for the raw maximum-stress utilization. Over the accepted 32--40 compromise checks, the corresponding maxima are 0.22\%, 0.088\%, and 1.20\%. The optimized smooth stress number is therefore materially less sensitive than the single-element maximum over this declared sample.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.96\textwidth]{representative_mesh_convergence.pdf}
+\caption{Targeted mesh checks for the nine pooled-candidate nondominated representatives. Circles show 24--32 relative changes; squares show 32--40 changes for the three normalized compromises.}
+\label{fig:representative_mesh_verification}
+\end{figure}
+
+\input{generated_tables/representative_mesh_convergence.tex}
+
+\subsection{Dimensionless response map}
+
+Figure~\ref{fig:dimensionless_map} maps the FEM dataset and final designs. Aspect ratio and thickness ratio separate families that overlap in material fraction. The map also illustrates why training points were built on feasible local perturbations instead of uniform random samples: manufacturable designs occupy a thin subset of the ten-dimensional box.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.86\textwidth]{dimensionless_performance_map.pdf}
+\caption{Dimensionless response and design-space maps. The FEM designs establish the response cloud; crosses mark direct-FEM Pareto designs in geometric-ratio coordinates.}
+\label{fig:dimensionless_map}
+\end{figure}
+
+\FloatBarrier
+\section{Optimized geometries and refined simulations}
+
+\subsection{Refined numerical values}
+
+Tables~\ref{tab:selected_physics_designs_fast} and \ref{tab:selected_response_diagnostics_fast} report the two extremes and normalized utopia-nearest compromise from each pooled-candidate nondominated set after the common 32-element check. The three compromises additionally satisfy the strict 40-element path audit. The derived forming-yield index is interpreted separately from service compression: a value above unity means that nominal forming curvature from a flat elastic sheet exceeds the elastic strain scale and therefore requires a forming process or an explicit residual-stress model.
+
+\input{generated_tables/selected_physics_designs_fast.tex}
+
+\input{generated_tables/selected_response_diagnostics_fast.tex}
+
+The study-defined combined selector $\Iws$ favors external work relative to both material fraction and smooth stress utilization. It is useful for shortlisting among already nondominated designs but is not a universal utility function and is not used to reconstruct a front.
+
+\subsection{Deformed fields and load paths}
+
+Figure~\ref{fig:stress_gallery} shows the three normalized compromises at the accepted 40-element refinement. Stress is distributed over the deformed centreline rather than inferred from undeformed curvature. Profiles with similar global material fractions can have different local distributions, demonstrating the value of retaining the complete decision vector and the simulated field.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.98\textwidth]{optimized_fem_stress_gallery.pdf}
+\caption{Deformed extreme-fibre stress fields and reaction paths at the 40-element mesh for the C037, C038, and C039 normalized compromises. Line color is the element maximum absolute stress; horizontal grey lines are rigid surfaces at 20\% compression.}
+\label{fig:stress_gallery}
+\end{figure}
+
+Reaction curves are evaluated over the complete declared path and can exhibit different tangent evolution. A positive refined last-interval tangent $\Theta$ supports local monotonic response along the sampled compression coordinate, but it is not a two-coordinate Hessian test and does not exclude unsampled bifurcations.
+
+The smooth $p$-norm is retained as the optimized stress variable because it is less mesh-sensitive than a single extreme. The length-weighted $\Omega_{99}$ and raw $\Ommax$ values are still reported so averaging cannot hide local stress. The targeted changes in Fig.~\ref{fig:representative_mesh_verification} establish numerical resolution for the selected designs rather than experimental stress accuracy or asymptotic convergence of every front member.
+
+\subsection{Computational cost}
+
+Table~\ref{tab:runtime_summary_fast} reports measured complete-path runtimes for the 80 training geometries, the already completed 572-geometry coarse reconstruction, the nine mesh-32 representatives, and the three mesh-40 compromises. Counts refer to unique mechanics solves rather than repeated case classifications. The targeted refinement adds 12 accepted paths instead of the 1072 extra paths required by the discarded all-candidate 32/40/48 plan. The table also discloses the three rejected exploratory mesh-48 paths: they consumed 316.0 CPU-process seconds and are excluded from the evidence.
+
+\input{generated_tables/runtime_summary_fast.tex}
+
+The runtime distribution is geometry dependent because contact activation, bounds, and nonlinear iterations vary by shape. Evaluation count remains the appropriate optimizer budget, while elapsed time remains useful for planning mechanical verification. Neural query time is not compared with FEM path time here because the scientific decision includes geometric screening, uncertainty evaluation, and subsequent direct solution rather than a single isolated forward call.
+
+\FloatBarrier
+\section{Discussion}
+
+\subsection{What changes when nonlinear mechanics is optimized}
+
+The geometric benchmark finds a narrow area--inertia band, but the mechanical fronts cover broad potential and stress ranges. Global inertia cannot uniquely encode platen contact sequence, axial/bending partition, local yielding regularization, or shape-dependent lateral contraction. Nonlinear results do not invalidate geometric screening; they show where it ceases to be sufficient.
+
+Pitch and height often move to bounds, but not in one universal direction. Low-material members favor large $P$, large $H$, and minimum $t$ because bounding rectangle and liner proxy dominate $\phib$. High-potential members shorten pitch or increase thickness, raising reaction and stored potential. Stress-limited members can instead alter rational crown shape and transition length while keeping thickness near its lower bound. This distinction is visible across the selected representatives and would be obscured by optimization over $t$ alone.
+
+The radius threshold is active or nearly active for several extremes, as quantified for every representative in Table~\ref{tab:selected_physics_designs_fast}. These designs satisfy the deterministic model but leave little manufacturing margin. A production study should replace the nominal threshold with a robust condition, for example $\Pr(\Rmin<0.9)\le\alpha$, using tool, thickness, moisture, and spring-back distributions. The present pooled-candidate nondominated set is a nominal mechanical envelope.
+
+\subsection{Role of the neural model}
+
+The dimensionless formulation supports neural generalization because potential is learned after division by $\sigma_ybtL_s$, and conjugate force is scaled consistently. The held-out errors are adequate for in-domain search guidance, but the narrow C038 stress band remains a demanding rank problem. High $R^2$ and low mean error therefore do not justify reporting neural optima as mechanical optima.
+
+Complete mesh-24 re-simulation of the terminal population addresses within-population selection bias, while adding all training geometries prevents the optimizer endpoints from defining the entire direct comparison set. The neural layer saves search cost by focusing on promising, in-domain regions; FEM supplies the numbers and classifications used in claims. The decision-fidelity table is as important as the prediction plot because optimization uses order and feasibility, not only mean squared error. Targeted 32/40 refinement supports the reported representatives but does not certify the discretization error or membership of every one of the 210 coarse nondominated members. This verification also cannot exclude an undiscovered design outside the combined sampled regions.
+
+Stress deserves a separate warning. The energy surrogate does not predict local stress, and the auxiliary ensemble does not inherit energy conjugacy. Its purpose is to prioritize regions. Direct FEM $\Om$, $\Omega_{99}$, and $\Ommax$ replace it after screening. A future stress-aware neural operator would require local-field supervision, mesh-independent coordinates, and validation spanning topology and contact states.
+
+\subsection{Interpretation of the dimensionless numbers}
+
+The eight-entry independent basis in Eq.~\eqref{eq:input_groups} and the responses in Eqs.~\eqref{eq:load_number}--\eqref{eq:localization_tangent} separate scale and mechanism more cleanly than arbitrary multipliers on area, stiffness, or energy. The identities $\tau_P=\eta\tau_H$ and $\mathcal C_y=(E/2\sigma_y)\Pi_\kappa$ prevent derived quantities from being counted as additional inputs. $\phib$ expresses board material accounting, whereas $\phic$ isolates the mechanically simulated medium. $\PsiU$ and $\PsiW$ remain distinct: they are close under the present conservative regularization, but the distinction becomes essential with friction, damage, or irreversible plasticity.
+
+$\mathcal C_y$ connects manufacturability and material scale. Values above one indicate that forming cannot be interpreted as purely elastic bending. $\mathcal L_\sigma$ distinguishes local stress concentration from nominal crush load. Finally, $\mathcal I_{WM}$, $\mathcal I_{WS}$, and $\Iws$ provide compact selectors without expanding Pareto dimension. Their value is comparative within the declared protocol, not universal across materials, strains, or boundaries.
+
+\subsection{Physical scope and limitations}
+
+The following boundaries apply:
+\begin{enumerate}[leftmargin=*,itemsep=3pt]
+\item FEM represents a single pre-formed medium between rigid surfaces with a $t/2$ centreline-to-surface offset, prescribed normal motion at the trough and periodic crowns, and free tangential slip. Flexible liners, adhesive constitutive response, friction, and debonding are omitted.
+\item The smooth yielding law is a deformation potential. It does not model path-dependent damage, hysteresis, crushing dissipation, moisture effects, or irreversible fibre-network evolution.
+\item Material constants are fixed. The study establishes relative performance within that model and does not claim experimental strength for new geometries.
+\item The path is monotonic compression to 20\%. Unloading, repeated loading, deeper self-contact, and package-scale boundary effects are outside scope.
+\item Scalar tangent $\Theta$ is not a complete stability analysis. Imperfection-sensitive bifurcation and coupled pitch--compression tangent require extra coordinates and branch tracking.
+\item The 0.9~mm radius condition is deterministic. No tooling tolerance or process-capability distribution is included.
+\item Direct FEM reconstruction validates surrogate decision fidelity against the same model that generated training data. The complete front uses mesh 24; the 32/40 checks apply only to the declared representatives and are not a claim of asymptotic convergence or universal membership stability.
+\end{enumerate}
+
+These limits define the level of the result. The reported sets are numerically verified trade-offs over the declared pooled candidates for one explicit periodic model, suitable for choosing a compact set of specimens for forming and experimental flat-crush evaluation.
+
+\section{Conclusions}
+
+A geometric corrugated-board optimization has been extended to nonlinear, stress-aware, dimensionless multi-objective design. The main conclusions are:
+\begin{enumerate}[leftmargin=*,itemsep=3pt]
+\item A ten-variable rational NURBS model supports coupled pitch, height, thickness, and shape search while enforcing a physical 0.9~mm radius threshold.
+\item A minimal independent dimensionless basis separates geometry from scale; derived identities are reported explicitly. Response numbers separate board material proxy, core fraction, crush load, stored potential, external work, smooth/local stress, localization, and tangent response. Combined selector $\Iws$ shortlists an existing front without becoming an independent objective.
+\item Eighty geometries and 400 accepted FEM states provide an in-domain screen. Held-out full-path tests quantify energy, reaction, and stress error without mixing load states from the same geometry across the split.
+\item Neural prediction quality is not treated as proof of optimality. Terminal populations are merged with all FEM designs; all 732 case classifications representing 572 unique geometries receive matched, finite direct mechanics at mesh 24.
+\item The reconstructed nondominated sets over the pooled 572-geometry universe contain 58 C037, 31 C038, and 121 C039 members. Nine extremes/compromises pass mesh 32, and the three case compromises pass mesh 40; the maximum representative changes in $\PsiU$ and $\Om$ remain below 0.6\% and 0.22\%, respectively, on the declared intervals.
+\item Similar material fractions can support sharply different mechanics because profile shape changes the contact sequence, axial--bending partition, and stress localization.
+\item Representative optimized geometries are reported with complete ten-variable vectors, direct response diagnostics, targeted mesh changes, and accepted 40-element deformed stress fields for the three case compromises.
+\end{enumerate}
+
+The immediate next physical step is to manufacture a set spanning material, potential, stress, and combined-selector extremes, then calibrate flexible-liner/contact and imperfection parameters against full load paths rather than isolated terminal values.
+
+\section*{Code and data availability}
+
+The complete manuscript source, optimization code, FEM implementation, trained-model parameters, numerical ledgers, figures, generated tables, tests, and execution manifests are maintained at \url{https://github.com/rfitas-lab/corrugated-board-size-shape-optimization}. The immutable source-and-data commit associated with the final article is linked from the compiled manuscript. Every numerical claim is generated from files included in that reproducibility package. Superseded exhaustive-protocol outputs are quarantined under \path{project/legacy_exhaustive_protocol} and are excluded from the fast manifest. The three rejected mesh-48 attempts are retained as a solver audit but are not inputs to any reported nondominated set, table, figure, or conclusion.
+
+\appendix
+
+\section{Experiment family taxonomy}
+
+The case identifiers distinguish parameterizations and objective families; they are not a chronological claim. Table~\ref{tab:case_taxonomy} gives the interpretation used in this paper. C001--C033 explore size-only or shape-only dimensionality, C034--C036 couple size and shape with geometric/linear quantities, and C037--C039 are the nonlinear dimensionless cases introduced here.
+
+\begin{table}[H]
+\centering\small
+\caption{Optimization experiment families.}
+\label{tab:case_taxonomy}
+\begin{tabularx}{\textwidth}{lllX}
+\toprule
+Cases & Variables & Count & Primary role \\
+\midrule
+C001--C004 & layer thicknesses, pitch, height & 5 & size-only board studies \\
+C005--C008 & pitch and height & 2 & reduced size trade-offs \\
+C009--C011 & four shape control points & 13 & low-order free-form shapes \\
+C012--C014 & eight shape control points & 25 & intermediate free-form shapes \\
+C015--C017 & fifteen shape control points & 46 & high-dimensional shape study \\
+C018 & compact rational profile & 7 & reduced NURBS representation \\
+C019--C027 & 4/8/15-point production families & 13/25/46 & parameterization comparison \\
+C028--C030 & compact rational profile & 7 & objective-pair comparison \\
+C031--C033 & compact rational profile & 7 & radius-constrained benchmark \\
+C034--C036 & compact shape plus $P,H,t$ & 10 & geometric coupled size--shape study \\
+C037--C039 & compact shape plus $P,H,t$ & 10 & dimensionless FEM/neural-screen optimization \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The progression in variable count clarifies a recurring design trade-off. A high-dimensional control-point representation can express more local features but produces more degeneracy and a thinner feasible region. The compact rational representation encodes periodic topology and uses weights to control transition sharpness. Coupling it to $P$, $H$, and $t$ then changes both geometric scale and mechanical slenderness without introducing dozens of independent coordinates.
+
+\section{Complete rational B-spline definition}
+
+For degree $p$, the Cox--de Boor basis is
 \begin{align}
 N_{i,0}(u)&=\begin{cases}
 1,&u\in[\xi_i,\xi_{i+1}),\\
 0,&\text{otherwise},
-\end{cases}\label{eq:cox0}\\
-N_{i,p}(u)&=\frac{u-\xi_i}{\xi_{i+p}-\xi_i}N_{i,p-1}(u)\nonumber\\
-&\quad+\frac{\xi_{i+p+1}-u}{\xi_{i+p+1}-\xi_{i+1}}
-N_{i+1,p-1}(u),\label{eq:coxrec}
+\end{cases}\\
+N_{i,p}(u)&=\frac{u-\xi_i}{\xi_{i+p}-\xi_i}N_{i,p-1}(u)
++\frac{\xi_{i+p+1}-u}{\xi_{i+p+1}-\xi_{i+1}}N_{i+1,p-1}(u),
 \end{align}
-where a zero denominator contributes zero. With control points $\mathbf P_i=(X_i,Y_i)^\mathsf T$ and positive weights $w_i$, the rational basis and centreline are
+where a zero denominator contributes zero. With ten control points and $p=2$, the clamped knot vector has three repeated end knots and uniformly spaced internal knots. The repeated control construction places exact crowns at $u=1/4$ and $3/4$ and a trough at $u=1/2$; the mechanical period is always the inclusive crown-to-crown interval. Physical $x$ and $y$ are scaled independently to $P$ and $H$ after extraction.
+
+The manufacturing evaluator uses a dense parameter grid because second numerical gradients are sensitive to sampling. The FEM grid interpolates physical $(x,y)$ in cumulative arc length within segments divided by exact trough and crown nodes. Thus radius is not inferred from the coarse beam mesh, near-vertical segments are not erased by $x$-sorting, and contact extrema are present at every resolution.
+
+\section{Geometric benchmark objective conventions}
+
+The geometric benchmark uses physical reports
 \begin{align}
- W(u)&=\sum_jw_jN_{j,p}(u),\qquad
- R_{i,p}(u)=\frac{w_iN_{i,p}(u)}{W(u)},\nonumber\\
- \mathbf c(u)&=\sum_iR_{i,p}(u)\mathbf P_i. \label{eq:nurbs}
+A_P&=A/P\quad[\mathrm{mm}],\\
+I_P&=I/P\quad[\mathrm{mm^3}],\\
+E_{z,\mathrm{eff}}&\quad[\mathrm{MPa}],\\
+R_1,R_2&\quad[\mathrm{mm}].
 \end{align}
-For $n+1=10$ control points and $p=2$, the open uniform knot vector contains $p+1$ repeated end knots and $n-p$ equally spaced internal knots,
+Optimization coordinates are declared as minimization. Minimizing $1/I_P$ is equivalent to maximizing $I_P$, but plotted axes retain physical increasing direction. Hypervolume depends on scaling and reference point; physical front coordinates are the reusable engineering result.
+
+Corrected dominance is
 \begin{equation}
- \boldsymbol\Xi=(\underbrace{0,0,0}_{p+1},\xi_3,\ldots,\xi_n,
- \underbrace{1,1,1}_{p+1}).
+\bm f_i\preceq\bm f_j
+\quad\text{and}\quad
+\exists k:f_{ik}<f_{jk},
 \end{equation}
-The rational derivatives required for tangent and curvature are evaluated without finite differencing:
-\begin{align}
-R'_{i,p}&=\frac{w_iN'_{i,p}W-w_iN_{i,p}W'}{W^2},\\
-R''_{i,p}&=\frac{w_iN''_{i,p}}{W}
--\frac{w_iN_{i,p}W''}{W^2}
--\frac{2w_iN'_{i,p}W'}{W^2}\nonumber\\
-&\quad+\frac{2w_iN_{i,p}(W')^2}{W^3},\\
-\mathbf c'&=\sum_iR'_{i,p}\mathbf P_i,\qquad
-\mathbf c''=\sum_iR''_{i,p}\mathbf P_i. \label{eq:nurbs_derivatives}
-\end{align}
-After extracting a complete period $u\in[u_a,u_b]$, independent affine maps impose pitch $\lambda$ and centreline amplitude $h_c$,
-\begin{align}
-x(u)&=\lambda\frac{c_x(u)-c_x(u_a)}{c_x(u_b)-c_x(u_a)},\nonumber\\
-y(u)&=h_c\frac{c_y(u)-c_{y,\min}}
- {c_{y,\max}-c_{y,\min}}+y_0.\label{eq:physical_map}
-\end{align}
-This design has useful invariances: multiplying all $x_{1:5}$ by the same constant does not change the curve; $x_6$ and $x_7$ independently redistribute rational influence; and exact periodic continuation avoids a geometry gap at cell boundaries. Search uses 300 samples for inexpensive integration, whereas final members use 800 samples and analytic NURBS derivatives for the radius check.
+after both quantities are minimization. Feasible points constraint-dominate infeasible points; infeasible points are ordered by total violation; feasible points use Pareto dominance and crowding.
 
-\begin{figure*}[t]
-\centering
-\begin{minipage}{0.54\textwidth}
-\centering
-\begin{tikzpicture}[x=0.63cm,y=0.63cm,>=Latex,font=\small]
-  \fill[enggreen!45] (0,-0.12) rectangle (12,0.12);
-  \fill[enggreen!45] (0,2.88) rectangle (12,3.12);
-  \draw[engblue,line width=1.15pt] (0,0)--(12,0) (0,3)--(12,3);
-  \draw[black,line width=1.0pt,domain=0:12,samples=180,smooth]
-    plot (\x,{1.5+1.32*sin(60*\x-90)});
-  \draw[->] (0,-0.55)--(2.2,-0.55) node[midway,below] {$x$};
-  \draw[->] (0,-0.55)--(0,1.05) node[left] {$y$};
-  \draw[<->] (3,0.34)--(3,2.66) node[midway,right] {$h_c$};
-  \draw[<->] (3,-0.36)--(9,-0.36) node[midway,below] {$\lambda$};
-  \draw[<->] (11.45,2.88)--(11.45,3.12) node[right] {$t_\ell$};
-  \draw[engblue,->,line width=0.8pt] (7.1,2.22)--(8.1,2.72) node[right] {$\mathbf t$};
-  \draw[engblue,->,line width=0.8pt] (7.1,2.22)--(6.65,3.05) node[above] {$\mathbf n$};
-  \draw[engblue,dashed] (7.1,2.22) arc[start angle=205,end angle=290,radius=1.15];
-  \node[engblue] at (6.15,1.72) {$R=1/|\kappa|$};
-  \node at (10.4,1.18) {$t_f$};
-\end{tikzpicture}
-\end{minipage}\hfill
-\begin{minipage}{0.43\textwidth}
-\centering
-\begin{tikzpicture}[x=0.68cm,y=0.68cm,>=Latex,font=\small]
-  \draw[gray,dashed] (0,0)--(1,0)--(2,2)--(3,2)--(4,0)--(5,0)--(6,2)--(7,2)--(8,0)--(9,0)--(10,2);
-  \draw[black,line width=1pt,domain=0:10,samples=200,smooth]
-    plot (\x,{1+0.92*sin(40*\x-90)+0.13*sin(80*\x)});
-  \foreach \x/\y in {0/0,1/0,2/2,3/2,4/0,5/0,6/2,7/2,8/0,9/0,10/2}
-    \filldraw[fill=enggreen,draw=engblue] (\x,\y) circle (1.7pt);
-  \foreach \xa/\xb/\lab in {0/1/d_1,1/2/d_2,2/3/d_3,3/4/d_4,4/5/d_5,5/6/d_1,6/7/d_2,7/8/d_3,8/9/d_4,9/10/d_5}{
-    \draw[<->] (\xa,-0.48)--(\xb,-0.48) node[midway,below,font=\scriptsize] {$\lab$};
-  }
-  \node[align=center] at (5,2.62) {control polygon, $\mathbf P_i$;\\rational curve, $\mathbf c(u)$};
-\end{tikzpicture}
-\end{minipage}
-\caption{Geometric definitions used throughout the optimization. Left: physical one-dimensional construction per unit board width, showing pitch, flute height, liner and flute thickness, local frame and curvature radius. Right: two-period rational-quadratic construction; the dashed control polygon is not the paper centreline. Colours are confined to this LaTeX-generated schematic; numerical result plots are monochrome except for explicitly selected candidates.}
-\label{fig:geometry_definition}
-\end{figure*}
+\section{Mechanical post-processing details}
 
-The public repository contains several related but non-identical design spaces. Figure~\ref{fig:parameterizations} separates pure envelope sizing from shape refinement and from the coupled problem. The control-point count is a model-resolution choice, not an optimization budget: increasing $n_c$ increases geometric freedom and decision-space dimension, while $\lambda$, $h$ and $t$ determine physical size. The final seven-variable family uses normalized spacings and rational factors instead of unconstrained ordinate motion, making periodicity and bounds easier to preserve.
+At each element, axial strain and curvature are recovered from current chord and relative rotations. Four extreme-fibre stresses are evaluated: top and bottom at both element ends. Their maximum absolute value defines $\sigma_e$ in Eq.~\eqref{eq:stress_pnorm}. The length-weighted quantile is found by sorting $\sigma_e$ and accumulating $L_e$ rather than counting elements, preventing local refinement from changing a percentile merely by adding short elements.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.98\textwidth]{optimization_parameterizations.pdf}
-\caption{Optimization cases distinguished in the numerical archive. Size-only cases vary the physical envelope; shape-only cases vary 4, 8 or 15 control points at fixed envelope; the seven-variable rational construction varies five normalized spacings and two weights; and coupled cases vary size and shape together. Control polygons are schematic, while the objective fronts reported later are read directly from the archived CSV files.}
-\label{fig:parameterizations}
-\end{figure*}
-
-\subsection{Area and inertia per wavelength}
-Let $s$ denote centreline arc length, $J_s(u)=\|\mathbf c'(u)\|$, $t_f$ flute thickness, $t_b,t_t$ liner thicknesses and unit out-of-plane width. The material area of one flute plus two liners is
+Yielded-length fraction is
 \begin{equation}
- A=t_f\int_{u_a}^{u_b}J_s\,\mathrm du+\lambda(t_b+t_t),\qquad A_\lambda=\frac{A}{\lambda}.
- \label{eq:area}
+f_y=\frac{\sum_eL_e\,\mathbf 1(\sigma_e\ge\sigma_y)}{\sum_eL_e}.
 \end{equation}
-$A_\lambda$ has units of length and is reported in millimetres. The first moment and centroid are
+It is evaluated for every accepted mesh-32 representative and mesh-40 compromise under the smooth law and target strain. A low or zero value under this nominal path does not exclude yielding after deeper compression or with geometric imperfections.
+
+Stored potential and external work are monitored independently. With displacement control, no friction, and a smooth conservative material potential, they should remain close. Table~\ref{tab:solver_audit_fast} documents the accepted paths and solver fallbacks; the potential--work difference results from five-point trapezoidal reaction integration and solver tolerance. Neither is labeled dissipated energy.
+
+\section{Full selected design vectors}
+
+\input{generated_tables/selected_design_vectors.tex}
+
+The first five entries $x_1,\ldots,x_5$ in Table~\ref{tab:selected_design_vectors} are raw positive spacing variables; the normalized coordinates in the NURBS definition are $d_i=x_i/\sum_jx_j$. Another vector obtained by multiplying all five raw values by a common positive constant represents the same curve. The next entries $x_6,x_7$ are bounded parameters mapped to the rational factors by Eq.~\eqref{eq:weight_mapping}. The printed table rounds coordinates to five decimal places for readability; the full-precision vectors in \texttt{selected\_optimized\_geometries.csv} reproduce the reported designs.
+
+\section{Optimization failure handling}
+
+For an infeasible or failed candidate, the callback returns finite objective values and continuous violation
 \begin{equation}
- Q_y=t_f\int yJ_s\,\mathrm du+\lambda(t_by_b+t_ty_t),\qquad \bar y=Q_y/A.\label{eq:centroid}
+v=v_R+v_D+v_{\mathrm{case}}+v_{\mathrm{solve}},
 \end{equation}
-Writing $n_y=x'/J_s$ for the vertical component of the centreline normal, exact integration across the thin flute strip adds the local thickness term $t_f^3n_y^2/12$. The geometric inertia per wavelength and width is therefore
-\begin{align}
- I_\lambda=\frac{1}{\lambda}\bigg[&\int_{u_a}^{u_b}\left\{t_f(y-\bar y)^2+\frac{t_f^3}{12}n_y^2\right\}J_s\,\mathrm du\nonumber\\
- &+\sum_{\ell\in\{b,t\}}\left\{\frac{\lambda t_\ell^3}{12}+\lambda t_\ell(y_\ell-\bar y)^2\right\}\bigg],
- \label{eq:inertia}
-\end{align}
-reported in mm$^3$. The legacy optimizer minimizes $10^{-6}/(I/\lambda)$ in SI units and raw $A$ in m$^2$. The plotted Pareto representation uses the equivalent, more interpretable pair: minimize $A/\lambda$ and maximize $I/\lambda$.
+where $v_R$ is normalized radius violation, $v_D$ is excess trust distance, $v_{\mathrm{case}}$ is C038 energy or C039 material violation, and $v_{\mathrm{solve}}$ is positive for a failed path. This prevents exceptions or NaNs from entering nondominated sorting. Reported set members require $v=0$, a matched successful mesh-24 mechanics record, finite direct objectives, and exact within-case nondominated membership over the pooled candidate universe. Representative refinement is reported separately and does not retroactively change coarse-set membership.
 
-\subsection{Effective transverse modulus}
-The evaluator rotates the orthotropic paper compliance $\mathbf S^{(123)}$ into the global axes through the local angle $\theta(u)=\operatorname{atan2}(y',x')$,
-\begin{align}
- \mathbf S^{(xyz)}(u)&=\mathbf T(\theta)\mathbf S^{(123)}
- \mathbf T(\theta)^\mathsf T,\nonumber\\
- \mathbf Q(u)&=\left[\mathbf S^{(xyz)}_{\mathcal I\mathcal I}(u)\right]^{-1}.
- \label{eq:compliance_transform}
-\end{align}
-where $\mathcal I$ selects the normal and coupled shear components retained by the two-dimensional homogenization. With vertical projected thickness $t_v=t_f/|\cos\theta|$, the wavelength-averaged extensional and bending matrices are
-\begin{align}
- \mathbf A_h&=\frac{1}{\lambda}\int_0^\lambda t_v(x)\mathbf Q(x)\,\mathrm dx,\\
- \mathbf D_h&=\frac{1}{\lambda}\int_0^\lambda
- \left[(y-\bar y)^2t_v+\frac{t_v^3}{12}\right]\mathbf Q(x)\,\mathrm dx.\label{eq:AD}
-\end{align}
-The legacy equivalent layer is recovered from
-\begin{equation}
- t_{\mathrm{eff}}=\sqrt{\frac{12\operatorname{tr}\mathbf D_h}{\operatorname{tr}\mathbf A_h}},
- \qquad E_{z,\mathrm{eff}}=\frac{12}{t_{\mathrm{eff}}^3(\mathbf D_h^{-1})_{zz}}.\label{eq:effective_modulus}
-\end{equation}
-This output is retained for post hoc analysis but is not an objective in the corrected area--inertia benchmark. The distinction matters: a gallery containing $E_z$ does not imply that every archived case optimized $E_z$.
+The seeded swarm retains an unseeded mode as default; physics cases supply feasible initial positions and reduced velocity scale. Bounds are enforced after every update. Parent and trial particles are combined, ranked by constraint-compatible fronts, and truncated by normalized crowding. Personal bests update under constraint domination; mutually nondominating ties are broken stochastically.
 
-\subsection{Physical radius}
-Curvature is evaluated in final millimetre coordinates directly from Eq.~\eqref{eq:nurbs_derivatives},
-\begin{equation}
- \kappa(u)=\frac{x'y''-y'x''}{(x'^2+y'^2)^{3/2}},\qquad
- R_{\min}=\left(\max_{u\in[u_a,u_b]}|\kappa(u)|\right)^{-1}.\label{eq:curvature}
-\end{equation}
-The archival audit also repeats the historical smoothed finite-difference calculation to reproduce its stored decision. Two profile zones are screened, and total violation is
-\begin{equation}
- g(\mathbf x)=\max(0,0.9-R_1)+\max(0,0.9-R_2).
-\end{equation}
-Feasible points dominate infeasible points; among infeasible points smaller $g$ is preferred.
+\section{Numerical checklist}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.93\textwidth]{archived_constraint_audit.pdf}
-\caption{Independent audit of the 256 archived final-front rows. Left: reconstructed objective plane, separating open-circle rows that satisfy the physical radius threshold from cross-marked violations. Right: distribution of the smaller reconstructed local radius. Because infeasible points influenced the original search history, the feasible subset is evidence for the audit and is not presented as a corrected Pareto run.}
-\label{fig:constraint_audit}
-\end{figure*}
-
-\section{Optimization benchmark}
-\subsection{Algorithms and budget}
-MO-ETPSO-R retains the constricted PSO update with inertia $w=0.7$, $c_1=c_2=2.05$, personal bests and an elitist archive. Leaders are sampled from the non-dominated archive with crowding preference. Parents and trials are combined, then reduced to 50 points by Pareto fronts and crowding.
-
-For particle $i$, coordinate $j$ and iteration $k$, the stochastic state update is
-\begin{align}
-v_{ij}^{k+1}&=\chi\left[w v_{ij}^{k}+c_1r_{1,ij}^{k}(p_{ij}^{k}-x_{ij}^{k})
-+c_2r_{2,ij}^{k}(\ell_{ij}^{k}-x_{ij}^{k})\right],\label{eq:velocity}\\
-x_{ij}^{k+1}&=\mathcal P_{[l_j,u_j]}\left(x_{ij}^{k}+v_{ij}^{k+1}\right),\label{eq:position}
-\end{align}
-where $r_1,r_2\sim\mathcal U(0,1)$ independently, $\mathbf p_i$ is the constraint-compatible personal best, $\boldsymbol\ell_i$ is an archive leader and $\mathcal P$ projects to the decision bounds. For $\phi=c_1+c_2>4$, the classical constriction is
-\begin{equation}
- \chi=\frac{2}{\left|2-\phi-\sqrt{\phi^2-4\phi}\right|}.
-\end{equation}
-The implemented campaign keeps the public inertia and acceleration convention, while the archive is rebuilt with standard domination. Within front $F_m$, normalized crowding is
-\begin{equation}
- d_i=\sum_{q=1}^{n_f}\frac{f_{q,i+1}-f_{q,i-1}}
- {f_{q,\max}-f_{q,\min}},\qquad i\in F_m,\label{eq:crowding}
-\end{equation}
-with infinite distance at objective extremes. This expression also supplies leader preference and last-front truncation.
-
-NSGA-II uses simulated binary crossover, polynomial mutation, standard fast non-dominated sorting and crowding. Both methods start from independent uniform samples within identical bounds. Each algorithm receives 50 candidates for 80 generations, exactly 4000 evaluator calls. Ten paired seeds are used. Hypervolume is calculated after scaling legacy objectives to $[10^{-3}(10^{-6}/I),10^{6}A]$, with common reference point $(1,15)$. Because both scale factors are positive, Pareto dominance is unchanged.
-
-Final hypervolume distributions are compared by a paired Wilcoxon signed-rank test. Ten runs provide an engineering benchmark rather than a universal performance ranking; the paired design removes initial-seed variation from the algorithm contrast.
-
-\subsection{MO-ETPSO hyperparameter sensitivity}
-Population size and inertia were studied separately from the algorithm comparison. A fixed budget of 1200 calls was imposed for every configuration: $N_p\in\{20,40,80\}$ therefore used 60, 30 and 15 generations, respectively. The inertia coefficient was $w\in\{0.4,0.7,0.9\}$, and each of the nine combinations used five paired seeds. Acceleration coefficients, constraint treatment, bounds, integration resolution and reference point were unchanged. This design separates the effect of distributing a budget across particles and generations from the trivial advantage of more function calls.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.96\textwidth]{mo_etpso_hyperparameter_study.pdf}
-\caption{Fixed-budget MO-ETPSO-R sensitivity over five seeds per setting. Error bars are one standard deviation. Population size and inertia are encoded redundantly by marker and line style; the figure remains interpretable in monochrome. All 45 runs ended with a fully feasible population, so the more informative archive-size statistic is shown in the middle panel.}
-\label{fig:moetpso_hyperparameters}
-\end{figure*}
-
-The nine mean hypervolumes occupy a narrow interval, 4.013--4.071 (Fig.~\ref{fig:moetpso_hyperparameters}). At $N_p=20$, increasing $w$ from 0.4 to 0.9 increased the standard deviation from 0.031 to 0.125 and reduced the mean number of non-dominated final members from 20.0 to 17.4. The best mean was obtained for $N_p=80,w=0.9$ ($4.0713\pm0.0035$), but $N_p=40,w=0.4$ reached $4.0678\pm0.0046$ in 1.80 rather than 3.00~s per run. The practical conclusion is therefore not a unique optimum: $N_p=40$ gives nearly the same front quality at lower wall time, whereas the small high-inertia swarm is least repeatable under the same call budget. Wall times are hardware- and implementation-specific and are reported only for relative comparison within this run.
-
-\subsection{Results}
-Figure~\ref{fig:pareto} shows the pooled feasible fronts and hypervolume history. Both optimizers converge rapidly to the same almost linear material--inertia trade-off. The front is narrow because adding arc length and redistributing paper farther from the centroid generally increases both area and inertia. The optimization task is therefore chiefly one of locating the feasible envelope under curvature, not discovering disconnected objective basins.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.96\textwidth]{pareto_and_convergence.pdf}
-\caption{Left: pooled feasible final Pareto members over ten seeds. Right: median normalized hypervolume and interquartile range against logarithmic function evaluations; both methods use 50 evaluations per generation.}
-\label{fig:pareto}
-\end{figure*}
-
-MO-ETPSO-R reached mean hypervolume $4.0206\pm0.0024$ (median 4.0202); NSGA-II reached $4.0136\pm0.0111$ (median 4.0155). The paired Wilcoxon statistic was $W=11$ with $p=0.105$. Accordingly, the observed mean advantage and lower variance of MO-ETPSO-R are not evidence of a statistically significant algorithm difference at ten seeds. The final feasible fractions were 0.992 and 0.994, respectively; marginal losses arise because designs close to $R=0.9$~mm can change classification when re-evaluated from 300 to 800 samples.
-
-Across all feasible final Pareto members, MO-ETPSO-R spanned $A/\lambda=1.7229$--1.7937~mm and $I/\lambda=3.9375$--4.0939~mm$^3$. NSGA-II spanned 1.7227--1.7865~mm and 3.9356--4.0935~mm$^3$. Effective transverse modulus varied much more, 3.61--30.84~MPa, even though the plotted objectives form a narrow band. This confirms that a two-objective area--inertia front does not control transverse compression stiffness uniquely.
-
-Representative knee profiles are visually similar, which is consistent with objective overlap. Optimizer-specific claims are therefore based on convergence statistics and numerical design vectors rather than an additional profile-only illustration.
-
-\section{Discussion}
-\subsection{What the audit changes}
-The archived figures remain useful evidence that the adapted optimizer ran and generated a structured front. They cannot, however, be treated as a constrained manufacturing front because the radius flag was disabled. Removing 186/256 archived rows after the fact would also be misleading: those points were allowed to influence personal bests, leaders and termination throughout the run. The correct remedy is a new constrained run, which is supplied here.
-
-Evaluator version drift has a similar implication. The current scaled evaluator uses the experimental 21.32~mm pitch and 10~mm height, while the archived values encode 5.65~mm and 2.65~mm. Both are legitimate geometry scales, but their areas, curvatures and stiffnesses are not interchangeable. Reproducibility requires a configuration manifest stored beside each run, including source commit, pitch, height, thickness, material constants, curve resolution, objective transforms and random seed.
-
-\subsection{Engineering interpretation}
-The area--inertia front is dominated by a basic section-design principle: more material placed farther from the centroid increases bending inertia. NURBS variables make the transition manufacturable by distributing curvature rather than creating polygonal corners. The radius constraint is active for much of the front, so manufacturing feasibility limits further improvement.
-
-The broad $E_{z,\mathrm{eff}}$ range along a narrow area--inertia band is a warning against substituting geometric inertia for transverse compression performance. A design intended for flat crush should either include $E_z$ or a nonlinear contact/FEM response as a third objective. Likewise, actual paper thickness and directional stiffness should be separated from scale-free shape variables. The present campaign intentionally reproduces the archived geometric problem; it is not a calibrated material optimization for the later single-sheet experiments.
-
-\subsection{Algorithm comparison}
-MO-ETPSO-R converged earlier on median hypervolume and exhibited smaller final variance, but NSGA-II achieved the largest single-run hypervolume. At this budget their fronts are engineering-equivalent. Additional seeds, alternative budgets and reference-free indicators would be needed for a formal algorithm ranking. More importantly, an algorithm comparison cannot rescue a misspecified evaluator: the constraint correction changes the scientific validity more than the small hypervolume difference between optimizers.
-
-\subsection{Limitations}
-The newer Opt\_CBv2 archive adds machine-readable histories for the complete 15-case shape matrix (C019--C033), which is reported in Appendix~\ref{sec:case_atlas}. Those historical cases differ in parameterization and objective pair and are not pooled into the corrected algorithm test: most predate the fixed radius implementation, use different archive sizes, or do not share a frozen evaluator manifest. The benchmark itself still uses ten seeds and one physical scale. Curvature classification close to the limit remains resolution dependent. Finally, the homogenized $E_z$ model is linear elastic and does not represent large-deformation contact or paper damage.
-
-\section{Reproducibility requirements for future campaigns}
-Each optimization release should contain: (i) an immutable evaluator with unit tests; (ii) a human-readable objective table stating physical direction and units; (iii) constraint values and continuous violations for every design; (iv) initial and final populations rather than plots alone; (v) algorithm seed and evaluation count; (vi) a run manifest containing geometry and material scale; and (vii) vector figures regenerated from raw tables. These requirements are lightweight compared with the cost of reconstructing a front after code drift.
-
-\section{Conclusions}
-A corrected, auditable NURBS optimization of corrugated-board geometry was reconstructed from the public implementation. The main conclusions are:
-\begin{enumerate}
-\item The adapted corrugated MO-ETPSO uses seven NURBS variables and a board evaluator; it is not input-equivalent to the generic GVRP implementation.
-\item The saved front was generated at 5.65~mm pitch, 2.65~mm amplitude and 0.50~mm paper thickness, a configuration recoverable exactly from its objective values but no longer represented by the current same-named source.
-\item The public radius condition was disabled. Only 70/256 archived final-front rows satisfy the stated physical 0.9~mm minimum radius.
-\item Under a corrected constraint and equal 4000-evaluation budgets, MO-ETPSO-R and NSGA-II recover the same area--inertia front. Their final hypervolume difference is not significant at ten paired seeds.
-\item Area--inertia optimality does not uniquely determine effective transverse modulus; future crush-oriented optimization should add a validated nonlinear mechanical objective.
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item verify NURBS invariance under common scaling of $x_{1:5}$;
+\item evaluate 800-sample physical radius before a design enters the feasible pool;
+\item split by geometry, never by load-state row;
+\item insert exact crown/trough nodes and verify zero initial contact gaps at every mesh;
+\item store every FEM state, raw status, projected gradient, reaction balance, terminal metric, and runtime;
+\item train five energy-consistent neural potentials and evaluate the geometry-held-out design split;
+\item report additive stress residual calibration descriptively and serialize the neural ensembles, tree model, scaler, and neighbor model;
+\item construct trust limit from training leave-one-out distances only;
+\item run all cases and seeds with the same budget;
+\item merge terminal and training designs, solve each of the 572 unique geometries once at 24 elements, join by a rounded coordinate key, and reclassify raw mechanics by case;
+\item select two extremes and one normalized compromise per case, then verify all nine unique representatives at 32 elements;
+\item refine the three case compromises at 40 elements and reject any path that fails the predeclared solver criterion;
+\item fingerprint the protocol, ordered ledgers, thresholds, and classification rules before reusing results;
+\item generate tables and figures from direct numerical values.
 \end{enumerate}
 
-\section*{Data and code availability}
-The reproducibility package contains the numerical B-spline evaluator, archived-front audit, corrected MO-ETPSO-R, independent NSGA-II implementation, all ten-seed populations, hypervolume histories and vector figures. The public optimization implementations and archived cases are available at \url{https://github.com/ricardofitas/Opt_CBv2} and \url{https://github.com/ricardofitas/Opt_CorrugatedBoards_Sim}. An archival DOI has not yet been assigned.
+\section{Scaling, robustness, and experimental extension}
 
-\section*{Author declarations}
-\textbf{Funding:} This work was supported by a University of Aveiro research grant (BI/PRR/13036/2026) within Agenda ATE---Alliance for the Energy Transition, project C644914747-00000023, funded by the Portuguese Recovery and Resilience Plan (PRR) and European Funds NextGenerationEU through the Agendas for Business Innovation programme. \textbf{Competing interests:} The authors declare no competing interests. \textbf{Author contributions:} R.F.: conceptualization, methodology, software, formal analysis, data curation, visualization and writing---original draft. S.M.O.T.: supervision, validation and writing---review and editing. O.W.: methodology, supervision, validation and writing---review and editing. All authors should confirm the final CRediT statement before submission. \textbf{Declaration of generative AI:} OpenAI Codex was used for code assistance, figure-layout iteration and language editing. The authors reviewed and edited all generated material and take full responsibility for the manuscript.
+If all in-plane lengths and thickness are scaled by a common factor $s$ while $b$, $E$, and $\sigma_y$ remain fixed, then $L_s$, $P$, $H$, and $t$ scale with $s$. The fractions $\phic$, $\phib$, $\eta$, $\tau_H$, and $\Pi_\kappa$ are invariant; $\tau_P$ follows from $\eta\tau_H$. The normalizers in Eqs.~\eqref{eq:load_number}--\eqref{eq:work_number} remove the leading section and path scales. Exact response invariance is not guaranteed because the beam/contact idealization and smooth yielding law retain geometry-dependent effects. The dimensionless formulation is therefore a similarity organization, not an assertion that all scaled cells are mechanically identical.
 
-\appendix
-\section{Repository and result provenance}
-\subsection{Files treated as primary evidence}
-The reconstruction uses three evidence layers and does not give them equal weight. Executable source defines the current algorithm and evaluator. Machine-readable iteration CSV files define what was actually written during the archived runs. Raster images are secondary visual records. When source and CSV values conflict, numerical re-evaluation is used to identify the parameter combination that reproduces the CSV; no current source file is silently assumed to be historical ground truth.
+A robust continuation can introduce uncertain vector $\bm\omega$ containing thickness, forming-radius bias, pitch, height, modulus, and yield stress. One possible formulation is
+\begin{align}
+\min_{\bm x}\quad &\left(
+\mathbb E[\phib],
+-\mathbb E[\PsiW],
+Q_{0.95}[\Om]
+\right),\\
+\text{subject to}\quad
+&\Pr[\Rmin(\bm x,\bm\omega)<0.9]\le\alpha,\\
+&\Pr[\Theta(\bm x,\bm\omega)\le0]\le\beta.
+\end{align}
+This extension should not be performed with arbitrary probability distributions. Tool measurements, formed-profile scans, and paper-property tests are needed to identify $\bm\omega$ and its correlations.
 
-The generic implementation imports a vehicle-routing objective and creates decision arrays whose length depends on the routing instance. It uses route feasibility and cost components unrelated to corrugated geometry. The adapted file replaces that problem constructor with a seven-variable call to the board evaluator, changes bounds, writes board-specific quantities and uses the three-component vector \texttt{[obj1,obj2,obj4]}. The two repositories therefore establish algorithm lineage but not input equivalence. Copying only the particle update from the generic repository would omit the geometry, physical units, constraints and objective transform that define the engineering problem.
+The selected geometries define a compact experimental matrix spanning the two extremes and normalized compromise of each material--potential, material--stress, and potential--stress front, with duplicate geometries tested only once. The combined selector provides an additional cross-case shortlist without changing Pareto membership. At minimum, tests should record the complete reaction--displacement path, formed geometry before loading, contact sequence, and failure location. Repeated specimens are needed to distinguish geometry trends from paper and forming variability.
 
-The archived final rows store all seven decisions, inverse inertia, area and effective transverse modulus. Candidate parameter configurations were evaluated against all rows, not against selected points in a plot. The recovered configuration minimizes the mean and maximum relative errors simultaneously. Changing $t$ from 0.50 to 0.20~mm or changing $\lambda$ from 5.65 to 21.32~mm creates order-one discrepancies, whereas the recovered scale produces errors at or below the numerical-resampling level (Table~\ref{tab:audit}). This sharp separation is why the historical scale can be inferred rather than merely guessed.
+Calibration should use pathwise quantities rather than one terminal force. Suitable targets include reaction at each strain, initial contact strain, tangent changes, final deformed ordinates, and full-field strain where available. Model validation should then reserve at least one geometry family and one thickness level not used in calibration. Only after that step would it be defensible to interpret $\PsiW$ as a validated design quantity rather than a numerically consistent mechanical index.
 
-\begin{table*}[t]
-\centering\small
-\caption{Input and semantics audit across the public implementations and the reconstructed campaign.}
-\label{tab:source_matrix}
-\begin{tabularx}{\textwidth}{p{0.16\textwidth}XXX}
-\toprule
-Item & Generic MO-ETPSO & Adapted corrugated script & Reconstructed campaign used here\\
-\midrule
-Decision vector & Variable-length routing representation & Seven real variables; five spacings and two rational controls & Same seven-variable board representation\\
-Bounds & Routing-instance dependent & $x_{1:5}\in[0.1,10]$; $x_{6:7}\in[0,1]$ & Identical bounds\\
-Evaluator & GVRP function \texttt{z12} & Corrugated NURBS/homogenization evaluator & Independent, unit-explicit NURBS/geometric evaluator\\
-Population/budget & Example: 100 by 1000 iterations & Public production default: 50 by 100 & 50 by 80 generations; 4000 calls\\
-Optimized values & Route objectives/constraints & \texttt{obj1}, \texttt{obj2}, \texttt{obj4}; $E_z$ logged separately & Area and inverse inertia; $E_z$ retained diagnostically\\
-Physical scale & Not applicable & Current copies disagree & $\lambda=5.65$~mm, amplitude 2.65~mm, $t=0.50$~mm\\
-Radius condition & Not applicable & Both branches return true & Continuous violation with $R_{\min}=0.9$~mm\\
-Pareto rule & Generic implementation convention & Strict improvement in every objective & Standard no-worse/all and better/one rule\\
-\bottomrule
-\end{tabularx}
-\end{table*}
+\FloatBarrier
 
-\subsection{Opt\_CBv2 extension and case identity}
-Repository commit \texttt{70836b8c} contains the later website gallery and the underlying final-iteration CSV files. Unlike the earlier raster-only record, each member retains its objective coordinates and full decision vector. This permits direct regeneration rather than plot digitization. The 15 shape cases form a deliberate $5\times3$ factorial display: five geometry parameterizations by three two-objective pairs. C019--C021 use four control points; C022--C024 use eight; C025--C027 use fifteen; C028--C030 use the compact seven-variable rational form without a positive manufacturing threshold; and C031--C033 apply $R_{\min}>0.9$~mm. Within every row, the columns respectively combine $(E_{z,\mathrm{eff}},I/\lambda)$, $(I/\lambda,A/\lambda)$ and $(A/(\lambda E_{z,\mathrm{eff}}),A/I)$.
-
-The atlas is reported as historical evidence rather than a pooled statistical experiment. A front can change because the objective pair, dimensionality, radius condition, hyperparameters or evaluator version changed. Panel labels therefore preserve case identity; connecting lines aid visual tracing but do not interpolate an engineering response. The constrained C031--C033 selections are shown with their geometries in Fig.~\ref{fig:case_plate_11}.
-
-\section{Complete Size and Shape Optimization Atlas}\label{sec:case_atlas}
-\renewcommand{\thefigure}{B\arabic{figure}}\setcounter{figure}{0}
-\renewcommand{\thetable}{B\arabic{table}}\setcounter{table}{0}
-Figures~\ref{fig:case_plate_01}--\ref{fig:case_plate_12} report the full gallery in provenance order. Every plate combines the Pareto projection with three explicitly keyed solutions: blue circle S1 is the first-objective extreme, red diamond S2 is the log-normalized knee and green triangle S3 is the second-objective extreme. The front itself remains black, so none of the selected states can be confused with an ordinary front member. A numerical vector table follows every plate. High-dimensional vectors are shortened on the page, while the released CSV retains every component.
-
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_01.pdf}
-\caption{Archived five-variable size cases C001--C004. Thicknesses, pitch and height vary simultaneously.}\label{fig:case_plate_01}\end{figure*}
-\input{generated_tables/case_plate_01}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_02.pdf}
-\caption{Archived envelope-only size cases C005--C008. The decision vector contains pitch and height, with fixed sheet thickness.}\label{fig:case_plate_02}\end{figure*}
-\input{generated_tables/case_plate_02}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_03.pdf}
-\caption{Archived four-control-point shape cases C009--C011 at fixed physical envelope.}\label{fig:case_plate_03}\end{figure*}
-\input{generated_tables/case_plate_03}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_04.pdf}
-\caption{Archived eight-control-point shape cases C012--C014.}\label{fig:case_plate_04}\end{figure*}
-\input{generated_tables/case_plate_04}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_05.pdf}
-\caption{Archived fifteen-control-point shape cases C015--C017.}\label{fig:case_plate_05}\end{figure*}
-\input{generated_tables/case_plate_05}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_06.pdf}
-\caption{Legacy compact rational-shape case C018. It is retained separately because it predates the later production compact campaign.}\label{fig:case_plate_06}\end{figure*}
-\input{generated_tables/case_plate_06}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_07.pdf}
-\caption{Compact rational-shape cases C028--C030.}\label{fig:case_plate_07}\end{figure*}
-\input{generated_tables/case_plate_07}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_08.pdf}
-\caption{Production four-control-point cases C019--C021.}\label{fig:case_plate_08}\end{figure*}
-\input{generated_tables/case_plate_08}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_09.pdf}
-\caption{Production eight-control-point cases C022--C024.}\label{fig:case_plate_09}\end{figure*}
-\input{generated_tables/case_plate_09}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_10.pdf}
-\caption{Production fifteen-control-point cases C025--C027.}\label{fig:case_plate_10}\end{figure*}
-\input{generated_tables/case_plate_10}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_11.pdf}
-\caption{Radius-constrained compact cases C031--C033 with $R_{\min}>0.9$~mm.}\label{fig:case_plate_11}\end{figure*}
-\input{generated_tables/case_plate_11}
-\clearpage
-\begin{figure*}[p]\centering\includegraphics[width=0.98\textwidth]{case_plate_12.pdf}
-\caption{New coupled size--shape cases C034--C036. The ten variables comprise seven rational-shape coordinates, pitch, centreline height and common paper thickness; all candidates satisfy the 0.9~mm radius condition.}\label{fig:case_plate_12}\end{figure*}
-\input{generated_tables/case_plate_12}
-\clearpage
-
-\renewcommand{\thefigure}{C\arabic{figure}}\setcounter{figure}{0}
-\renewcommand{\thetable}{C\arabic{table}}\setcounter{table}{0}
-
-\section{Objective dictionary and dimensional trace}
-\subsection{Raw, optimization and reporting forms}
-Multiple equivalent forms appear in the project, so Table~\ref{tab:objective_dictionary} fixes direction and units. Let $I_\lambda=I/\lambda$ and $A_\lambda=A/\lambda$. Positive multiplication and reciprocal transformation preserve the intended trade-off only if direction is changed consistently. In particular, minimizing $1/I_\lambda$ is equivalent to maximizing $I_\lambda$, while plotting $I_\lambda$ on an increasing axis reverses the visual direction of improvement relative to the stored objective.
-
-\begin{table*}[t]
-\centering\small
-\caption{Objective dictionary used to prevent label, unit and direction ambiguity.}
-\label{tab:objective_dictionary}
-\begin{tabularx}{\textwidth}{p{0.17\textwidth}p{0.22\textwidth}p{0.11\textwidth}p{0.10\textwidth}X}
-\toprule
-Symbol/file field & Physical meaning & Unit & Direction & Use\\
-\midrule
-$A$ / section area & Paper section area per unit board width over one wavelength & mm$^2$ & Minimize & Legacy stored quantity; depends on wavelength\\
-$A_\lambda$ & Material area normalized by wavelength and width & mm & Minimize & Primary engineering report; comparable at fixed construction definition\\
-$I_\lambda$ & Second moment per wavelength and board width & mm$^3$ & Maximize & Primary geometric stiffness proxy\\
-$10^{-6}/I_\lambda$ & Scaled reciprocal inertia & numerical scaled unit & Minimize & Legacy optimization coordinate\\
-$E_{z,\mathrm{eff}}$ & Linear homogenized transverse modulus & MPa & Diagnostic & Logged in archive but absent from \texttt{[obj1,obj2,obj4]} optimization vector\\
-$R_1,R_2$ & Local physical curvature radii & mm & Both $\ge0.9$ & Manufacturing feasibility\\
-\bottomrule
-\end{tabularx}
-\end{table*}
-
-For a unit-width sheet, $t\,\mathrm ds$ has area units. Dividing its period integral by $\lambda$ leaves length, which explains why normalized area $A/\lambda$ is reported in millimetres. Similarly, $t(y-\bar y)^2\,\mathrm ds$ has length to the fourth power per unit width; division by wavelength leaves mm$^3$. These normalized quantities are sometimes loosely called area and inertia in figures, but their units must accompany those abbreviated labels.
-
-Geometric scaling also matters. If wavelength, amplitude and thickness were all multiplied by a common factor $s$, then $A_\lambda$ would scale as $s$ and $I_\lambda$ as $s^3$. The archived and experimental configurations do not use a common $s$: the archived pitch/amplitude pair is near a quarter-scale copy while thickness remains 0.50~mm. Consequently, neither similarity law nor a simple axis rescaling maps every objective and curvature constraint between the two configurations.
-
-\subsection{Numerical quadrature and final re-evaluation}
-During search, 300 points sample the rational curve. Arc length and section integrals are calculated by stable numerical quadrature on that polyline; curvature is obtained from smoothed derivatives in physical coordinates. Every final population is re-evaluated using 800 samples. Reported Pareto membership, physical quantities and feasibility come from that final pass. This produces a conservative distinction between the optimizer's internal approximation and the data used for figures.
-
-The small feasibility loss at final resolution is expected near an active inequality. A design with a coarse estimate just above 0.9~mm may move just below it after refinement. It is not appropriate to force such a point back to feasible by rounding the displayed radius. For manufacturing use, a buffer (for example, $R\ge0.95$~mm) or a convergence-tested robust constraint would be preferable.
-
-\section{Corrected optimizer specification}
-\subsection{Constraint-domination and archive update}
-Let $g_i\ge0$ be total radius violation. Candidate $i$ constraint-dominates candidate $j$ if: (a) $i$ is feasible and $j$ is infeasible; (b) both are infeasible and $g_i<g_j$; or (c) both are feasible and $i$ Pareto-dominates $j$. Pareto domination is
-\begin{equation}
- \mathbf f_i\preceq\mathbf f_j\quad\text{and}\quad \exists k:f_{ik}<f_{jk},
-\end{equation}
-after expressing both objectives as minimization. This definition retains equality in one objective and improvement in another, which the strict-all-objectives legacy check can miss.
-
-At every generation, parent and trial populations are combined. Constraint-compatible non-dominated sorting creates fronts; complete fronts are admitted until the size limit would be exceeded. The last admitted front is sorted by normalized crowding distance. Infinite boundary crowding preserves extremes. The external archive is updated by the same rule and truncated to 50 members, preventing leader sampling from growing without bound.
-
-Particle velocities use a constricted PSO-style update with inertia $w=0.7$ and $c_1=c_2=2.05$. A leader is sampled from sparsely occupied archive regions; position bounds are enforced after every update. Personal best replacement uses constraint-domination, with crowding-based tie handling for mutually non-dominating candidates. This retains the public method's swarm character while correcting only the engineering admissibility and ranking semantics.
-
-\subsection{Independent baseline}
-NSGA-II is implemented independently rather than wrapping the particle code. Simulated binary crossover and polynomial mutation operate directly on the seven bounded real variables. Selection uses standard non-dominated fronts and crowding under the same constraint-domination rule. Both algorithms therefore share evaluator, initialization bounds, final re-evaluation and hypervolume code, but not variation or state update. This is important: comparing two labels that share the same erroneous Pareto or constraint routine would reproduce a common bug rather than provide an independent baseline.
-
-Ten paired seeds initialize equal-size populations. Pairing means that algorithm contrasts are computed for seed 0 against seed 0, and so forth; it does not mean that subsequent random draws or populations remain identical. The Wilcoxon signed-rank calculation uses the ten final paired hypervolume differences and makes no normality assumption. With only ten pairs, a non-significant result should be read as insufficient evidence of a difference, not proof that the algorithms are identical.
-
-\begin{table}[t]
-\centering\small
-\caption{Final normalized hypervolume by paired seed.}
-\label{tab:seed_hv}
-\begin{tabular}{rrr}
-\toprule
-Seed & MO-ETPSO-R & NSGA-II\\
-\midrule
-0 & 4.02341 & 3.98613\\
-1 & 4.02326 & 4.01298\\
-2 & 4.02007 & 4.01883\\
-3 & 4.02040 & 4.01526\\
-4 & 4.02264 & 4.01283\\
-5 & 4.01858 & 4.00652\\
-6 & 4.01990 & 4.02290\\
-7 & 4.01844 & 4.01583\\
-8 & 4.01643 & 4.01958\\
-9 & 4.02314 & 4.02542\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-Table~\ref{tab:seed_hv} shows why the distribution summary is preferable to a selected best run. MO-ETPSO-R is higher for seven pairs, but NSGA-II is higher for three and obtains the overall largest value. Seed 0 also creates much of NSGA-II's larger variance. Removing that seed after inspecting the values would be unjustified; it is retained in every statistic.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.93\textwidth]{reconstruction_and_paired_seeds.pdf}
-\caption{Reproducibility evidence. Left: row-wise relative-error distributions for the recovered archived evaluator configuration. Right: paired final hypervolume values, retaining all ten seeds. Lines link equal-seed outcomes and are not statistical confidence intervals.}
-\label{fig:reproducibility}
-\end{figure*}
-
-\subsection{Fixed algorithm and indicator parameters}
-Table~\ref{tab:algorithm_parameters} freezes the settings that affect comparison. Population size is counted once per generation, including the initial evaluated population, so 80 generations correspond to 4000 evaluator calls rather than 4050. Hypervolume is computed on the current feasible non-dominated set; a population with no feasible non-dominated point has zero recorded hypervolume. The same physical re-evaluation is applied after the final generation for reported engineering ranges.
-
-\begin{table*}[t]
-\centering\small
-\caption{Corrected benchmark parameter manifest.}
-\label{tab:algorithm_parameters}
-\begin{tabular}{lll}
-\toprule
-Category & Setting & Value or rule\\
-\midrule
-Shared & Decision bounds & $[0.1,10]^5\times[0,1]^2$\\
- & Population; generations & 50; 80\\
- & Evaluations per seed & 4000\\
- & Search/final curve samples & 300/800\\
- & Seeds & integers 0--9, paired by label\\
- & Feasibility & $R_1,R_2\ge0.9$~mm; continuous violation\\
- & Physical scale & $\lambda=5.65$~mm; amplitude 2.65~mm; $t=0.50$~mm\\
-\addlinespace
-MO-ETPSO-R & Inertia & $w=0.7$\\
- & Acceleration coefficients & $c_1=c_2=2.05$\\
- & Archive capacity & 50; standard fronts and crowding\\
- & Leader selection & crowding preference from feasible archive\\
-\addlinespace
-NSGA-II & Variation & simulated binary crossover; polynomial mutation\\
- & Environmental selection & standard fronts and normalized crowding\\
-\addlinespace
-Indicator & Objective coordinates & $10^{-3}(10^{-6}/I)$ and $10^6A$\\
- & Reference point & $(1,15)$ in those scaled minimization coordinates\\
- & Paired test & two-sided Wilcoxon signed rank\\
-\bottomrule
-\end{tabular}
-\end{table*}
-
-The reference point is fixed before seed comparison and is dominated by the final front. It is not claimed to provide an absolute engineering utility scale. Hypervolume changes if the objective scaling or reference changes; Pareto membership does not. The stored final populations therefore remain the primary reusable output, while hypervolume is the experiment-specific convergence statistic.
-
-\subsection{Convergence speed versus terminal quality}
-Median MO-ETPSO-R hypervolume reaches 99\% of its own final median after 300 evaluations and 99.9\% after 550. NSGA-II reaches the corresponding fractions after 850 and 3300 evaluations. These within-algorithm thresholds support the visual impression that the swarm archive stabilizes earlier under the selected parameters. They do not establish that one method will converge faster under another budget, population size or geometry scale, because each fraction is referenced to that algorithm's terminal median.
-
-Terminal differences are much smaller than early-history differences. This explains how MO-ETPSO-R can exhibit an early median advantage and lower variance while the paired terminal test remains non-significant. A practical screening workflow might value early envelope discovery; a formal optimizer ranking would need multiple budgets and problems. Reporting only the terminal $p$ value would discard useful computational behavior, while reporting only the early curve would exaggerate an advantage that is largely gone by 4000 calls.
-
-The history table stores one indicator value per algorithm, seed and generation. Evaluations, not wall-clock time, are placed on the horizontal axis because both methods call the same dominant geometry evaluator but differ in Python control overhead. Wall time would additionally depend on hardware and vectorization. If a future FEM objective dominates runtime, both evaluation count and elapsed time should be reported because failed nonlinear solves may have topology-dependent cost.
-
-\section{Engineering interpretation of representative designs}
-The plotted representative members are chosen by a normalized compromise score in the pooled feasible front, not by visual preference. The selected NSGA-II member has $A/\lambda=1.7227$~mm, $I/\lambda=3.9356$~mm$^3$, $E_{z,\mathrm{eff}}=3.63$~MPa and limiting radius 0.902~mm. The selected MO-ETPSO-R member has $A/\lambda=1.7870$~mm, $I/\lambda=4.0917$~mm$^3$, $E_{z,\mathrm{eff}}=27.41$~MPa and limiting radius 0.901~mm. The two reported knee choices therefore occupy different locations along the same narrow geometric trade-off, even if their smooth periodic silhouettes look related.
-
-This comparison exposes the limitation of a knee defined only in the two plotted objectives. The second member uses about 3.7\% more normalized material and delivers about 4.0\% more normalized inertia, yet its homogenized transverse modulus is more than seven times larger. $E_z$ changes through tangent orientation and local compliance integration, neither of which is captured uniquely by global second moment. A designer concerned with out-of-plane compression might strongly prefer the second point, whereas a material--bending trade-off alone treats the choice as a conventional knee.
-
-There is no contradiction between high geometric inertia and a narrow minimum radius. The radius constraint acts locally; inertia depends on the complete material distribution about the centroid. A rational curve can place long segments at favorable ordinates while using short transition zones near the curvature limit. This is precisely where manufacturing uncertainty matters: a nominal radius of 0.901~mm leaves almost no allowance for tool tolerance, moisture-induced spring-back or numerical derivative error.
-
-For physical prototyping, Pareto selection should therefore include a feasibility margin and robustness analysis. One simple approach is to require $R\ge0.9+\Delta_R$ for a chosen tolerance $\Delta_R$. A more defensible approach samples uncertain thickness, pitch, amplitude and control-point perturbations, then optimizes an expected response and failure probability. The current deterministic front supplies candidates and sensitivities for that study but cannot quantify process capability by itself.
-
-\section{Uncertainty, sensitivity and claims supported by the data}
-\subsection{Numerical uncertainty}
-Three numerical approximations affect reported quantities: curve sampling, derivative regularization for curvature, and quadrature of the homogenized matrices. Final 800-point re-evaluation reduces but does not eliminate them. The archived reconstruction errors provide an empirical check on the geometric quantities because the same decisions are available under an independently written evaluator. The effective modulus has the largest maximum discrepancy, 2.82\%, consistent with its dependence on several integrated matrices and post-processing operations.
-
-The reconstruction errors are not measurement uncertainty and should not be used as confidence intervals. They measure agreement between executable interpretations of an archived numerical campaign. Likewise, variation across optimizer seeds is algorithmic stochasticity, not uncertainty in paper properties. Keeping those two sources separate prevents a small standard deviation in hypervolume from being misread as high confidence in a physical modulus.
-
-Curvature is the most delicate constraint because it involves second derivatives. Smoothing suppresses isolated polyline differentiation spikes but introduces a bandwidth choice. The corrected evaluator applies the same fixed rule to every candidate and rechecks at higher resolution. A future manufacturing release should compare analytic NURBS derivatives with the numerical estimate and store both local radius locations, not only the Boolean result.
-
-\subsection{Model-form uncertainty}
-Area and geometric inertia are exact geometric summaries under the idealized centre-line/thickness construction, but they are proxies for structural performance. The homogenized $E_z$ is linear elastic and inherits assumed orthotropic paper constants, perfect geometry and the absence of damage/contact evolution. It is useful for ranking candidate compliance within that theory; it is not validated flat-crush strength.
-
-Paper C of the project adds a nonlinear beam/contact calculation and shows why this distinction matters. Even a mechanics-based model with measured longitudinal modulus can miss topology-specific experimental forces if friction, formed geometry and self-contact are absent. The present optimization should therefore not replace its inertia objective with an unvalidated FEM output and call the result physically optimal. The correct sequence is verification, independent calibration/validation, then use of the response as an objective with solver-failure handling.
-
-\subsection{Statistical claim boundaries}
-The paired Wilcoxon result addresses one question: whether the ten terminal hypervolume differences provide evidence of a systematic location shift under this fixed benchmark. It does not establish algorithm equivalence, universal superiority or identical fronts. The descriptive result that both pooled populations occupy nearly the same engineering band is separate and directly visible in the stored physical quantities.
-
-The archived 70/256 feasibility count is deterministic under the reconstructed evaluator and threshold; it is not an estimate of the probability that an archived design can be manufactured. The count shows that the saved front cannot be described as radius constrained. Actual manufacturability would require tooling, process and tolerance data.
-
-Finally, the recovered source scale is an inference supported by near-exact numerical reconstruction. It should be described as recovered or reconstructed, not as metadata read from the historical source. The manuscript consistently makes that distinction so future discovery of an immutable historical commit can confirm or revise the provenance without altering the corrected benchmark.
-
-\section{Recommended decision workflow}
-For a new geometry campaign, the user should first freeze a physical construction and objective dictionary. Second, unit tests should verify NURBS invariance, area/inertia dimensions, analytic/numerical curvature agreement and deliberately infeasible designs. Third, at least two independent optimizers should be run under equal evaluator budgets, storing every final population and convergence indicator. Fourth, final candidates should be re-evaluated at higher resolution and with a feasibility margin. Fifth, a mechanically meaningful third objective should be admitted only after its solver has analytical verification and profile-wise experimental validation.
-
-When selecting from the resulting front, engineering units should be used rather than optimizer transforms. A compact shortlist should include the material-saving extreme, inertia extreme, a normalized knee, and at least one design selected for transverse modulus or nonlinear crush response. Printing or forming only one visually attractive curve risks hiding a flat region of the front or a local manufacturing constraint.
-
-This workflow also clarifies termination. An enhanced termination rule may stop when archive movement becomes negligible, but it should monitor both objective change and feasibility. The present equal-budget benchmark deliberately disables claims based on algorithm-specific stopping so every run has the same number of calls. Once behavior is established, a production campaign may restore stopping and report saved evaluations as an outcome rather than silently giving algorithms unequal budgets.
-
-\section{Reproduction checklist and failure tests}
-The released evaluator can be checked without rerunning all optimizers. First, evaluate the archived decision rows at the recovered scale and confirm the error statistics in Table~\ref{tab:audit}. Second, set either radius below 0.9~mm and verify positive constraint violation; this regression test specifically prevents the two-branch Boolean defect from returning. Third, construct two points equal in one objective and better in the other and confirm standard domination. Fourth, multiply $x_{1:5}$ by a common positive constant and confirm an unchanged geometry. Fifth, re-evaluate final populations at 800 samples and regenerate figures directly from the resulting CSV rather than serialized plot objects.
-
-Run manifests should additionally record software versions, the immutable source identifier and the raw command line. Random seed without code version is insufficient; code version without physical scale is insufficient; and an objective table without the transform actually passed to the optimizer is insufficient. The package stores all three layers so a future change to the mechanical objective can be compared with, rather than confused for, the present geometric campaign.
-
-\ifelsarticle\bibliographystyle{elsarticle-num}\else\bibliographystyle{unsrtnat}\fi
+\bibliographystyle{unsrtnat}
 \bibliography{../references}
+
 \end{document}

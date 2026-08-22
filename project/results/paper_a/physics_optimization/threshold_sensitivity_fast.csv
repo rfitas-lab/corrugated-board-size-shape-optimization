@@ -1,0 +1,7 @@
+case,threshold_kind,training_quantile,threshold_value,feasible_classifications,front_members,dominance_rule
+C038,minimum stored-potential number,0.3,0.00036486553874182,183,49,strict mesh-24 dominance
+C038,minimum stored-potential number,0.4,0.00045547088228936,129,31,strict mesh-24 dominance
+C038,minimum stored-potential number,0.5,0.0005638865844735999,60,7,strict mesh-24 dominance
+C039,maximum board material fraction,0.55,0.2130295416926082,135,81,strict mesh-24 dominance
+C039,maximum board material fraction,0.65,0.2175367958352141,210,121,strict mesh-24 dominance
+C039,maximum board material fraction,0.75,0.21990558775171937,217,122,strict mesh-24 dominance

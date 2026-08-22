@@ -1,0 +1,14 @@
+{
+  "constant_shear_energy_relative_error": 0.0,
+  "pure_bending_energy_relative_error": 4.9883950977070004e-11,
+  "energy_gradient_max_relative_error": 5.852283465118255e-10,
+  "contact_benchmark_mesh": 8,
+  "contact_benchmark_strains": [
+    0.0,
+    0.05
+  ],
+  "contact_path_success": true,
+  "contact_initial_gap_mm": 0.0,
+  "contact_reaction_imbalance_force_fraction": 3.4687131568232764e-06,
+  "contact_normalized_projected_gradient": 1.2909333664164653e-05
+}

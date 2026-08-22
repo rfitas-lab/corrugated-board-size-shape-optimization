@@ -1,0 +1,20 @@
+{
+  "compression": "gzip level 9 with mtime=0",
+  "files": {
+    "fem_unique_geometries_mesh24.csv": {
+      "archive": "fem_unique_geometries_mesh24.csv.gz",
+      "archive_bytes": 311916,
+      "archive_sha256": "6a33294d9c1d58651e3f50080089135472b89b5cb65d42178544b171c6a74a62",
+      "uncompressed_bytes": 2286853,
+      "uncompressed_sha256": "eec3d850385eb43c22a82bdf643df44427ce47db0ad21b0c7e0a413966e5690e"
+    },
+    "fem_verified_terminal_fast.csv": {
+      "archive": "fem_verified_terminal_fast.csv.gz",
+      "archive_bytes": 364004,
+      "archive_sha256": "989a20b7d5f795b77df437ec96ce25ff38a935b488ff1df226813463bc8d4b20",
+      "uncompressed_bytes": 3207736,
+      "uncompressed_sha256": "da1f86196fe460c61e541a3643646dd25645e84d2e37f909fc195db561592f25"
+    }
+  },
+  "format_version": 1
+}

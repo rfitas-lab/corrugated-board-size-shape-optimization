@@ -1,0 +1,10 @@
+{
+  "profiles_checked": 1200,
+  "maximum_endpoint_ordinate_gap_mm": 0.0,
+  "maximum_unit_tangent_mismatch": 3.0369316002948343e-14,
+  "sampling_intervals": 800,
+  "period_parameter_interval": [
+    0.25,
+    0.75
+  ]
+}

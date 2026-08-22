@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering\small
+\caption{Held-out design-level validation. Relative error is the mean absolute relative error; near-zero states are excluded from the path-level relative-error statistic.}
+\label{tab:physics_validation}
+\begin{tabular}{lllrr}
+\toprule
+Response & Model & Scope & $R^2$ & Rel. error \\
+\midrule
+Dimensional potential $U$ & structured energy surrogate & complete path & 0.984 & 7.0\% \\
+Potential number $\Psi_U$ & structured energy surrogate & complete path & 0.982 & 7.4\% \\
+Compression reaction $F$ & energy derivative & complete path & 0.982 & 7.1\% \\
+Stress utilization $\Omega_8$ & tree ensemble & 20\% strain & 0.885 & 6.3\% \\
+\bottomrule
+\end{tabular}
+\end{table*}

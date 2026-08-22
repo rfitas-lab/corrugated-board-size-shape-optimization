@@ -1,0 +1,269 @@
+\begin{thebibliography}{34}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aboura et~al.(2004)Aboura, Talbi, Allaoui, and Benzeggagh]{Aboura2004}
+Zoheir Aboura, Nabil Talbi, Samir Allaoui, and M.~L. Benzeggagh.
+\newblock Elastic behavior of corrugated cardboard: Experiments and modeling.
+\newblock \emph{Composite Structures}, 63\penalty0 (1):\penalty0 53--62, 2004.
+\newblock \doi{10.1016/S0263-8223(03)00131-4}.
+
+\bibitem[Buannic et~al.(2003)Buannic, Cartraud, and Quesnel]{Buannic2003}
+Natacha Buannic, Patrice Cartraud, and Tanguy Quesnel.
+\newblock Homogenization of corrugated core sandwich panels.
+\newblock \emph{Composite Structures}, 59\penalty0 (3):\penalty0 299--312,
+  2003.
+\newblock \doi{10.1016/S0263-8223(02)00246-5}.
+
+\bibitem[Biancolini(2005)]{Biancolini2005}
+Marco~Evangelos Biancolini.
+\newblock Evaluation of equivalent stiffness properties of corrugated board.
+\newblock \emph{Composite Structures}, 69\penalty0 (3):\penalty0 322--328,
+  2005.
+\newblock \doi{10.1016/j.compstruct.2004.07.014}.
+
+\bibitem[Talbi et~al.(2009)Talbi, Batti, Ayad, and Guo]{Talbi2009}
+N.~Talbi, A.~Batti, R.~Ayad, and Y.~Q. Guo.
+\newblock An analytical homogenization model for finite element modelling of
+  corrugated cardboard.
+\newblock \emph{Composite Structures}, 88\penalty0 (2):\penalty0 280--289,
+  2009.
+\newblock \doi{10.1016/j.compstruct.2008.04.008}.
+
+\bibitem[Garbowski and Gajewski(2021)]{Garbowski2021Shear}
+Tomasz Garbowski and Tomasz Gajewski.
+\newblock Determination of transverse shear stiffness of sandwich panels with a
+  corrugated core by numerical homogenization.
+\newblock \emph{Materials}, 14:\penalty0 1976, 2021.
+\newblock \doi{10.3390/ma14081976}.
+
+\bibitem[Lu et~al.(2001)Lu, Chen, and Zhu]{Lu2001}
+T.~J. Lu, C.~Chen, and G.~Zhu.
+\newblock Compressive behaviour of corrugated board panels.
+\newblock \emph{Journal of Composite Materials}, 35:\penalty0 2098--2126, 2001.
+\newblock \doi{10.1106/6ryp-wyqr-q7jr-nvvu}.
+
+\bibitem[Haj-Ali et~al.(2009)Haj-Ali, Choi, Wei, Popil, and
+  Schaepe]{HajAli2009}
+Rami Haj-Ali, Joonho Choi, Bo-Siou Wei, Roman Popil, and Michael Schaepe.
+\newblock Refined nonlinear finite element models for corrugated fiberboards.
+\newblock \emph{Composite Structures}, 87\penalty0 (4):\penalty0 321--333,
+  2009.
+\newblock \doi{10.1016/j.compstruct.2008.02.001}.
+
+\bibitem[Park et~al.(2020{\natexlab{a}})Park, Park, Choi, et~al.]{Park2020Edge}
+Jongmin Park, Minyoung Park, Dae-Sung Choi, et~al.
+\newblock Finite element-based simulation for edgewise compression behavior of
+  corrugated paperboard for packaging of agricultural products.
+\newblock \emph{Applied Sciences}, 10:\penalty0 6716, 2020{\natexlab{a}}.
+\newblock \doi{10.3390/app10196716}.
+
+\bibitem[Park et~al.(2021)Park, Sim, and Jung]{Park2021Flat}
+Jong-Min Park, Jong-Min Sim, and Hyun-Mo Jung.
+\newblock Finite element simulation of the flat crush behavior of corrugated
+  packages.
+\newblock \emph{Applied Sciences}, 11:\penalty0 7867, 2021.
+\newblock \doi{10.3390/app11177867}.
+
+\bibitem[Di~Russo et~al.(2023)Di~Russo, Desole, Gisario, and
+  Barletta]{DiRusso2023}
+Franco~Maria Di~Russo, Maria~Pia Desole, Annamaria Gisario, and Massimiliano
+  Barletta.
+\newblock Evaluation of wave configurations in corrugated boards by
+  experimental analysis and finite element modeling: the role of the micro-wave
+  in packaging design.
+\newblock \emph{The International Journal of Advanced Manufacturing
+  Technology}, 126:\penalty0 4963--4982, 2023.
+\newblock \doi{10.1007/s00170-023-11397-y}.
+
+\bibitem[Vigui{\'e} et~al.(2011)Vigui{\'e}, Dumont, Org{\'e}as, Vacher,
+  Desloges, and Mauret]{Viguie2011}
+J{\'e}r{\'e}mie Vigui{\'e}, Pierre J.~J. Dumont, Laurent Org{\'e}as, Pierre
+  Vacher, Isabelle Desloges, and {\'E}velyne Mauret.
+\newblock Surface stress and strain fields on compressed panels of corrugated
+  board boxes: An experimental analysis by using digital image
+  stereocorrelation.
+\newblock \emph{Composite Structures}, 93\penalty0 (11):\penalty0 2861--2873,
+  2011.
+\newblock \doi{10.1016/j.compstruct.2011.05.018}.
+
+\bibitem[Vigui{\'e} and Dumont(2013)]{Viguie2013}
+J{\'e}r{\'e}mie Vigui{\'e} and Pierre J.~J. Dumont.
+\newblock Analytical post-buckling model of corrugated board panels using
+  digital image correlation measurements.
+\newblock \emph{Composite Structures}, 101:\penalty0 243--254, 2013.
+\newblock \doi{10.1016/j.compstruct.2013.01.023}.
+
+\bibitem[Fadiji et~al.(2020)Fadiji, Coetzee, and Opara]{Fadiji2020}
+Tobi Fadiji, Corn{\'e}~J. Coetzee, and Umezuruike~Linus Opara.
+\newblock Evaluating the displacement field of paperboard packages subjected to
+  compression loading using digital image correlation ({DIC}).
+\newblock \emph{Food and Bioproducts Processing}, 123:\penalty0 60--71, 2020.
+\newblock \doi{10.1016/j.fbp.2020.06.008}.
+
+\bibitem[Samaniego et~al.(2020)Samaniego, Anitescu, Goswami, Nguyen-Thanh, Guo,
+  Hamdia, Zhuang, and Rabczuk]{Samaniego2020}
+E.~Samaniego, C.~Anitescu, S.~Goswami, V.~M. Nguyen-Thanh, H.~Guo, K.~Hamdia,
+  X.~Zhuang, and T.~Rabczuk.
+\newblock An energy approach to the solution of partial differential equations
+  in computational mechanics via machine learning: concepts, implementation and
+  applications.
+\newblock \emph{Computer Methods in Applied Mechanics and Engineering},
+  362:\penalty0 112790, 2020.
+\newblock \doi{10.1016/j.cma.2019.112790}.
+
+\bibitem[Nguyen-Thanh et~al.(2020)Nguyen-Thanh, Zhuang, and
+  Rabczuk]{NguyenThanh2020}
+Vien~Minh Nguyen-Thanh, Xiaoying Zhuang, and Timon Rabczuk.
+\newblock A deep energy method for finite deformation hyperelasticity.
+\newblock \emph{European Journal of Mechanics - A/Solids}, 80:\penalty0 103874,
+  2020.
+\newblock \doi{10.1016/j.euromechsol.2019.103874}.
+
+\bibitem[Rezaei et~al.(2022)Rezaei, Harandi, Moeineddin, Xu, and
+  Reese]{Rezaei2022}
+Saman Rezaei, Alireza Harandi, Alireza Moeineddin, Bai-Xiang Xu, and Stefanie
+  Reese.
+\newblock A mixed formulation for physics-informed neural networks as a
+  potential solver for engineering problems in heterogeneous domains.
+\newblock \emph{Computer Methods in Applied Mechanics and Engineering},
+  401:\penalty0 115616, 2022.
+\newblock \doi{10.1016/j.cma.2022.115616}.
+
+\bibitem[Simon(2021)]{Simon2021}
+Jaan-Willem Simon.
+\newblock A review of recent trends and challenges in computational modeling of
+  paper and paperboard at different scales.
+\newblock \emph{Archives of Computational Methods in Engineering}, 28:\penalty0
+  2409--2428, 2021.
+\newblock \doi{10.1007/s11831-020-09460-y}.
+
+\bibitem[Beex and Peerlings(2009)]{Beex2009}
+Lars A.~A. Beex and Ron H.~J. Peerlings.
+\newblock An experimental and computational study of laminated paperboard
+  creasing and folding.
+\newblock \emph{International Journal of Solids and Structures}, 46\penalty0
+  (24):\penalty0 4192--4207, 2009.
+\newblock \doi{10.1016/j.ijsolstr.2009.08.012}.
+
+\bibitem[Stenberg et~al.(2001)Stenberg, Fellers, and {\"O}stlund]{Stenberg2001}
+Nils Stenberg, Christer Fellers, and S{\"o}ren {\"O}stlund.
+\newblock Plasticity in the thickness direction of paperboard under combined
+  shear and normal loading.
+\newblock \emph{Journal of Engineering Materials and Technology}, 123\penalty0
+  (2):\penalty0 184--190, 2001.
+\newblock \doi{10.1115/1.1352747}.
+
+\bibitem[Stenberg(2003)]{Stenberg2003}
+Nils Stenberg.
+\newblock A model for the through-thickness elastic-plastic behaviour of paper.
+\newblock \emph{International Journal of Solids and Structures}, 40:\penalty0
+  7483--7498, 2003.
+\newblock \doi{10.1016/j.ijsolstr.2003.09.003}.
+
+\bibitem[Park et~al.(2020{\natexlab{b}})Park, Chang, and
+  Jung]{Park2020Equivalent}
+Jongmin Park, Seongmin Chang, and Hyun-Mo Jung.
+\newblock Numerical prediction of equivalent mechanical properties of
+  corrugated paperboard by {3D} finite element analysis.
+\newblock \emph{Applied Sciences}, 10:\penalty0 7973, 2020{\natexlab{b}}.
+\newblock \doi{10.3390/app10227973}.
+
+\bibitem[Garbowski et~al.(2021)Garbowski, Grabski, and
+  Marek]{Garbowski2021Full}
+Tomasz Garbowski, Jakub~Krzysztof Grabski, and Aleksander Marek.
+\newblock Full-field measurements in the edge crush test of a corrugated
+  board---analytical and numerical predictive models.
+\newblock \emph{Materials}, 14:\penalty0 2840, 2021.
+\newblock \doi{10.3390/ma14112840}.
+
+\bibitem[Garbowski et~al.(2022)Garbowski, Knitter-Piatkowska, and
+  Grabski]{Garbowski2022Bending}
+Tomasz Garbowski, Agnieszka Knitter-Piatkowska, and Jakub~Krzysztof Grabski.
+\newblock Analytical determination of the bending stiffness of a five-layer
+  corrugated cardboard with imperfections.
+\newblock \emph{Materials}, 15:\penalty0 663, 2022.
+\newblock \doi{10.3390/ma15020663}.
+
+\bibitem[Navaranjan et~al.(2013)Navaranjan, Dickson, Paltakari, and
+  Ilmonen]{Navaranjan2013}
+Namasivayam Navaranjan, Alan~R. Dickson, Jouni Paltakari, and Kai Ilmonen.
+\newblock Humidity effect on compressive deformation and failure of recycled
+  and virgin layered corrugated paperboard structures.
+\newblock \emph{Composites Part B: Engineering}, 45:\penalty0 965--971, 2013.
+\newblock \doi{10.1016/j.compositesb.2012.05.037}.
+
+\bibitem[Piegl and Tiller(1997)]{Piegl1997}
+Les Piegl and Wayne Tiller.
+\newblock \emph{The {NURBS} Book}.
+\newblock Springer, Berlin, 2 edition, 1997.
+\newblock \doi{10.1007/978-3-642-59223-2}.
+
+\bibitem[Hughes et~al.(2005)Hughes, Cottrell, and Bazilevs]{Hughes2005}
+Thomas J.~R. Hughes, John~A. Cottrell, and Yuri Bazilevs.
+\newblock Isogeometric analysis: {CAD}, finite elements, {NURBS}, exact
+  geometry and mesh refinement.
+\newblock \emph{Computer Methods in Applied Mechanics and Engineering},
+  194:\penalty0 4135--4195, 2005.
+\newblock \doi{10.1016/j.cma.2004.10.008}.
+
+\bibitem[Kennedy and Eberhart(1995)]{Kennedy1995}
+James Kennedy and Russell Eberhart.
+\newblock Particle swarm optimization.
+\newblock In \emph{Proceedings of the IEEE International Conference on Neural
+  Networks}, volume~4, pages 1942--1948, 1995.
+\newblock \doi{10.1109/ICNN.1995.488968}.
+
+\bibitem[Coello~Coello et~al.(2004)Coello~Coello, Pulido, and
+  Lechuga]{Coello2004}
+Carlos~A. Coello~Coello, Gregorio~Toscano Pulido, and Maximino~Salazar Lechuga.
+\newblock Handling multiple objectives with particle swarm optimization.
+\newblock \emph{IEEE Transactions on Evolutionary Computation}, 8\penalty0
+  (3):\penalty0 256--279, 2004.
+\newblock \doi{10.1109/TEVC.2004.826067}.
+
+\bibitem[Deb et~al.(2002)Deb, Pratap, Agarwal, and Meyarivan]{Deb2002}
+Kalyanmoy Deb, Amrit Pratap, Sameer Agarwal, and T.~Meyarivan.
+\newblock A fast and elitist multiobjective genetic algorithm: {NSGA-II}.
+\newblock \emph{IEEE Transactions on Evolutionary Computation}, 6\penalty0
+  (2):\penalty0 182--197, 2002.
+\newblock \doi{10.1109/4235.996017}.
+
+\bibitem[Zitzler et~al.(2003)Zitzler, Thiele, Laumanns, Fonseca, and
+  da~Fonseca]{Zitzler2003}
+Eckart Zitzler, Lothar Thiele, Marco Laumanns, Carlos~M. Fonseca, and
+  Viviane~Grunert da~Fonseca.
+\newblock Performance assessment of multiobjective optimizers: An analysis and
+  review.
+\newblock \emph{IEEE Transactions on Evolutionary Computation}, 7\penalty0
+  (2):\penalty0 117--132, 2003.
+\newblock \doi{10.1109/TEVC.2003.810758}.
+
+\bibitem[Deb(2001)]{Deb2001}
+Kalyanmoy Deb.
+\newblock \emph{Multi-Objective Optimization Using Evolutionary Algorithms}.
+\newblock Wiley, Chichester, 2001.
+
+\bibitem[Fitas(2024)]{Fitas2024MOETPSO}
+Ricardo Fitas.
+\newblock Multi-objective elitist particle swarm optimization with enhanced
+  termination.
+\newblock \emph{arXiv preprint arXiv:2402.12856}, 2024.
+\newblock \doi{10.48550/arXiv.2402.12856}.
+
+\bibitem[Crisfield(1991)]{Crisfield1991}
+Michael~A. Crisfield.
+\newblock \emph{Non-Linear Finite Element Analysis of Solids and Structures},
+  volume~1.
+\newblock Wiley, Chichester, 1991.
+
+\bibitem[Wriggers(2006)]{Wriggers2006}
+Peter Wriggers.
+\newblock \emph{Computational Contact Mechanics}.
+\newblock Springer, Berlin, 2 edition, 2006.
+\newblock \doi{10.1007/978-3-540-32609-0}.
+
+\end{thebibliography}

@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\caption{Strict solver audit for the evidence used in the paper. Fallback counts are states accepted by the alternate SLSQP solve of the same energy and the common KKT check; runtime is the median complete-path time.}
+\label{tab:solver_audit_fast}
+\begin{tabular}{lrrrrr}
+\toprule
+Ledger & Mesh & Paths & Accepted & Fallback states & Runtime [s] \\
+\midrule
+Training & 16 & 80 & 80 & 0 & 4.73 \\
+Coarse reconstruction & 24 & 572 & 572 & 9 & 7.23 \\
+Representatives & 32 & 9 & 9 & 11 & 15.69 \\
+Case compromises & 40 & 3 & 3 & 8 & 119.69 \\
+\bottomrule
+\end{tabular}
+\end{table}

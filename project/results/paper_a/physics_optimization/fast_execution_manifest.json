@@ -1,0 +1,714 @@
+{
+  "command": "python project/run_paper_a_fast_verification.py",
+  "budget": {
+    "mesh32": 9,
+    "mesh40": 3,
+    "mesh8_formulation_check": 1
+  },
+  "coverage": {
+    "source_files": [
+      "../CITATION.cff",
+      "../README.md",
+      "make_paper_a_gallery.py",
+      "make_physics_tables.py",
+      "manuscripts/paper_a/main.tex",
+      "manuscripts/references.bib",
+      "prepare_paper_a_data.py",
+      "requirements-paper-a.txt",
+      "requirements.txt",
+      "revision_studies.py",
+      "run_coupled_size_shape.py",
+      "run_paper_a.py",
+      "run_paper_a_fast_verification.py",
+      "run_paper_a_physics_optimization.py",
+      "src/cbenergy/__init__.py",
+      "src/cbenergy/energy_network.py",
+      "src/cbfem/__init__.py",
+      "src/cbfem/geometry.py",
+      "src/cbfem/model.py",
+      "src/cbopt/__init__.py",
+      "src/cbopt/evaluator.py",
+      "src/cbopt/mechanical_evaluator.py",
+      "src/cbopt/optimizers.py",
+      "src/plot_style.py",
+      "vendor/autograd/__init__.py",
+      "vendor/autograd/builtins.py",
+      "vendor/autograd/core.py",
+      "vendor/autograd/differential_operators.py",
+      "vendor/autograd/extend.py",
+      "vendor/autograd/misc/__init__.py",
+      "vendor/autograd/misc/fixed_points.py",
+      "vendor/autograd/misc/flatten.py",
+      "vendor/autograd/misc/optimizers.py",
+      "vendor/autograd/misc/tracers.py",
+      "vendor/autograd/numpy/__init__.py",
+      "vendor/autograd/numpy/fft.py",
+      "vendor/autograd/numpy/linalg.py",
+      "vendor/autograd/numpy/numpy_boxes.py",
+      "vendor/autograd/numpy/numpy_jvps.py",
+      "vendor/autograd/numpy/numpy_vjps.py",
+      "vendor/autograd/numpy/numpy_vspaces.py",
+      "vendor/autograd/numpy/numpy_wrapper.py",
+      "vendor/autograd/numpy/random.py",
+      "vendor/autograd/scipy/__init__.py",
+      "vendor/autograd/scipy/integrate.py",
+      "vendor/autograd/scipy/linalg.py",
+      "vendor/autograd/scipy/signal.py",
+      "vendor/autograd/scipy/special.py",
+      "vendor/autograd/scipy/stats/__init__.py",
+      "vendor/autograd/scipy/stats/beta.py",
+      "vendor/autograd/scipy/stats/chi2.py",
+      "vendor/autograd/scipy/stats/dirichlet.py",
+      "vendor/autograd/scipy/stats/gamma.py",
+      "vendor/autograd/scipy/stats/multivariate_normal.py",
+      "vendor/autograd/scipy/stats/norm.py",
+      "vendor/autograd/scipy/stats/poisson.py",
+      "vendor/autograd/scipy/stats/t.py",
+      "vendor/autograd/test_util.py",
+      "vendor/autograd/tracer.py",
+      "vendor/autograd/util.py",
+      "vendor/autograd/wrap_util.py",
+      "../tests/test_evidence_integrity.py",
+      "../tests/test_physics_optimization.py",
+      "../tests/test_smoke.py"
+    ],
+    "trained_model_files": [
+      "results/paper_a/physics_optimization/models/energy_surrogate_seed11.npz",
+      "results/paper_a/physics_optimization/models/energy_surrogate_seed29.npz",
+      "results/paper_a/physics_optimization/models/energy_surrogate_seed3.npz",
+      "results/paper_a/physics_optimization/models/energy_surrogate_seed47.npz",
+      "results/paper_a/physics_optimization/models/energy_surrogate_seed83.npz",
+      "results/paper_a/physics_optimization/models/feature_scaler.joblib",
+      "results/paper_a/physics_optimization/models/stress_ensemble.joblib",
+      "results/paper_a/physics_optimization/models/trust_neighbors.joblib"
+    ],
+    "numerical_input_files": [
+      "results/paper_a/benchmark_final_populations.csv",
+      "results/paper_a/benchmark_hypervolume_history.csv",
+      "results/paper_a/benchmark_summary.csv",
+      "results/paper_a/mo_etpso_hyperparameter_study.csv",
+      "results/paper_a/mo_etpso_hyperparameter_summary.csv",
+      "results/paper_a/run_metadata.json",
+      "results/paper_a/coupled_size_shape/C034_all_members.csv",
+      "results/paper_a/coupled_size_shape/C036_all_members.csv",
+      "results/paper_a/coupled_size_shape/C035_all_members.csv",
+      "results/paper_a/physics_optimization/direct_verification_pool.csv",
+      "results/paper_a/physics_optimization/compressed_evidence_manifest.json",
+      "results/paper_a/physics_optimization/energy_surrogate_test_predictions.csv",
+      "results/paper_a/physics_optimization/feasible_design_pool.csv",
+      "results/paper_a/physics_optimization/fem_designs.csv",
+      "results/paper_a/physics_optimization/fem_paths_mesh16.csv",
+      "results/paper_a/physics_optimization/fem_terminal_mesh16.csv",
+      "results/paper_a/physics_optimization/fem_unique_geometries_mesh24.csv",
+      "results/paper_a/physics_optimization/fem_unique_geometries_mesh24.csv.gz",
+      "results/paper_a/physics_optimization/fem_verified_terminal_fast.csv.gz",
+      "results/paper_a/physics_optimization/optimization_convergence.csv",
+      "results/paper_a/physics_optimization/optimization_convergence_summary.csv",
+      "results/paper_a/physics_optimization/periodicity_audit.json",
+      "results/paper_a/physics_optimization/stress_test_predictions.csv",
+      "results/paper_a/physics_optimization/surrogate_pareto_candidates.csv",
+      "results/paper_a/physics_optimization/surrogate_terminal_members.csv",
+      "results/paper_a/physics_optimization/surrogate_validation.json",
+      "results/paper_a/physics_optimization/fem_representative_geometries_mesh48_rejected_solver_audit.csv"
+    ],
+    "numerical_output_files": [
+      "results/paper_a/physics_optimization/fem_verified_terminal_fast.csv",
+      "results/paper_a/physics_optimization/fem_rebuilt_pareto_fronts_fast.csv",
+      "results/paper_a/physics_optimization/fem_rebuilt_pareto_fronts.csv",
+      "results/paper_a/physics_optimization/selected_optimized_geometries.csv",
+      "results/paper_a/physics_optimization/selected_refined_geometries.csv",
+      "results/paper_a/physics_optimization/fem_representative_geometries_mesh32.csv",
+      "results/paper_a/physics_optimization/fem_representative_geometries_mesh40.csv",
+      "results/paper_a/physics_optimization/fem_representative_states_mesh40.pkl.gz",
+      "results/paper_a/physics_optimization/representative_mesh_validation.csv",
+      "results/paper_a/physics_optimization/representative_convergence_summary.csv",
+      "results/paper_a/physics_optimization/threshold_sensitivity_fast.csv",
+      "results/paper_a/physics_optimization/formulation_verification.json",
+      "results/paper_a/physics_optimization/fast_verification_summary.json"
+    ],
+    "manuscript_dependency_files": [
+      "figures/paper_a/optimization_parameterizations.pdf",
+      "figures/paper_a/pareto_and_convergence.pdf",
+      "figures/paper_a/constrained_selected_designs.pdf",
+      "figures/paper_a/pareto_atlas_5x3.pdf",
+      "figures/paper_a/fem_energy_surrogate_validation.pdf",
+      "figures/paper_a/physics_optimizer_convergence.pdf",
+      "figures/paper_a/physics_pareto_fronts.pdf",
+      "figures/paper_a/representative_mesh_convergence.pdf",
+      "figures/paper_a/dimensionless_performance_map.pdf",
+      "figures/paper_a/optimized_fem_stress_gallery.pdf",
+      "manuscripts/paper_a/generated_tables/periodicity_audit.tex",
+      "manuscripts/paper_a/generated_tables/physics_validation.tex",
+      "manuscripts/paper_a/generated_tables/energy_training_diagnostics.tex",
+      "manuscripts/paper_a/generated_tables/stress_calibration.tex",
+      "manuscripts/paper_a/generated_tables/solver_audit_fast.tex",
+      "manuscripts/paper_a/generated_tables/formulation_verification.tex",
+      "manuscripts/paper_a/generated_tables/optimizer_convergence_summary.tex",
+      "manuscripts/paper_a/generated_tables/physics_front_summary_fast.tex",
+      "manuscripts/paper_a/generated_tables/threshold_sensitivity_fast.tex",
+      "manuscripts/paper_a/generated_tables/decision_fidelity_fast.tex",
+      "manuscripts/paper_a/generated_tables/representative_mesh_convergence.tex",
+      "manuscripts/paper_a/generated_tables/selected_physics_designs_fast.tex",
+      "manuscripts/paper_a/generated_tables/selected_response_diagnostics_fast.tex",
+      "manuscripts/paper_a/generated_tables/runtime_summary_fast.tex",
+      "manuscripts/paper_a/generated_tables/selected_design_vectors.tex",
+      "manuscripts/paper_a/generated_tables/verification_pool_fast.tex"
+    ]
+  },
+  "inputs": {
+    "../CITATION.cff": {
+      "sha256": "bf11b26ce9be4065f7a21d3b4213ca992cd5e56ec77e03946ecd916646dc840a",
+      "bytes": 514
+    },
+    "../README.md": {
+      "sha256": "404a45ffa8f137fe96706e2a5b548b840f911d526b6eb6e60b2645124181de05",
+      "bytes": 3702
+    },
+    "make_paper_a_gallery.py": {
+      "sha256": "322534618010e73f5eb5108f25cc1cba6ff89f0cf58d3b426d42aa3c5a1556ac",
+      "bytes": 23854
+    },
+    "make_physics_tables.py": {
+      "sha256": "83c515882f09e0a7d7a224fd37dd1164170e9eb4031ad88076110ba0031e7d0a",
+      "bytes": 29069
+    },
+    "manuscripts/paper_a/main.tex": {
+      "sha256": "ae06987a0f407423a1f599163e1bce1fc678762aa7f5eea76912dc42838415b2",
+      "bytes": 75529
+    },
+    "manuscripts/references.bib": {
+      "sha256": "60759977f3eb17b882f3c411f034878c843dee8b33aebfdeb47a90daae57fc7e",
+      "bytes": 16993
+    },
+    "prepare_paper_a_data.py": {
+      "sha256": "2073acb330062debd8a52559eb390a32195bf376d5798e6a79d5e21ba8a30967",
+      "bytes": 3222
+    },
+    "requirements-paper-a.txt": {
+      "sha256": "7926d352d077c1e08841a4ffe970b73a43c768af58b8707893781c49f96dfadf",
+      "bytes": 158
+    },
+    "requirements.txt": {
+      "sha256": "457fc3ed0535ef36c61cfd3859f6639decc3c60b75c8b454b35b13ddefeb2c71",
+      "bytes": 127
+    },
+    "results/paper_a/benchmark_final_populations.csv": {
+      "sha256": "bf22d0f6def96d94ccc54265f57889e914580b7bc808bb749fa0d17799e0f19e",
+      "bytes": 311276
+    },
+    "results/paper_a/benchmark_hypervolume_history.csv": {
+      "sha256": "4f5f8387ad4895e71eff60aa92aed5cf74cfb89ffeca8f19520b8aa38f301023",
+      "bytes": 59011
+    },
+    "results/paper_a/benchmark_summary.csv": {
+      "sha256": "2834fe7e4cd57e174eff162bb747db7c92e9fab6109e4bc5d845474b28ebb741",
+      "bytes": 363
+    },
+    "results/paper_a/coupled_size_shape/C034_all_members.csv": {
+      "sha256": "94ffc243a803812b86d5342f96af7c217c32cb0f8915f3fca1214bcecd2c2487",
+      "bytes": 33653
+    },
+    "results/paper_a/coupled_size_shape/C035_all_members.csv": {
+      "sha256": "5154ef3769137134966e87c5ce30daf023d0e7b4bb13bbbdd8cde50017e93a19",
+      "bytes": 33879
+    },
+    "results/paper_a/coupled_size_shape/C036_all_members.csv": {
+      "sha256": "1f526f193296e5c2001b56cf0a31631d190863f2cc00fe353ff444af1dccf93b",
+      "bytes": 29605
+    },
+    "results/paper_a/mo_etpso_hyperparameter_study.csv": {
+      "sha256": "6ba27f4c9c3398966e9fdadda3b0681395306478e77f8e947e4b70f66dd61276",
+      "bytes": 2831
+    },
+    "results/paper_a/mo_etpso_hyperparameter_summary.csv": {
+      "sha256": "cba297f228fab6da46b176d92727127c335d89aab2308f992f66708391025c7e",
+      "bytes": 1116
+    },
+    "results/paper_a/physics_optimization/compressed_evidence_manifest.json": {
+      "sha256": "b3c2839024f5bb42350669a041ffa22d7c4f3e3043636741bf4d503b33bc31ce",
+      "bytes": 807
+    },
+    "results/paper_a/physics_optimization/direct_verification_pool.csv": {
+      "sha256": "531871f46363005ff474d8b3f858204499cfe0928a44dee5775689899fd017cb",
+      "bytes": 373777
+    },
+    "results/paper_a/physics_optimization/energy_surrogate_test_predictions.csv": {
+      "sha256": "c3b7920c36261d4cdacd837611b688529d38dbb486ffdbe7a9709eb39a3fef7e",
+      "bytes": 16411
+    },
+    "results/paper_a/physics_optimization/feasible_design_pool.csv": {
+      "sha256": "b0cd7eeaaa29b3375f90058f4edb549cb5464dbe47c730c1b8316ee63a98bb5a",
+      "bytes": 300053
+    },
+    "results/paper_a/physics_optimization/fem_designs.csv": {
+      "sha256": "e7b5a3bf1a5dfc4719fffe404f22844cd7ab8ea9b34008adad316986db19d83c",
+      "bytes": 27813
+    },
+    "results/paper_a/physics_optimization/fem_paths_mesh16.csv": {
+      "sha256": "28896425b5eb1261d427f240c81790403e72521dd57adde2d0e3bb3bb081a82c",
+      "bytes": 483700
+    },
+    "results/paper_a/physics_optimization/fem_representative_geometries_mesh48_rejected_solver_audit.csv": {
+      "sha256": "e0eadc89e3c575ede5b24e32b2f4fde18b1bf66bb76420f1041da219dddb8bca",
+      "bytes": 56687
+    },
+    "results/paper_a/physics_optimization/fem_terminal_mesh16.csv": {
+      "sha256": "ba0065956ed50837c705a1752c881d1ce53b9277b16760d36c5e2c259854fc7e",
+      "bytes": 334146
+    },
+    "results/paper_a/physics_optimization/fem_unique_geometries_mesh24.csv": {
+      "sha256": "eec3d850385eb43c22a82bdf643df44427ce47db0ad21b0c7e0a413966e5690e",
+      "bytes": 2286853
+    },
+    "results/paper_a/physics_optimization/fem_unique_geometries_mesh24.csv.gz": {
+      "sha256": "6a33294d9c1d58651e3f50080089135472b89b5cb65d42178544b171c6a74a62",
+      "bytes": 311916
+    },
+    "results/paper_a/physics_optimization/fem_verified_terminal_fast.csv.gz": {
+      "sha256": "989a20b7d5f795b77df437ec96ce25ff38a935b488ff1df226813463bc8d4b20",
+      "bytes": 364004
+    },
+    "results/paper_a/physics_optimization/models/energy_surrogate_seed11.npz": {
+      "sha256": "ced02adf4b3641f14f85a2b56f66b11bcabf6babbe9c2970607e5fa1be1159d6",
+      "bytes": 5166
+    },
+    "results/paper_a/physics_optimization/models/energy_surrogate_seed29.npz": {
+      "sha256": "7c3852078d76919dec2e56c2050becfce006c4bb9ed2553507c7d4692d70c9fd",
+      "bytes": 5166
+    },
+    "results/paper_a/physics_optimization/models/energy_surrogate_seed3.npz": {
+      "sha256": "c1d5d4c9653d39d3dfdf2716441ee0d47ef04ac16396c0cd105b503049ef947f",
+      "bytes": 5166
+    },
+    "results/paper_a/physics_optimization/models/energy_surrogate_seed47.npz": {
+      "sha256": "2124034e3cacd522292bdebf9e4feb4846be7e6b63ced7df03ce393947354865",
+      "bytes": 5166
+    },
+    "results/paper_a/physics_optimization/models/energy_surrogate_seed83.npz": {
+      "sha256": "911e90fc16d05d9f29cfc0b3cac871da94d3fc30a95e300e3ee614b4c5ba3c4a",
+      "bytes": 5166
+    },
+    "results/paper_a/physics_optimization/models/feature_scaler.joblib": {
+      "sha256": "02a2cd151cebebcf27a8c1c6603876778685a7005b00aa3971d717f8196ea056",
+      "bytes": 775
+    },
+    "results/paper_a/physics_optimization/models/stress_ensemble.joblib": {
+      "sha256": "690a0587989996fa178455bb651e26b666350631c63ede360385a1882e0f883a",
+      "bytes": 614289
+    },
+    "results/paper_a/physics_optimization/models/trust_neighbors.joblib": {
+      "sha256": "9b8c2da1d4276e07662dce1efccf7908ae4fafdc9752691682f3f1b975bfe23b",
+      "bytes": 9590
+    },
+    "results/paper_a/physics_optimization/optimization_convergence.csv": {
+      "sha256": "4a6d3879dcf1c03aae8838332b799075afe9906dd82a64107ca41b7f86d80f95",
+      "bytes": 75259
+    },
+    "results/paper_a/physics_optimization/optimization_convergence_summary.csv": {
+      "sha256": "64d2b2b120be9ff7fcb5c1ef5d899bd64b77da488ea6cc0d11a92da0693fc3a0",
+      "bytes": 1114
+    },
+    "results/paper_a/physics_optimization/periodicity_audit.json": {
+      "sha256": "00b05707625172ddf1293eaa2de842c5abe8dcaa9d7d8ec61103287218c7f00f",
+      "bytes": 218
+    },
+    "results/paper_a/physics_optimization/stress_test_predictions.csv": {
+      "sha256": "b69104842fe70de7224c4b1f514349d9d9a068aa78e45c909cb6c9bb22500bda",
+      "bytes": 1896
+    },
+    "results/paper_a/physics_optimization/surrogate_pareto_candidates.csv": {
+      "sha256": "133de0e083d05e51a1f6f602a4ef76ae70a7327b5f5d2f1dd0ff832dfd262d2c",
+      "bytes": 85396
+    },
+    "results/paper_a/physics_optimization/surrogate_terminal_members.csv": {
+      "sha256": "72a4f4fbd0eea7e84f7bd4afb7abea6bb900b204ca57eea8633ba84372927e0c",
+      "bytes": 260212
+    },
+    "results/paper_a/physics_optimization/surrogate_validation.json": {
+      "sha256": "7603cba092fc0c9eb7345825aa5e2c1e6acfefce39cece0ad78f2c32cb151ca0",
+      "bytes": 2073
+    },
+    "results/paper_a/run_metadata.json": {
+      "sha256": "561bc18aca51202b71399aca7c1c70a500896fbdfe2571b1009f0282cb40fa4e",
+      "bytes": 445
+    },
+    "revision_studies.py": {
+      "sha256": "e9af43ad49f131304a8e62519261945292fed65dab8db94594447aabe0d485ee",
+      "bytes": 4807
+    },
+    "run_coupled_size_shape.py": {
+      "sha256": "a2426b5a2d109f639607f77424fc34418875749fb1ec2611d9161dac2d011074",
+      "bytes": 4856
+    },
+    "run_paper_a.py": {
+      "sha256": "a1b46f6a0f2f72f131e84ad6cd989143efea13d54ad2f0b6f1f0a07e253ba5ff",
+      "bytes": 10505
+    },
+    "run_paper_a_fast_verification.py": {
+      "sha256": "221aabfa957c2bf5cfd5652938594834d7a19fa4d7118e684a4222ff16ba0eb0",
+      "bytes": 44495
+    },
+    "run_paper_a_physics_optimization.py": {
+      "sha256": "102ad04f8da3f0425a641cbae88f3619becb4e43a0816d959f523cbf59e1ff97",
+      "bytes": 82553
+    },
+    "src/cbenergy/__init__.py": {
+      "sha256": "5538ab0a56881b823b387c810c765e7e88aae9f0bbe727705457f14bf6265af1",
+      "bytes": 170
+    },
+    "src/cbenergy/energy_network.py": {
+      "sha256": "48885c698862229a509fed2ba15a04dd65b86f92dbfb7667827eb98717c135c5",
+      "bytes": 8747
+    },
+    "src/cbfem/__init__.py": {
+      "sha256": "9da798ebca6330375bc47105dc089ac1b174f17c1067a1705cbe65a8e8cc50f8",
+      "bytes": 351
+    },
+    "src/cbfem/geometry.py": {
+      "sha256": "c89d74c026eb453d9d660ad896c3f4fe272c794b1e55e4f0abf824ef996b1cc6",
+      "bytes": 1727
+    },
+    "src/cbfem/model.py": {
+      "sha256": "5ef80f339ac6b7ad2bfffc26198dfb343f8b40b3b993ae2fea7441a9144f4d22",
+      "bytes": 30895
+    },
+    "src/cbopt/__init__.py": {
+      "sha256": "501f786e63ede7f3033c172101e66004908c1972b012101cd4cb8f83b10ac534",
+      "bytes": 321
+    },
+    "src/cbopt/evaluator.py": {
+      "sha256": "f20b0977b815fbd1142150ef8c00c710857a92981f8c70d321d55f07e7802b37",
+      "bytes": 9603
+    },
+    "src/cbopt/mechanical_evaluator.py": {
+      "sha256": "9d1ec7c7c842c47baa37e91b94580a96e8863a2853c62b2c96481eb032f48bee",
+      "bytes": 24580
+    },
+    "src/cbopt/optimizers.py": {
+      "sha256": "ad56602eb8195d9f53f6de750419c4c3143aed8a427402d792de6735e3bf1474",
+      "bytes": 12182
+    },
+    "src/plot_style.py": {
+      "sha256": "5ea54eb224d09427c263816695c6386a6802f1c83efffb0356c6b502e41bb8ef",
+      "bytes": 1648
+    },
+    "vendor/autograd/__init__.py": {
+      "sha256": "39db0108eda227a8adcff5fd257dda2a8689a021ae5257d63554138a935c0580",
+      "bytes": 528
+    },
+    "vendor/autograd/builtins.py": {
+      "sha256": "a2de58d93736e7edb736cd271da5db0132ad3e410a7ff32aa5db8d44b806c824",
+      "bytes": 6475
+    },
+    "vendor/autograd/core.py": {
+      "sha256": "6a7171fe3fd949439957cdfc856f654970f3665c7fe5100b3920cdeec37c45ff",
+      "bytes": 11985
+    },
+    "vendor/autograd/differential_operators.py": {
+      "sha256": "be9a82a4ca00040efff2031bc0f28db102b55ddb7b40cc92e5c7ebf08e56644a",
+      "bytes": 8468
+    },
+    "vendor/autograd/extend.py": {
+      "sha256": "3af77fa53d5572e8bc8e7d6d694bae28ffb7b625f2dde34224703d3094dc34c9",
+      "bytes": 317
+    },
+    "vendor/autograd/misc/__init__.py": {
+      "sha256": "11a69acfbdd85c8ccdcdd29708595b44c05023ac5213bf31070395ac271402c0",
+      "bytes": 62
+    },
+    "vendor/autograd/misc/fixed_points.py": {
+      "sha256": "ceecc17dc083d93d4be6613171027063b50827a312c3335b0f5a8d64f9d3274c",
+      "bytes": 748
+    },
+    "vendor/autograd/misc/flatten.py": {
+      "sha256": "a1df38ff870831a68192f6041c7405c47dd5b5af889a66a9074598abcb342a63",
+      "bytes": 1125
+    },
+    "vendor/autograd/misc/optimizers.py": {
+      "sha256": "5e8b220631f8cd772e0816bf1d4294e16f615616718d6d64a7882d2588c9ba49",
+      "bytes": 2714
+    },
+    "vendor/autograd/misc/tracers.py": {
+      "sha256": "cea7f6403b4975fb24989b7e6510169765db62da4ce1ed6f706efabd2572ebca",
+      "bytes": 2220
+    },
+    "vendor/autograd/numpy/__init__.py": {
+      "sha256": "8b2b920053d5eb232ffa9e4ddf758d6c9c0ae5377e897fec12eb11476f184ef0",
+      "bytes": 1281
+    },
+    "vendor/autograd/numpy/fft.py": {
+      "sha256": "4d1915cb6ce879d83be9ea5602b0bd20525c2cca8262594d83625f30aee32933",
+      "bytes": 5101
+    },
+    "vendor/autograd/numpy/linalg.py": {
+      "sha256": "3da81406bd886bb3c9439415d98b85b68318930cf4c6d39d0d349c4d6c26e1ef",
+      "bytes": 11375
+    },
+    "vendor/autograd/numpy/numpy_boxes.py": {
+      "sha256": "5c30c753e0b1bacd8513e0d840f3ae841dca6ce7b54e2f8a7f5ae0a3da5aa414",
+      "bytes": 5471
+    },
+    "vendor/autograd/numpy/numpy_jvps.py": {
+      "sha256": "e69c6ee4483d32f46d93f3f771a0cd7f0cde47050c521dfca9e03f659f849d1f",
+      "bytes": 10255
+    },
+    "vendor/autograd/numpy/numpy_vjps.py": {
+      "sha256": "8a6d9fddf7e6dc53e7e90f943b1f45247c2db3f1e968d6ce0b2937641d249fda",
+      "bytes": 32489
+    },
+    "vendor/autograd/numpy/numpy_vspaces.py": {
+      "sha256": "d63ea6bcd8302715b468dbdee5bf9a94b265c578f8c899b31c38ae4df26c1c59",
+      "bytes": 3673
+    },
+    "vendor/autograd/numpy/numpy_wrapper.py": {
+      "sha256": "29173bd93125b35997f01754d8a1b140fae36526e2a680cbe261607fd22299e1",
+      "bytes": 6877
+    },
+    "vendor/autograd/numpy/random.py": {
+      "sha256": "68d6e1ad6b6aa1cd364708e8fde6d7e6904e6545bc46563a1cf028fa4ba41869",
+      "bytes": 111
+    },
+    "vendor/autograd/scipy/__init__.py": {
+      "sha256": "f01b10b6e1b06204b9e34d6dc248f665b3991a72e28a2d439406086324adfb63",
+      "bytes": 48
+    },
+    "vendor/autograd/scipy/integrate.py": {
+      "sha256": "9f98cf868535e564b011f9efb7dcef17ad8edaf8ccbfbfad850802632f64ff23",
+      "bytes": 2782
+    },
+    "vendor/autograd/scipy/linalg.py": {
+      "sha256": "94ea9f5acdbd377831002d7184a422c070c4414660cc36584c86a513f63377e3",
+      "bytes": 4295
+    },
+    "vendor/autograd/scipy/signal.py": {
+      "sha256": "83278ccb7ff838883a58cd2f5272e4e1fb5ae056bfbf8059953127d7b4765b4a",
+      "bytes": 7886
+    },
+    "vendor/autograd/scipy/special.py": {
+      "sha256": "7629031d23f7c0cfd77a4fd3c3e0f93a84cc08084003a68c19010cd153629129",
+      "bytes": 5083
+    },
+    "vendor/autograd/scipy/stats/__init__.py": {
+      "sha256": "e95add40d858c0a08ec2c4cbb8328ddba127756ff3367cab321d21bc4286dc32",
+      "bytes": 287
+    },
+    "vendor/autograd/scipy/stats/beta.py": {
+      "sha256": "9e0ab7fdac22a7ee8dd0a78a0845f181ebc133e7e289f96627c32f8e647ac59c",
+      "bytes": 1334
+    },
+    "vendor/autograd/scipy/stats/chi2.py": {
+      "sha256": "44b57c25f5ec3c3de13ad65c2b572119918d18429a6e111e9d3df2b9dd18cef3",
+      "bytes": 800
+    },
+    "vendor/autograd/scipy/stats/dirichlet.py": {
+      "sha256": "78c5eee18442bb861844b8ae7fcafa12ce7f694ae4ffd9a9283f43fec827fce1",
+      "bytes": 684
+    },
+    "vendor/autograd/scipy/stats/gamma.py": {
+      "sha256": "99f1ea821a96a7781be0c4cdecd93584c42389c4f82c1509ec6157b07246fc07",
+      "bytes": 970
+    },
+    "vendor/autograd/scipy/stats/multivariate_normal.py": {
+      "sha256": "6ffa8fd83451b319c3b597dc03a4f7b64e6cdde5d66b75397d3f4327f45425b0",
+      "bytes": 2505
+    },
+    "vendor/autograd/scipy/stats/norm.py": {
+      "sha256": "76bd6242415e8c5e307a0c1b2ffa8c92902aec45be26735eedffd6dee7ae6180",
+      "bytes": 2749
+    },
+    "vendor/autograd/scipy/stats/poisson.py": {
+      "sha256": "d361d175327222bd94e4f670f1b8534a06e2b44a6d6df01f674baefa6b01f2f6",
+      "bytes": 684
+    },
+    "vendor/autograd/scipy/stats/t.py": {
+      "sha256": "9f97e7cb5ec8bbb23c7a19bb63f2d56ecc00982cc16604e101e2fd7cd664175f",
+      "bytes": 2728
+    },
+    "vendor/autograd/test_util.py": {
+      "sha256": "d25987b3ad989011e61c3120fbdb0beafa127c92f860c5537c98e1a53d5cf4ba",
+      "bytes": 2796
+    },
+    "vendor/autograd/tracer.py": {
+      "sha256": "43f4fca2c1d308e97d285df9ff028b18c7879d69a9e067195f983772026724f2",
+      "bytes": 6443
+    },
+    "vendor/autograd/util.py": {
+      "sha256": "e0f5f4df9d6981c9f67e13df95274196ede36a286995b48bf6154a0bc7ef29f9",
+      "bytes": 1394
+    },
+    "vendor/autograd/wrap_util.py": {
+      "sha256": "e80e856f513d79af36369753310ca72a5de7c1ad7b83e73dfec63c1076b271eb",
+      "bytes": 1614
+    },
+    "../tests/test_evidence_integrity.py": {
+      "sha256": "9de65a141ddae1542eb6d09c5dbcd49634cf2e681d91abe9b3e42a8e11dfe2bb",
+      "bytes": 14084
+    },
+    "../tests/test_physics_optimization.py": {
+      "sha256": "f6df68b7ff4d3d6dbcba9b53da9dfd20fc28443ef4f8e9c43dd3256d2f20fed2",
+      "bytes": 7528
+    },
+    "../tests/test_smoke.py": {
+      "sha256": "e6b0ba9b91b5b01d8061e36444e29405220e234118fa50729effb27f9db70847",
+      "bytes": 708
+    }
+  },
+  "outputs": {
+    "figures/paper_a/constrained_selected_designs.pdf": {
+      "sha256": "1152138f436672d4240e73b63e8480c7fd3cf4e60910b4a35ee33f69890b6695",
+      "bytes": 50294
+    },
+    "figures/paper_a/dimensionless_performance_map.pdf": {
+      "sha256": "cce3083d1e1c805453a10db4024de1885be9fc89e716c2d8dd22f758ee752dab",
+      "bytes": 31890
+    },
+    "figures/paper_a/fem_energy_surrogate_validation.pdf": {
+      "sha256": "1f5f154f43c5cc95c09178db3a338e02e2e2ccd56a384d88bdd730ab47779d2c",
+      "bytes": 29792
+    },
+    "figures/paper_a/optimization_parameterizations.pdf": {
+      "sha256": "333bdf3a8434be5fc9519b04bd9111130624e68f6fca1933494446e36e6777e6",
+      "bytes": 82672
+    },
+    "figures/paper_a/optimized_fem_stress_gallery.pdf": {
+      "sha256": "e46a6d75eb5a2a91c124275604e433a463aea3616ee19864f8c7a837445fa866",
+      "bytes": 39995
+    },
+    "figures/paper_a/pareto_and_convergence.pdf": {
+      "sha256": "b35db8070b762c1f49a3841a09c93d7d425e80ab4f962169346213215e3c8eff",
+      "bytes": 46320
+    },
+    "figures/paper_a/pareto_atlas_5x3.pdf": {
+      "sha256": "6a6204a8d1d4c822542e23b9f2d24dae190b629ffd533ae3914ce89809b5a27d",
+      "bytes": 85328
+    },
+    "figures/paper_a/physics_optimizer_convergence.pdf": {
+      "sha256": "e39a6bd3b2a941ca686d70ca6efedff7a80ce834e45c921578a6f28b20f08c3f",
+      "bytes": 17545
+    },
+    "figures/paper_a/physics_pareto_fronts.pdf": {
+      "sha256": "6cb5ff7039d3e182434c82f4f9ccbf2a572842679f0666fdff2ff9e2d1a7bf04",
+      "bytes": 36362
+    },
+    "figures/paper_a/representative_mesh_convergence.pdf": {
+      "sha256": "2660591c2e164f0fe0770b30f461dbcc16f3c593e4ee50447008b219eb1edc86",
+      "bytes": 22473
+    },
+    "manuscripts/paper_a/generated_tables/decision_fidelity_fast.tex": {
+      "sha256": "53a0d65e1c903ab1817cb8e4102fad715221bc40c07326e88df9541c6d5bc380",
+      "bytes": 515
+    },
+    "manuscripts/paper_a/generated_tables/energy_training_diagnostics.tex": {
+      "sha256": "a87058b31e07b92b937563dcc306b3ede8a006badd14df783fb957fc2d278d25",
+      "bytes": 631
+    },
+    "manuscripts/paper_a/generated_tables/formulation_verification.tex": {
+      "sha256": "ed7a60f196baa5474030c29d3a353d15278be0d7cac56c5172354c7a4f78d727",
+      "bytes": 659
+    },
+    "manuscripts/paper_a/generated_tables/optimizer_convergence_summary.tex": {
+      "sha256": "6805a80ff8e3147083a5e7debed8552c324ba337c05356ccc3c0ed07ddd69dab",
+      "bytes": 473
+    },
+    "manuscripts/paper_a/generated_tables/periodicity_audit.tex": {
+      "sha256": "c604ceba604e4d3a2366273e6f3a2f6ccdf243b7864babc713844b44b3383018",
+      "bytes": 450
+    },
+    "manuscripts/paper_a/generated_tables/physics_front_summary_fast.tex": {
+      "sha256": "c2eb8649141731083e6bf564d0232b46af92dca12efeba7a10a561c6b440f594",
+      "bytes": 547
+    },
+    "manuscripts/paper_a/generated_tables/physics_validation.tex": {
+      "sha256": "f1bed7e6755d256aace1d28db8f2babcc99b86465427ef80c57ea93e5fac0779",
+      "bytes": 708
+    },
+    "manuscripts/paper_a/generated_tables/representative_mesh_convergence.tex": {
+      "sha256": "ea363b2b2a071d43fb24546259f1f633853b08af2da56a3f4561cef82694ed06",
+      "bytes": 818
+    },
+    "manuscripts/paper_a/generated_tables/runtime_summary_fast.tex": {
+      "sha256": "9a346072a95cdf2d51c5ecf9e493caf2e67f53f9eff430b78fd1816f36598e18",
+      "bytes": 727
+    },
+    "manuscripts/paper_a/generated_tables/selected_design_vectors.tex": {
+      "sha256": "a1542a30645d7366b6fb9b0f02061db8f252d419422ba3280702f91375d6bea5",
+      "bytes": 1379
+    },
+    "manuscripts/paper_a/generated_tables/selected_physics_designs_fast.tex": {
+      "sha256": "052c1ff2be0b5148db6da534af06378e571026ae0279281995ad89a4f7918f86",
+      "bytes": 922
+    },
+    "manuscripts/paper_a/generated_tables/selected_response_diagnostics_fast.tex": {
+      "sha256": "54f3a672f0294ca4b75e8072d79aa2accf5cff6ca55781df071f8550eeaaab20",
+      "bytes": 1164
+    },
+    "manuscripts/paper_a/generated_tables/solver_audit_fast.tex": {
+      "sha256": "87e27a127e36a4e4314516a1873c3e4d9099083ef1ec8bbec22490ef712318db",
+      "bytes": 606
+    },
+    "manuscripts/paper_a/generated_tables/stress_calibration.tex": {
+      "sha256": "4b68955d1536d5ccff037b3e0a3d04b1e40cd1aa71da488aff3bafe6bbbbbdae",
+      "bytes": 559
+    },
+    "manuscripts/paper_a/generated_tables/threshold_sensitivity_fast.tex": {
+      "sha256": "223c8ddbc3445325905833bf503cacbc99d79eaa061ac00919e5da26ee264ca6",
+      "bytes": 546
+    },
+    "manuscripts/paper_a/generated_tables/verification_pool_fast.tex": {
+      "sha256": "4f0aebf2be982ac8cc82d4629786915f8e54bac92809fc2f6a1bdfede444c827",
+      "bytes": 452
+    },
+    "results/paper_a/physics_optimization/fast_verification_summary.json": {
+      "sha256": "1f7e700c917a43aa8d7dbef5f0f06ad849cab57f67b08af12c7acd01d03697ab",
+      "bytes": 1284
+    },
+    "results/paper_a/physics_optimization/fem_rebuilt_pareto_fronts.csv": {
+      "sha256": "cce71a695748d3cc99eee1e3194e269796726b3aae5ecff9bd05b4b8a186961f",
+      "bytes": 918434
+    },
+    "results/paper_a/physics_optimization/fem_rebuilt_pareto_fronts_fast.csv": {
+      "sha256": "cce71a695748d3cc99eee1e3194e269796726b3aae5ecff9bd05b4b8a186961f",
+      "bytes": 918434
+    },
+    "results/paper_a/physics_optimization/fem_representative_geometries_mesh32.csv": {
+      "sha256": "ff7599353327190b4246af55de66526cf2f86d8c332f46e64760216c9dca0020",
+      "bytes": 36593
+    },
+    "results/paper_a/physics_optimization/fem_representative_geometries_mesh40.csv": {
+      "sha256": "d4d46dc7b9226e6e70cfdf5ba4e6a24dc1ff189630a3013ebf9393a4475b2e17",
+      "bytes": 16462
+    },
+    "results/paper_a/physics_optimization/fem_representative_states_mesh40.pkl.gz": {
+      "sha256": "56228f42fefe1783ba3d8d2da4cd900cac1985b26c913c8f1416dbca65cc231e",
+      "bytes": 23189
+    },
+    "results/paper_a/physics_optimization/fem_verified_terminal_fast.csv": {
+      "sha256": "da1f86196fe460c61e541a3643646dd25645e84d2e37f909fc195db561592f25",
+      "bytes": 3207736
+    },
+    "results/paper_a/physics_optimization/formulation_verification.json": {
+      "sha256": "79fe116e6ee7a14ea604624731c7b4d35ba35fbe8116c083ecc823251f9bc57a",
+      "bytes": 466
+    },
+    "results/paper_a/physics_optimization/representative_convergence_summary.csv": {
+      "sha256": "9df280eeed9b0a37a1fa63dab29c0e61465ecbccc3ca8e34f77bf22c75ef2284",
+      "bytes": 2035
+    },
+    "results/paper_a/physics_optimization/representative_mesh_validation.csv": {
+      "sha256": "562c0f92f2920bfc59532234ad9bf71b8737b9236a39005bd7840133b8beaf89",
+      "bytes": 90390
+    },
+    "results/paper_a/physics_optimization/selected_optimized_geometries.csv": {
+      "sha256": "9864e5f638a127d9d4b88d83e37f0b7c35842413ed4e2f3c82591de24e672d80",
+      "bytes": 40759
+    },
+    "results/paper_a/physics_optimization/selected_refined_geometries.csv": {
+      "sha256": "741b4a4cc2cf797fbe5a6b41b247c69c43dae790b35bfd7fdd26761a44dececf",
+      "bytes": 14606
+    },
+    "results/paper_a/physics_optimization/threshold_sensitivity_fast.csv": {
+      "sha256": "3699c2abe2ea3fd909aa66f02daf83219b06c702715064aba642463d9370f08f",
+      "bytes": 669
+    }
+  }
+}

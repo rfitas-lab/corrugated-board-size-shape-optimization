@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering\small
+\caption{Independent analytical and numerical checks of the element and contact implementation.}
+\label{tab:formulation_verification}
+\begin{tabular}{llrr}
+\toprule
+Check & Metric & Observed & Acceptance limit \\
+\midrule
+Constant-shear element energy & relative error & 0.000e+00 & 1.0e-09 \\
+Pure-bending element energy & relative error & 4.988e-11 & 1.0e-09 \\
+Element energy gradient & maximum relative error & 5.852e-10 & 2.0e-05 \\
+Two-state contact path & reaction imbalance & 3.469e-06 & 5.0e-04 \\
+Two-state contact path & normalized projected gradient & 1.291e-05 & 5.0e-04 \\
+\bottomrule
+\end{tabular}
+\end{table}

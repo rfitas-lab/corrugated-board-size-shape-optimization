@@ -1,11 +1,10 @@
-"""Fast numerical reproduction of the public NURBS corrugated-board model.
+"""Numerical evaluator for the rational NURBS corrugated-board model.
 
-The public implementation evaluates a quadratic rational B-spline, rotates the
+The implementation evaluates a quadratic rational B-spline, rotates the
 paper compliance along the local tangent, homogenizes the section, and returns
 inverse geometric inertia, section area, and an effective transverse modulus.
-This module retains those definitions while making units and constraints
-explicit.  It also reports both the legacy raw quantities and normalized
-quantities suitable for unambiguous manuscript labels.
+The module makes units and constraints explicit and reports both raw and
+normalized quantities suitable for unambiguous manuscript labels.
 """
 
 from __future__ import annotations
@@ -33,7 +32,7 @@ class BoardEvaluation:
 
     @property
     def objectives(self) -> np.ndarray:
-        """Legacy minimization pair used in the archived adapted optimizer."""
+        """Geometric minimization pair used in the optimization benchmark."""
 
         return np.array(
             [self.inverse_inertia_scaled, self.section_area_m2],
@@ -78,7 +77,14 @@ def nurbs_profile(
     wavelength_mm: float = 5.65,
     amplitude_mm: float = 2.65,
 ) -> tuple[np.ndarray, np.ndarray, tuple[int, int, int]]:
-    """Return the full two-period rational quadratic B-spline in millimetres."""
+    """Return the full two-period rational quadratic B-spline in millimetres.
+
+    The repeated control-point construction has exact crowns at ``u=1/4``
+    and ``u=3/4`` and an exact trough at ``u=1/2``.  Those knots bound one
+    genuinely periodic crown-to-crown cell: both position and tangent agree
+    at its ends.  The sampling grid is therefore rounded up to a multiple of
+    four intervals so the three defining knots are represented exactly.
+    """
 
     design = np.asarray(design, dtype=float)
     if design.shape != (7,):
@@ -88,20 +94,15 @@ def nurbs_profile(
     r2 = 0.0103 * np.exp(9.17 * design[6]) + 0.1
     weights = np.array([1.0, r1, r1, r2, r2, r1, r1, r2, r2, 1.0])
     knots = _clamped_uniform_knots(len(cp), 2)
-    u = np.linspace(0.0, 1.0, sample_size)
+    intervals = max(8, 4 * int(np.ceil((int(sample_size) - 1) / 4.0)))
+    u = np.linspace(0.0, 1.0, intervals + 1)
     numerator = BSpline(knots, cp * weights[:, None], 2)(u)
     denominator = BSpline(knots, weights, 2)(u)
     pts = numerator / denominator[:, None]
 
-    d = design[:5] / design[:5].sum()
-    t1 = int(((d[0] + d[1] + d[2] / 2.0) / 2.0) * sample_size)
-    tm = int(0.5 * sample_size)
-    t3 = int(((1.0 + d[0] + d[1] + d[2] / 2.0) / 2.0) * sample_size)
-    t1 = np.clip(t1, 1, sample_size - 4)
-    tm = np.clip(tm, t1 + 2, sample_size - 2)
-    t3 = np.clip(t3, tm + 2, sample_size - 1)
+    t1, tm, t3 = intervals // 4, intervals // 2, 3 * intervals // 4
     dx_reference = abs(pts[t3, 0] - pts[t1, 0])
-    height_reference = np.ptp(pts[t1:t3, 1])
+    height_reference = np.ptp(pts[t1 : t3 + 1, 1])
     if dx_reference <= 0 or height_reference <= 0:
         raise ValueError("Degenerate NURBS profile.")
     x = pts[:, 0] * wavelength_mm / dx_reference
@@ -191,8 +192,8 @@ def evaluate_design(
     )
     r1 = _zone_radius_mm(x_all, y_all, slice(t1, tm + 1))
     r2 = _zone_radius_mm(x_all, y_all, slice(tm, t3 + 1))
-    x_mm = x_all[t1:t3]
-    y_mm = y_all[t1:t3]
+    x_mm = x_all[t1 : t3 + 1]
+    y_mm = y_all[t1 : t3 + 1]
     order = np.argsort(x_mm)
     x_mm, y_mm = x_mm[order], y_mm[order]
     # Duplicate abscissae can occur at nearly vertical NURBS portions.

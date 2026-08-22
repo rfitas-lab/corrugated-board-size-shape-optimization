@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the Opt_CBv2 5x3 Pareto atlas and a small selected-design gallery."""
+"""Build the geometric Pareto atlas and selected-design galleries."""
 
 from __future__ import annotations
 
@@ -27,7 +27,6 @@ from plot_style import (  # noqa: E402
 )
 
 DATA_ROOT = ROOT / "data" / "paper_a" / "opt_cbv2_final_fronts"
-ARCHIVE_ROOT = ROOT.parent / "tmp" / "Opt_CBv2" / "MOETPSO" / "Cases"
 FIGURE_ROOT = ROOT / "figures" / "paper_a"
 TABLE_ROOT = ROOT / "manuscripts" / "paper_a" / "generated_tables"
 
@@ -69,8 +68,6 @@ def parse_vector(value: str) -> np.ndarray:
 def load_case(case_number: int) -> pd.DataFrame:
     path = DATA_ROOT / f"C{case_number:03d}_final.csv"
     if not path.exists():
-        path = ARCHIVE_ROOT / f"C{case_number:03d}" / "Iteration_199.csv"
-    if not path.exists():
         raise FileNotFoundError(f"No numerical front was found for C{case_number:03d}")
     data = pd.read_csv(path)
     data = data.rename(columns={"xline_all_values": "x", "yline_all_values": "y"})
@@ -80,7 +77,7 @@ def load_case(case_number: int) -> pd.DataFrame:
 
 
 def triplet_profile(vector: np.ndarray, samples: int = 1200) -> tuple[np.ndarray, np.ndarray]:
-    """Reconstruct the archived [y1,x2,w2,y2,...] rational curve."""
+    """Reconstruct the [y1,x2,w2,y2,...] rational curve."""
 
     if len(vector) < 4 or (len(vector) - 1) % 3:
         raise ValueError("Triplet parameterization requires 3n+1 variables")
@@ -133,7 +130,7 @@ def size_profile(vector: np.ndarray, samples: int = 1200) -> tuple[np.ndarray, n
 
 
 def draw_design(ax: plt.Axes, vector: np.ndarray, repetitions: int = 3) -> None:
-    """Draw an archived or newly coupled design in physical millimetres."""
+    """Draw a selected design in physical millimetres."""
 
     if len(vector) in (2, 4, 5):
         x_one, y_one, t_bottom, t_flute, t_top = size_profile(vector)
@@ -204,7 +201,7 @@ def write_design_table(stem: str, cases: list[int]) -> None:
         [
             r"\begin{table*}[p]",
             r"\centering\scriptsize",
-            rf"\caption{{Numerical selected-design record associated with Fig.~\ref{{fig:{stem}}}. S1 is the first-objective extreme, S2 the log-normalized knee and S3 the second-objective extreme. For high-dimensional control-point vectors, the first five and final two components are printed; the full vectors remain in the accompanying CSV archive.}}",
+            rf"\caption{{Numerical selected-design record associated with Fig.~\ref{{fig:{stem}}}. S1 is the first-objective extreme, S2 the log-normalized compromise and S3 the second-objective extreme. For high-dimensional control-point vectors, the printed endpoint components provide a compact shape summary.}}",
             rf"\label{{tab:{stem}}}",
             r"\setlength{\tabcolsep}{3.2pt}",
             r"\begin{tabularx}{\textwidth}{llrr>{\raggedright\arraybackslash}X}",
@@ -232,8 +229,8 @@ def scientific_ticks(ax: plt.Axes) -> None:
 
 
 def pareto_atlas() -> None:
-    apply_latex_style(6.8)
-    fig, axes = plt.subplots(5, 3, figsize=(7.15, 8.05), constrained_layout=False)
+    apply_latex_style(8.2)
+    fig, axes = plt.subplots(5, 3, figsize=(7.15, 8.55), constrained_layout=False)
     for row, (row_name, case_numbers, marker, linestyle) in enumerate(ROW_DEFINITIONS):
         for column, case_number in enumerate(case_numbers):
             ax = axes[row, column]
@@ -259,10 +256,10 @@ def pareto_atlas() -> None:
                 transform=ax.transAxes,
                 ha="right",
                 va="top",
-                fontsize=6.2,
+                fontsize=7.4,
             )
             if row == 0:
-                ax.set_title(COLUMN_TITLES[column], pad=4.0, fontsize=7.4)
+                ax.set_title(COLUMN_TITLES[column], pad=4.0, fontsize=8.4)
             if row == 4:
                 ax.set_xlabel(COLUMN_LABELS[column][0], labelpad=2.0)
             if column == 0:
@@ -274,7 +271,7 @@ def pareto_atlas() -> None:
                     rotation=90,
                     ha="center",
                     va="center",
-                    fontsize=7.1,
+                    fontsize=8.1,
                 )
     legend_items = [
         Line2D([0], [0], color=BLACK, linestyle=style, marker=marker,
@@ -439,7 +436,7 @@ def axis_labels_for_case(case_number: int) -> tuple[str, str]:
 
 
 def pareto_family_plates() -> None:
-    """Pareto plus S1/S2/S3 geometries for every archived case family."""
+    """Pareto plus S1/S2/S3 geometries for every case family."""
 
     apply_latex_style(7.2)
     selection_markers = ["o", "D", "^"]

@@ -9,10 +9,9 @@
   "wavelength_mm": 5.65,
   "amplitude_mm": 2.65,
   "paper_thickness_mm": 0.5,
-  "archive_parameter_source": "inferred exactly from saved objectives; repository source later changed",
-  "hypervolume_reference_normalized": [
+  "hypervolume_reference_scaled_objectives": [
     1.0,
     15.0
   ],
-  "archive_front_rows": 256
+  "benchmark_configuration": "fixed seven-variable geometric design with continuous radius violation"
 }

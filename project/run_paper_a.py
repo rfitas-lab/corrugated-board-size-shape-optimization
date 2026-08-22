@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Reproduce, audit, and benchmark the Paper A optimization campaign."""
+"""Run the paired geometric optimization benchmark for Paper A."""
 
 from __future__ import annotations
 
 import argparse
-import ast
 import json
 import sys
 from pathlib import Path
@@ -20,7 +19,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from cbopt.evaluator import evaluate_design, nurbs_profile  # noqa: E402
 from cbopt.optimizers import run_mo_etpso, run_nsga2  # noqa: E402
 from plot_style import (  # noqa: E402
-    BLACK, GRAY_DARK, GRAY_LIGHT, GRAY_PALE, HIGHLIGHT_RED, apply_latex_style,
+    BLACK, GRAY_DARK, GRAY_LIGHT, GRAY_PALE, apply_latex_style,
 )
 
 
@@ -46,57 +45,6 @@ def objective(design: np.ndarray, sample_size: int = 300):
         0.0, 0.9 - result.minimum_radius_2_mm
     )
     return values, result.feasible, violation
-
-
-def audit_archived(repo_root: Path, output_dir: Path) -> pd.DataFrame:
-    base = repo_root / "Scaled_parts" / "prob_CB_prod_fix_v5_WC" / "EPSO0"
-    records = []
-    for run_dir in sorted(base.glob("EPSO_*")):
-        final = run_dir / "Iteration_99.csv"
-        if not final.exists():
-            continue
-        frame = pd.read_csv(final)
-        for row_number, row in frame.iterrows():
-            serialized = str(row["X_all_values"]).replace("np.float64(", "").replace(")", "")
-            design = np.asarray(ast.literal_eval(serialized), dtype=float)
-            result = evaluate_design(
-                design,
-                sample_size=800,
-                wavelength_mm=WAVELENGTH_MM,
-                amplitude_mm=AMPLITUDE_MM,
-                thickness_mm=THICKNESS_MM,
-                radius_limit_mm=0.9,
-            )
-            records.append(
-                {
-                    "archive_run": run_dir.name,
-                    "row": row_number,
-                    **{f"x{i + 1}": design[i] for i in range(7)},
-                    "archived_inverse_inertia": row["obj1"],
-                    "recomputed_inverse_inertia": result.inverse_inertia_scaled,
-                    "archived_section_area_m2": row["obj2"],
-                    "recomputed_section_area_m2": result.section_area_m2,
-                    "archived_effective_Ez_Pa": row["obj3"],
-                    "recomputed_effective_Ez_Pa": result.effective_transverse_modulus_mpa * 1e6,
-                    "radius_1_mm": result.minimum_radius_1_mm,
-                    "radius_2_mm": result.minimum_radius_2_mm,
-                    "physically_feasible_Rmin_0p9": result.feasible,
-                }
-            )
-    audit = pd.DataFrame(records)
-    if len(audit):
-        audit["inverse_inertia_relative_error"] = (
-            audit["recomputed_inverse_inertia"] - audit["archived_inverse_inertia"]
-        ).abs() / audit["archived_inverse_inertia"].abs()
-        audit["section_area_relative_error"] = (
-            audit["recomputed_section_area_m2"] - audit["archived_section_area_m2"]
-        ).abs() / audit["archived_section_area_m2"].abs()
-        audit["Ez_relative_error"] = (
-            audit["recomputed_effective_Ez_Pa"] - audit["archived_effective_Ez_Pa"]
-        ).abs() / audit["archived_effective_Ez_Pa"].abs()
-    output_dir.mkdir(parents=True, exist_ok=True)
-    audit.to_csv(output_dir / "archived_final_front_audit.csv", index=False)
-    return audit
 
 
 def run_benchmark(seeds: int, population: int, generations: int, sample_size: int):
@@ -216,7 +164,7 @@ def make_figures(final: pd.DataFrame, history: pd.DataFrame, figure_dir: Path) -
         ax.fill_between(x, q1, q3, color=band, alpha=0.9, linewidth=0)
     ax.set_xscale("log")
     ax.set_xlabel("Function evaluations (log scale)")
-    ax.set_ylabel("Normalized 2D hypervolume")
+    ax.set_ylabel("Scaled-objective hypervolume")
     ax.grid(color=GRAY_LIGHT, linewidth=0.4)
     ax.legend(frameon=False, fontsize=8, loc="lower right")
     fig.tight_layout()
@@ -264,84 +212,6 @@ def make_figures(final: pd.DataFrame, history: pd.DataFrame, figure_dir: Path) -
     plt.close(fig)
 
 
-def make_audit_figure(audit: pd.DataFrame, figure_dir: Path) -> None:
-    """Show the engineering effect of the disabled archived radius constraint."""
-    apply_latex_style(8.0)
-    figure_dir.mkdir(parents=True, exist_ok=True)
-    area = audit.recomputed_section_area_m2.to_numpy() * 1e6 / WAVELENGTH_MM
-    inverse = audit.recomputed_inverse_inertia.to_numpy()
-    inertia = 1e3 / inverse
-    feasible = audit.physically_feasible_Rmin_0p9.to_numpy(bool)
-    radius = audit[["radius_1_mm", "radius_2_mm"]].min(axis=1).to_numpy()
-    fig, axes = plt.subplots(1, 2, figsize=(7.15, 2.7))
-    axes[0].scatter(area[~feasible], inertia[~feasible], s=12, marker="x", color=GRAY_DARK, alpha=0.65, label="violates 0.9 mm")
-    axes[0].scatter(area[feasible], inertia[feasible], s=16, marker="o", facecolor="none", edgecolor=BLACK, alpha=0.8, label="physically feasible")
-    axes[0].set_xlabel(r"Reconstructed $A/\lambda$ (mm)")
-    axes[0].set_ylabel(r"Reconstructed $I/\lambda$ (mm$^3$)")
-    axes[0].grid(color=GRAY_LIGHT, linewidth=0.4)
-    axes[0].legend(frameon=False, fontsize=7)
-    axes[1].hist(radius, bins=np.linspace(0, 1.4, 29), color=GRAY_DARK, alpha=0.85)
-    axes[1].axvline(0.9, color=HIGHLIGHT_RED, linestyle="--", linewidth=1.2, label="stated limit")
-    axes[1].set_xlabel("Minimum reconstructed radius (mm)")
-    axes[1].set_ylabel("Archived rows")
-    axes[1].grid(color=GRAY_LIGHT, linewidth=0.4, axis="y")
-    axes[1].legend(frameon=False, fontsize=7)
-    fig.tight_layout(w_pad=1.2)
-    for suffix in ("pdf", "png"):
-        fig.savefig(figure_dir / f"archived_constraint_audit.{suffix}", dpi=350, bbox_inches="tight")
-    plt.close(fig)
-
-
-def make_reproducibility_figure(
-    audit: pd.DataFrame, history: pd.DataFrame, figure_dir: Path
-) -> None:
-    """Summarize reconstruction accuracy and paired-seed benchmark outcomes."""
-    apply_latex_style(8.0)
-    figure_dir.mkdir(parents=True, exist_ok=True)
-    fig, axes = plt.subplots(1, 2, figsize=(7.15, 2.75))
-    error_columns = [
-        ("inverse_inertia_relative_error", "inverse inertia", BLACK),
-        ("section_area_relative_error", "section area", GRAY_DARK),
-        ("Ez_relative_error", r"effective $E_z$", GRAY_LIGHT),
-    ]
-    positions = np.arange(len(error_columns))
-    data = [np.maximum(audit[column].to_numpy(), 1e-8) for column, _, _ in error_columns]
-    violin = axes[0].violinplot(data, positions=positions, widths=0.75, showmedians=True, showextrema=False)
-    for body, (_, _, color) in zip(violin["bodies"], error_columns):
-        body.set_facecolor(color)
-        body.set_edgecolor("none")
-        body.set_alpha(0.75)
-    violin["cmedians"].set_color("black")
-    violin["cmedians"].set_linewidth(0.8)
-    axes[0].set_yscale("log")
-    axes[0].set_xticks(positions)
-    axes[0].set_xticklabels([label for _, label, _ in error_columns], rotation=15, ha="right")
-    axes[0].set_ylabel("Archived-row relative error")
-    axes[0].set_title("Recovered evaluator configuration")
-    axes[0].grid(color=GRAY_LIGHT, linewidth=0.4, axis="y")
-
-    final_hv = history.groupby(["algorithm", "seed"]).tail(1).pivot(index="seed", columns="algorithm", values="hypervolume")
-    for seed, row in final_hv.iterrows():
-        axes[1].plot(
-            [row["NSGA-II"], row["MO-ETPSO-R"]],
-            [seed, seed],
-            color=GRAY_LIGHT,
-            linewidth=0.8,
-            zorder=1,
-        )
-    axes[1].scatter(final_hv["NSGA-II"], final_hv.index, marker="s", facecolor="none", edgecolor=GRAY_DARK, s=22, label="NSGA-II", zorder=2)
-    axes[1].scatter(final_hv["MO-ETPSO-R"], final_hv.index, marker="o", facecolor="none", edgecolor=BLACK, s=22, label="MO-ETPSO-R", zorder=2)
-    axes[1].set_xlabel("Final normalized hypervolume")
-    axes[1].set_ylabel("Paired seed")
-    axes[1].set_yticks(final_hv.index)
-    axes[1].set_title("Paired-run outcomes")
-    axes[1].grid(color=GRAY_LIGHT, linewidth=0.4, axis="x")
-    axes[1].legend(frameon=False, fontsize=7)
-    fig.tight_layout(w_pad=1.2)
-    for suffix in ("pdf", "png"):
-        fig.savefig(figure_dir / f"reconstruction_and_paired_seeds.{suffix}", dpi=350, bbox_inches="tight")
-    plt.close(fig)
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--seeds", type=int, default=10)
@@ -352,15 +222,12 @@ def main() -> None:
     results_dir = ROOT / "results" / "paper_a"
     figures_dir = ROOT / "figures" / "paper_a"
     results_dir.mkdir(parents=True, exist_ok=True)
-    audit = audit_archived(ROOT.parent / "tmp" / "Opt_CB", results_dir)
     final, history, _ = run_benchmark(args.seeds, args.population, args.generations, args.sample_size)
     final.to_csv(results_dir / "benchmark_final_populations.csv", index=False)
     history.to_csv(results_dir / "benchmark_hypervolume_history.csv", index=False)
     summary = summarize(final, history)
     summary.to_csv(results_dir / "benchmark_summary.csv", index=False)
     make_figures(final, history, figures_dir)
-    make_audit_figure(audit, figures_dir)
-    make_reproducibility_figure(audit, history, figures_dir)
     metadata = {
         "seeds": args.seeds,
         "population": args.population,
@@ -372,9 +239,8 @@ def main() -> None:
         "wavelength_mm": WAVELENGTH_MM,
         "amplitude_mm": AMPLITUDE_MM,
         "paper_thickness_mm": THICKNESS_MM,
-        "archive_parameter_source": "inferred exactly from saved objectives; repository source later changed",
-        "hypervolume_reference_normalized": REFERENCE.tolist(),
-        "archive_front_rows": int(len(audit)),
+        "hypervolume_reference_scaled_objectives": REFERENCE.tolist(),
+        "benchmark_configuration": "fixed seven-variable geometric design with continuous radius violation",
     }
     (results_dir / "run_metadata.json").write_text(json.dumps(metadata, indent=2) + "\n")
     print(summary.to_string(index=False))

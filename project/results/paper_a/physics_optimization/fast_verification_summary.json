@@ -1,0 +1,36 @@
+{
+  "strategy": "complete mesh-24 front plus representative refinement",
+  "coarse_classifications": 732,
+  "coarse_unique_geometries": 572,
+  "coarse_front_members": {
+    "C037": 58,
+    "C038": 31,
+    "C039": 121
+  },
+  "mesh32_representatives": 9,
+  "mesh40_refinements": 3,
+  "formulation_verification_paths": 1,
+  "avoided_new_all_candidate_solves": 1072,
+  "rejected_mesh48_cpu_process_seconds": 316.04203205399244,
+  "thresholds": {
+    "trust_limit": 2.9180592889513584,
+    "minimum_potential": 0.00045547088228936,
+    "minimum_potential_training_quantile": 0.4,
+    "maximum_material_fraction": 0.2175367958352141,
+    "maximum_material_training_quantile": 0.65
+  },
+  "maximum_relative_change_24_to_32": {
+    "target_reaction_N": 0.00955233213740593,
+    "stored_potential_number": 0.005906468799165433,
+    "stress_pnorm_utilization": 0.002134163531595632,
+    "stress_q99_utilization": 0.022473859072882022,
+    "stress_max_utilization": 0.022523800199498054
+  },
+  "maximum_relative_change_32_to_40": {
+    "target_reaction_N": 0.009185396704456882,
+    "stored_potential_number": 0.0022036616354291537,
+    "stress_pnorm_utilization": 0.0009824738139430484,
+    "stress_q99_utilization": 0.01203659907310144,
+    "stress_max_utilization": 0.012049130845895754
+  }
+}

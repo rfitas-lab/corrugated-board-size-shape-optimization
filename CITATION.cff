@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software or its data products, please cite the accompanying manuscript."
-title: "Corrugated-Board Size and Shape Optimization"
+title: "Dimensionless Multi-Objective Size--Shape Optimization of Corrugated-Board Profiles with Nonlinear FEM and an Energy-Consistent Neural Potential"
 type: software
 authors:
   - family-names: Fitas

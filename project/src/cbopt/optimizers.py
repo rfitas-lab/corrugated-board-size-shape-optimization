@@ -204,12 +204,39 @@ def run_mo_etpso(
     c2: float = 2.05,
     seed: int = 0,
     reference: Array | None = None,
+    initial_positions: Array | None = None,
+    initial_velocity_scale: float = 1.0,
 ) -> OptimizationResult:
-    """Corrected archive-based elitist PSO with Pareto/crowding selection."""
+    """Elitist multi-objective PSO with Pareto/crowding selection.
+
+    ``initial_positions`` permits a verified feasible population to seed a
+    difficult nonlinear design space.  Missing rows are sampled uniformly so
+    the historical unseeded behaviour remains the default.
+    """
 
     rng = np.random.default_rng(seed)
-    positions = rng.uniform(lower, upper, (population_size, len(lower)))
-    velocities = rng.uniform(-1.0, 1.0, positions.shape) * (upper - lower)
+    if initial_positions is None:
+        positions = rng.uniform(lower, upper, (population_size, len(lower)))
+    else:
+        supplied = np.atleast_2d(np.asarray(initial_positions, dtype=float))
+        if supplied.shape[1] != len(lower):
+            raise ValueError("initial_positions has the wrong number of columns")
+        supplied = np.clip(supplied, lower, upper)
+        if len(supplied) >= population_size:
+            chosen = rng.choice(len(supplied), population_size, replace=False)
+            positions = supplied[chosen].copy()
+        else:
+            positions = np.vstack(
+                (
+                    supplied,
+                    rng.uniform(lower, upper, (population_size - len(supplied), len(lower))),
+                )
+            )
+    velocities = (
+        rng.uniform(-1.0, 1.0, positions.shape)
+        * (upper - lower)
+        * float(initial_velocity_scale)
+    )
     objectives, feasible, violation = _evaluate(positions, evaluator)
     pbest, pbest_obj, pbest_feasible, pbest_violation = positions.copy(), objectives.copy(), feasible.copy(), violation.copy()
     if reference is None:
@@ -217,12 +244,12 @@ def run_mo_etpso(
     history = [_hypervolume_2d(objectives, feasible, reference)]
     chi = 2.0 / abs(2.0 - (c1 + c2) - np.sqrt((c1 + c2) ** 2 - 4.0 * (c1 + c2)))
     for _ in range(generations - 1):
-        archive_idx = _select_nsga(objectives, feasible, min(population_size, len(positions)), violation)
-        archive = positions[archive_idx]
-        archive_obj = objectives[archive_idx]
-        first = _fast_fronts(archive_obj, feasible[archive_idx], violation[archive_idx])[0]
-        leaders = archive[first]
-        crowd = _crowding(archive_obj, first)
+        elite_idx = _select_nsga(objectives, feasible, min(population_size, len(positions)), violation)
+        elite = positions[elite_idx]
+        elite_obj = objectives[elite_idx]
+        first = _fast_fronts(elite_obj, feasible[elite_idx], violation[elite_idx])[0]
+        leaders = elite[first]
+        crowd = _crowding(elite_obj, first)
         finite = np.where(np.isfinite(crowd), crowd, np.nanmax(crowd[np.isfinite(crowd)]) + 1 if np.isfinite(crowd).any() else 1.0)
         weights = finite + 1e-12
         weights = weights / weights.sum()

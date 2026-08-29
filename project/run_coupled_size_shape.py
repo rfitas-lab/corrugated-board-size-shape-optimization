@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Run the new coupled size--shape cases C034--C036 for Paper A.
+"""Run the coupled size--shape cases C034--C036 for Paper A.
 
-The archived Opt_CBv2 campaigns stop at separate size and shape studies.  This
-script deliberately uses new case identifiers and records every seed so that
-the new evidence cannot be confused with the public archive.
+The cases extend the separate size and shape studies, use distinct identifiers,
+and record every seed and terminal population.
 """
 
 from __future__ import annotations

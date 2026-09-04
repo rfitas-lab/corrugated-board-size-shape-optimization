@@ -1,0 +1,202 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[letterpaper,margin=18mm,columnsep=7mm]{geometry}
+\emergencystretch=2em
+\usepackage{lmodern,microtype,amsmath,amssymb,graphicx,booktabs,tabularx,array,xcolor,url}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{stfloats}
+\graphicspath{{figures/}}
+\newcommand{\ua}{u_A}
+\newcommand{\am}{a_m}
+\newcommand{\om}{\Omega_8}
+\hypersetup{pdftitle={Resource-consistent shape optimization of formed corrugated media: analytic curvature and finite-scenario qualification},pdfauthor={Ricardo Fitas; Sergio Manuel Oliveira Tavares; Oliver Weeger}}
+\title{Resource-consistent shape optimization of formed corrugated media: analytic curvature and finite-scenario qualification}
+\author{Ricardo Fitas$^{1,2}$, S\'ergio Manuel Oliveira Tavares$^1$, Oliver Weeger$^2$\\[3pt]
+\small $^1$Centre for Mechanical Technology and Automation (TEMA), Department of Mechanical Engineering,\\
+\small University of Aveiro, Campus Universit\'ario de Santiago, 3810--193 Aveiro, Portugal\\
+\small $^2$Cyber-Physical Simulation, Department of Mechanical Engineering, Technical University of Darmstadt,\\
+\small Dolivostrasse 15, 64293 Darmstadt, Germany\\
+\small Correspondence: \texttt{rfitas99@gmail.com}}
+\date{Version 2 research manuscript, 4 September 2026}
+\begin{document}
+\raggedbottom
+\maketitle
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+\noindent\textbf{Keywords:} corrugated medium; equal material resources; rational B-splines; curvature; nonlinear compression; numerical robustness.
+
+\section{Introduction}
+A useful shape optimum must compare the same physical resources and survive the numerical checks that define its admissibility. These requirements are particularly consequential for corrugated paper, where pitch, height, thickness, contact and local curvature influence different response measures. Detailed corrugated-board models and experiments already establish the importance of geometry and boundary conditions \citep{Talbi2009,Park2021Flat,DiRusso2023}. Rational B-splines and evolutionary multiobjective search provide established foundations for exploring this design space \citep{Piegl1997,Deb2002}. Their engineering value depends on the physical comparability and geometric admissibility of the resulting candidates.
+
+This study asks a more specific question: which shape advantages remain after fixing the initial envelope and actual medium volume per projected area, evaluating curvature at its analytic extrema, and perturbing the manufactured geometry and material parameters? The answer is developed through an audit of an existing 572-geometry finite-element ledger and a new, directly evaluated shape comparison. The two components have different evidential roles. The audit diagnoses consequences of definitions and numerical constraints in the archived study. The new experiment compares sinusoidal, two-parameter Fourier and six-parameter NURBS shapes under the same nominal physical resources and finite-element protocol.
+
+Building on sensitivity-aware multiobjective optimization \citep{DebGupta2006}, the study establishes three concrete contributions: a resource correction that changes the archived material--stress selection, an analytic curvature audit that identifies previously admitted radius violations, and an equal-budget direct-FEM comparison followed by finite-scenario qualification. Together they identify which apparent shape advantages survive physically comparable accounting and tighter geometric evaluation. Complete call ledgers connect these conclusions to the executed calculations.
+
+\section{What is being optimized?}
+\subsection{Medium resource and stored potential}
+Let $P$ be initial pitch, $H$ initial centreline height, $b$ specimen width, $t$ medium thickness and $L_s$ the centreline arc length of one period. The actual medium volume divided by its initial projected area is
+\begin{equation}
+ \am=\frac{btL_s}{bP}=\frac{tL_s}{P},\qquad
+ \frac{m_m}{A_0}=\rho_m\am,\quad A_0=bP. \label{eq:resource}
+\end{equation}
+The second equality assumes a common medium density $\rho_m$; density is not measured or assigned in this numerical study. We consequently report $\am$ in mm, without converting it into an asserted grammage.
+
+If two liners of the same thickness and density as the medium are included in bookkeeping, the corresponding volume per initial footprint is
+\begin{equation}
+ a_b=t(L_s/P+2)=H\phi_b,\qquad
+ \phi_b=\frac{t(L_s+2P)}{PH}. \label{eq:board}
+\end{equation}
+Thus $\phi_b$ is an envelope volume fraction. It is not proportional to areal mass when $H$ varies. For independently specified liners, $m_b/A_0=\rho_m tL_s/P+\rho_b t_b+\rho_t t_t$. In the new experiment, only the medium is mechanically represented, and Eq.~\eqref{eq:resource} is the resource constraint. Fixed liner contributions could subsequently be added to its mass accounting; they are not part of the computed deformation energy.
+
+The objective pair uses terminal stored potential per initial footprint and a stress norm:
+\begin{equation}
+ \max\ \ua=\frac{U(0.2H)}{bP},\qquad
+ \min\ \om=\frac{1}{\sigma_y}
+ \left(\frac{\sum_e L_e\sigma_e^8}{\sum_e L_e}\right)^{1/8}. \label{eq:objectives}
+\end{equation}
+Here $\sigma_e$ is the largest absolute longitudinal extreme-fibre stress in element $e$. The ordinate $\ua$ is displayed in J\,m$^{-2}$: 1 N\,mm$^{-1}=1000$ J\,m$^{-2}$. It measures recoverable potential in the specified smooth deformation law. It does not measure irreversible crushing energy, nor is it interchangeable with experimental loading work.
+
+\subsection{Audit of the archived interpretation}
+All latest supplied manuscript files are treated as the v1 baseline and retained unchanged. The repository's mesh-24 ledger contains 572 successful geometries and 732 case classifications; its 58, 31 and 121 archived front memberships are reproduced for C037--C039. These counts describe fronts within visited candidate sets.
+
+Table~\ref{tab:resource_audit} recomputes the two comparisons most affected by Eq.~\eqref{eq:board}. S4 has 27.43\% lower $\phi_b$ than S6 but 12.71\% greater medium volume per footprint. Its larger initial height also changes absolute platen travel at the common engineering strain. The supposed small material change from S7 to S9 corresponds to a 59.69\% reduction in medium volume per footprint and a 95.47\% reduction in stored potential per footprint. Neither comparison isolates a shape advantage at equal resources.
+
+\begin{table}[t]
+\centering\small
+\caption{Archived response ratios, expressed as $100(A/B-1)$. The same-thickness liner column is hypothetical bookkeeping.}\label{tab:resource_audit}
+\begin{tabular}{lrr}
+\toprule Quantity & S4/S6 [\%] & S9/S7 [\%]\\\midrule
+Envelope fraction $\phi_b$ & $-27.43$ & $+1.48$\\
+Initial height $H$ & $+42.02$ & $-45.00$\\
+Medium resource $\am$ & $+12.71$ & $-59.69$\\
+Same-$t$ board resource $a_b$ & $+3.07$ & $-44.19$\\
+Stored potential/area $\ua$ & $+40.45$ & $-95.47$\\
+Normalized potential $\Psi_U$ & $+24.61$ & $-88.75$\\
+Stress utilization $\om$ & $+10.52$ & $-52.75$\\\bottomrule
+\end{tabular}
+\end{table}
+
+A particularly clear diagnostic is obtained without changing the 129 historically eligible C038 rows or their original normalized-potential floor. Replacing only $\phi_b$ by $\am$ in the material--stress objective pair reduces the 31-member front to S6 alone: S6 dominates every other eligible row in these two coordinates. This is a conditional reclassification, not a fixed-height optimum, because the historical eligibility conditions still mix heights. It motivates the resource-matched experiment below.
+
+\begin{figure*}[t]
+\centering\includegraphics[width=.98\textwidth]{archive_resource_audit.pdf}
+\caption{Why the material definition changes selection. Left: the historically eligible C038 candidates in the original fraction--stress coordinates. Right: the identical candidates with actual medium volume per initial footprint. The original 31-member front collapses to S6 under the corrected material coordinate. Historical eligibility is held fixed in this diagnostic.}\label{fig:archive}
+\end{figure*}
+
+\section{Analytic geometric admissibility}
+\subsection{A knot-sided radius calculation}
+The archived implementation estimates curvature from smoothed finite differences of a sampled NURBS curve. The v1 main text described analytic derivatives, while its appendix and code used smoothing. The present implementation makes that distinction explicit and leaves the archived evaluator unchanged.
+
+A degree-two rational span can be written $\mathbf c=\mathbf N/w$, with quadratic homogeneous coordinate polynomials. Using a local span coordinate, define
+\begin{align}
+ \mathbf A&=\mathbf N'w-\mathbf Nw',&D&=\mathbf A\cdot\mathbf A,\nonumber\\
+ K&=w^2\det(\mathbf A,\mathbf A').
+\end{align}
+Its signed curvature is $K/D^{3/2}$. Candidate interior extrema satisfy
+\begin{equation}
+ 2K'D-3KD'=0. \label{eq:curvature_extrema}
+\end{equation}
+The implementation evaluates every real polynomial root in each span, both span endpoints, and both sides of each internal knot. Degree-two curves are $C^1$ at simple knots; their second derivatives need not agree there. The periodic seam is included. The maximum absolute curvature over these candidates gives $R_{\min}^{-1}$. This is a floating-point stationary-point calculation, not an interval-arithmetic certificate.
+
+For Fourier shapes and smooth perturbations of NURBS, analytic first and second derivatives are also used, but local maxima of curvature are bracketed on 257 points per smooth span and refined by bounded scalar minimization. The supplementary verification distinguishes this numerical extremum search from the polynomial calculation.
+
+\subsection{Consequences for archived feasibility}
+Of the 572 archived geometries passing the smoothed $R_{\min}\geq0.9$ mm screen, 16 fail the analytic screen. The largest smoothed-radius overestimate is 7.90\%, although the median is only 0.0803\%. S1 and S3, both archived objective extremes, move below 0.9 mm. A small typical error is therefore insufficient assurance near an active inequality.
+
+The analytic coordinates agree with the archived dense NURBS construction to $8.9\times10^{-15}$ mm in 40 targeted checks, comprising all 16 changed classifications and 24 sampled archived rows. Analytic tangents agree with centred finite differences to relative error $1.2\times10^{-10}$ away from knots. A much denser radius evaluation, at 8193 points per span, exceeds the stationary-point minimum-radius estimate by at most relative $2.7\times10^{-8}$ in these checks. The common spacing rescaling and periodic tangent identities also pass. These are numerical verification results, not material or manufacturing validation.
+
+\begin{figure*}[t]
+\centering\includegraphics[width=.98\textwidth]{curvature_audit.pdf}
+\caption{Radius-screen audit of 572 archived designs. The 0.9 mm criterion is applied without display rounding. The analytic method evaluates knot sides and stationary points; the historical method uses smoothed finite differences. The selected-design panel shows why near-threshold representatives require explicit rechecking.}\label{fig:radius}
+\end{figure*}
+
+The inherited 0.9 mm forming-radius threshold is retained as an illustrative design constraint. Passing it does not establish process capability. In particular, the medium is assumed stress-free after forming; residual forming stress, springback and damage are outside the mechanics below.
+
+\section{New fixed-resource experiment}
+\subsection{Shape families and resources}
+Every nominal design has $P=7.9$ mm, $H=3.0$ mm and $\am=0.27$ mm. Thickness is solved from $t=\am P/L_s$ and must lie in $[0.15,0.25]$ mm. Thus shape-dependent arc length changes required thickness, rather than silently changing material quantity. Equal resources refer to the initial configuration; the compression boundary model allows the horizontal pitch to evolve.
+
+The sinusoidal reference is $y=H[1+\cos(2\pi x/P)]/2$, whose radius is $P^2/(2\pi^2 H)=1.053909$ mm. The two-parameter smooth comparator is
+\begin{align}
+ y=\frac H2[1+\cos\theta
+ &+a(\cos2\theta-1)\nonumber\\
+ &+b(\cos3\theta-\cos\theta)],\quad\theta=2\pi x/P, \label{eq:fourier}
+\end{align}
+with $a\in[-0.12,0.12]$ and $b\in[-0.08,0.08]$. The crown and trough heights remain exactly $H$ and zero; monotonicity on each half-period is checked.
+
+The NURBS family retains the v1 ten-control-point periodic quadratic construction. Its five positive spacings are normalized by their sum, and two rational-weight parameters lie in $[0,1]$. The new search removes the redundant common spacing scale: $x_j=\exp[4(z_j-1/2)]$ for $j=1,\ldots,4$, $x_5=1$, and the remaining two coordinates are weight parameters, with $\mathbf z\in[0,1]^6$. This declares a six-dimensional subset of the historical ratio domain, rather than claiming to repeat its entire ten-variable search. The complete construction is given in the supplement and executable source.
+
+\subsection{Mechanics and boundary conditions}
+A preformed medium of width $b=25$ mm is discretized by corotational assumed-strain Timoshenko beam elements \citep{Crisfield1991}. Constant axial strain and curvature are integrated through thickness using five Gauss points, and the mean shear strain is integrated once per element. The longitudinal deformation-potential density is
+\begin{equation}
+ W(e)=\frac{hE e^2}{2}+(1-h)\frac{\sigma_y^2}{E}
+ \left[\sqrt{1+(Ee/\sigma_y)^2}-1\right], \label{eq:energy}
+\end{equation}
+with $E=2899$ MPa, $G=E/55$, $\sigma_y=60$ MPa and $h=0.02$. The stress is $W'(e)$. This smooth, single-valued law has no committed plastic strain and no dissipative unloading loop. The terminal $U$ in Eq.~\eqref{eq:objectives} is exactly the potential differentiated by the solver.
+
+The exact trough is persistently attached vertically to the lower rigid surface. Both periodic crowns are persistently attached vertically to the upper rigid surface; their vertical displacement and rotations are tied. One crown's horizontal displacement fixes rigid translation, while the opposite crown's horizontal displacement is free. The remaining nodes obey unilateral vertical bounds \citep{Wriggers2006}; tangential slip is free. Surface offsets are $t/2$. These are attached rigid-liner boundary idealizations, not fully detachable contact or a flexible two-liner board. Self-contact, friction, debonding and material history are absent.
+
+Crown and trough positions are retained as nodes at every mesh, and the remaining elements are allocated by the two arc lengths. Compression is prescribed at $\delta/H=0,0.05,0.10,0.15,0.20$. The inherited continuation uses L-BFGS-B with the original constrained fallback and step subdivision checks. A state requires optimizer success and normalized projected gradient at most $5\times10^{-4}$, using force scale $\sigma_ybt$. Every path must have all accepted nominal states. A converged minimization path is not a proof of global equilibrium selection, complete branch discovery or positive reduced-Hessian inertia.
+
+\subsection{Budgets and comparison rules}
+The NURBS experiment compares direct NSGA-II with scrambled Sobol sampling \citep{Deb2002,JoeKuo2008} for seeds 4101--4103. Each method receives exactly 64 expensive, 16-element compression paths per seed. Their first 16 feasible Sobol designs are identical for each paired seed. NSGA-II then uses rank/crowding tournaments, simulated binary crossover with distribution index 15, polynomial mutation with index 20 and probability $1/6$, and elitist rank/crowding selection, over four 16-member batches in total. Geometrically rejected proposals are screened before FEM and counted separately. Failed FEM paths consume their allotted call and are retained as unsuccessful outcomes.
+
+A separate 64-call Sobol run covers the Fourier family, and one call evaluates the sine. The complete nominal budget is therefore 449 direct paths. There is no hidden surrogate-training charge in this experiment. The comparator addresses one family and one small expensive-evaluation budget, with the two complete direct-search procedures assessed under identical mechanics.
+
+Hypervolume uses $(u_{A,\mathrm{sine},16}/\ua,\om)$ and fixed reference $(2,1)$, where the sine scale was obtained in the timing pilot. Results are pooled over all evaluated feasible candidates, including designs discarded from a final population. Histories use expensive path calls as the horizontal coordinate. Individual paired outcomes and elapsed times are reported, with no significance or equivalence claim from three pairs. The protocol was written before the comparative solves, after a disclosed timing/geometry pilot; it was not externally preregistered.
+
+\subsection{Finite-scenario qualification}
+The shortlist is selected by a fixed rule: the sinusoid; each family's energy extreme, stress extreme and normalized knee; the largest-radius NURBS candidate; and four evenly spaced members of the pooled nominal front. Identical family/parameter vectors are deduplicated. The same shortlist is first evaluated in 11 scenarios (nominal plus signed single-axis perturbations) and then enriched by 16 joint Sobol perturbations generated with seed 4151.
+
+The sensitivity ranges are $\pm3\%$ in height, $\pm5\%$ in thickness, $\pm10\%$ in $E$ and $G$ together, $\pm10\%$ in $\sigma_y$, and a smooth forming perturbation $\eta\in[-0.02,0.02]$:
+\begin{equation}
+ y_\eta(u)=y(u)+\eta H\sin^2(2\pi q),\qquad
+ q=\frac{u-u_0}{u_1-u_0}. \label{eq:perturbation}
+\end{equation}
+This perturbation preserves the reference crown and trough coordinates and periodic tangent closure; half-period monotonicity is rechecked. Thickness is not renormalized after perturbation: manufacturing variation is allowed to change the actual material resource, which is recorded for every scenario. Each perturbed specimen reaches the same engineering strain, 0.20. These illustrative ranges are not inferred probability distributions or calibrated process tolerances.
+
+Each shortlisted design is re-solved directly at 24 elements in every scenario. Define
+\begin{equation}
+\begin{aligned}
+ \underline{u}_{A,\mathcal S}&=\min_{s\in\mathcal S}\ua(s),\\
+ \overline{\Omega}_{8,\mathcal S}&=\max_{s\in\mathcal S}\om(s),\\
+ \underline R_{\mathcal S}&=\min_{s\in\mathcal S}R_{\min}(s).
+\end{aligned}\label{eq:robust}
+\end{equation}
+Finite-set qualification requires every path to be accepted, every geometry screen to pass and $\underline R_{\mathcal S}\geq0.9$ mm. These extrema define the comparison within the shortlist and sampled scenarios. Enrichment can worsen an extremum or remove feasibility, providing an explicit test of whether a design decision remains stable when the sensitivity set grows.
+
+\section{Results of the new computations}
+\input{new_results}
+
+\section{Interpretation across the four studies}
+This design study occupies a different evidential role from its three companion manuscripts. Paper B \citep{CompanionB} supplies specimen-level compression-work and sequential load-loss evidence. Its common observation windows motivate explicitly declaring the compression endpoint here, but experimental loading work is not the deformation potential in Eq.~\eqref{eq:energy}; paper category is also not an identified probability law for our perturbations. Shared original specimens are reused experimental evidence, not independent validations of several models.
+
+Paper C \citep{CompanionC} examines state representation, exact reduced mechanics and the full cost of qualified computational responses. Its results motivate charging training, verification and state recovery whenever a surrogate is used for design. The present new comparison instead charges direct FEM paths. Any later acceleration should reproduce the present resource definitions and solver-acceptance outcomes under these boundary conditions before its speedup is transferred.
+
+Paper C2 \citep{CompanionCtwo} demonstrates why close reactions can coexist with different configurations and compares finite searches for certified elastica states. Its ten-wave fixed-span elastica, support ties and constitutive history differ from the single-period model here. It is a warning against using force agreement as a state certificate, not evidence that our scenario extrema contain all branches. Our qualification varies geometry and material along the selected continuation protocol; it does not establish robustness to alternative equilibria.
+
+The four papers thus connect through observability, resources and explicitly bounded numerical evidence. Measurements define what occurred, mechanics define what a state predicts, qualification defines when a reduced calculation is credible, and optimization selects among physically comparable candidates. The interfaces require matching specimens, boundary conditions and state variables rather than transferring a validation statistic.
+
+\section{Limitations and next physical test}
+The new experiment fixes one initial pitch, height and medium resource; it covers two bounded smooth shape families and one loading horizon. The NURBS log-ratio bounds are explicit and do not exhaust all periodic profiles. The candidate-level FEM comparison and finite-scenario front remain conditional on these choices. The original linear homogenized modulus and geometric-inertia studies are retained in the v1 archive, but they are not substituted for nonlinear response in the new comparison.
+
+Mesh and load-step checks qualify selected responses, not every continuous optimum. The radius calculation is verified numerically; the 0.9 mm constraint and sensitivity ranges have no measured process-capability interpretation. The inherited smooth potential excludes damage, friction, flexible liners, adhesive constitutive behavior, residual forming stress and path-dependent plasticity. Different stable configurations may also be reached under different histories or disturbances. Consequently, numerical advantages do not yet establish superiority of a commercial board construction.
+
+A discriminating next experiment would fabricate the sinusoidal reference, a nominally attractive candidate and a scenario-qualified candidate at measured common medium mass and initial envelope. Formed geometry, actual thickness, synchronized side images, transmitted force and loading/unloading work should be recorded on a common displacement protocol. Such measurements would test resource matching, forming feasibility and configuration selection separately. They cannot be replaced by the number of optimizer runs or the size of an archived front.
+
+\section{Conclusions}
+\input{conclusions}
+
+\section*{Data and code availability}
+The v1 manuscript, figures and bibliography supplied for this revision are preserved with file hashes. The public code baseline is commit \texttt{9144fee3} of \url{https://github.com/rfitas-lab/corrugated-board-size-shape-optimization}. The accompanying v2 package contains the analytic geometry evaluator, inherited-mechanics adapter, frozen protocol, every expensive call and geometric-screen count, solver failures, saved states, scenario and refinement ledgers, figure generators and manuscript sources. All v2 results are separate from the archived campaign. The supplement provides commands and provenance; availability of an eventual public v2 revision is distinct from the baseline repository link.
+
+\section*{Author declarations}
+\textbf{Funding:} This work was supported by a University of Aveiro research grant (BI/PRR/13036/2026) within Agenda ATE---Alliance for the Energy Transition, project C644914747-00000023, funded by the Portuguese Recovery and Resilience Plan (PRR) and European Funds NextGenerationEU through the Agendas for Business Innovation programme.
+\textbf{Competing interests:} The authors declare no competing interests.
+\textbf{Author contributions:} R.F.: conceptualization, methodology, software, formal analysis, data curation, visualization and writing---original draft. S.M.O.T.: supervision, validation and writing---review and editing. O.W.: methodology, supervision, validation and writing---review and editing.
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+\end{document}

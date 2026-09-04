@@ -1,0 +1,45 @@
+\subsection{Equal-resource shape trade-offs}
+All 449 nominal solver paths meet the inherited acceptance checks. Nominal thickness varies from 0.18919 to 0.20955 mm because arc length is compensated to maintain $\am=0.27$ mm. Figure~\ref{fig:new_front} shows a continuous energy--stress trade-off across the visited shapes. The 16-element sinusoidal reference has $\ua=12.8137$ J\,m$^{-2}$ and $\om=0.51505$. The NURBS energy extreme V01 increases stored potential by 7.79\% with 3.91\% greater stress utilization. The NURBS stress extreme V02 reduces utilization by 10.48\%, at the cost of 22.92\% less potential. These are physically matched shape trade-offs, rather than savings obtained by varying height or material quantity.
+
+The Fourier family provides a useful simpler comparator. Its energy extreme exceeds the sine by only 0.66\%, with 0.09\% greater stress utilization; its stress extreme lowers utilization by 2.49\% while sacrificing 5.81\% of potential. Increased parameter count mainly enlarges the observed NURBS trade-off range. It does not produce a shape that improves both objectives over every simpler reference.
+
+\begin{figure*}[t]
+\centering\includegraphics[width=.98\textwidth]{fixed_resource_fronts.pdf}
+\caption{Fixed-resource direct-FEM comparison at mesh 16. Left: all accepted nominal evaluations and each family's pooled candidate front; the sinusoid is an explicit simpler reference. Right: median and full seed range of pooled-candidate hypervolume. Each paired algorithm run receives exactly 64 expensive paths and the same initial 16 candidates.}\label{fig:new_front}
+\end{figure*}
+
+The paired final hypervolume changes for NSGA-II relative to Sobol are $+1.10\%$, $-4.64\%$ and $-1.06\%$ for seeds 4101--4103. Mean values are 0.53906 and 0.54759, respectively. Thus the tested evolutionary search has no consistent front-quality advantage at this budget. It does require fewer geometric proposals: 1571 in total across its three runs, compared with 6091 for Sobol. Both consume 192 expensive paths. Table~S1 gives each run's counts, indicator and elapsed time; differences in geometric filtering and solver conditioning are included in the timings. The result supports retaining a direct sampling baseline when assessing a more elaborate design pipeline.
+
+\subsection{Which nominal choices survive perturbations?}
+The ten shortlisted designs receive all 270 prescribed scenario paths. Every submitted solver path meets the inherited algorithmic acceptance checks, while 39 scenario geometries fail the declared admissibility tests: 32 violate the 0.9 mm radius and seven lose half-period monotonicity. The latter all involve Fourier stress extreme V05, despite its minimum radius remaining above 1.11 mm. The largest reference-envelope overshoot in these rejected geometries is 0.00133 mm. This rejection concerns the declared single-trough shape family, rather than an experimentally measured forming failure.
+
+Five candidates pass all 11 axial scenarios. Joint enrichment removes V09, whose minimum radius decreases from 0.90676 to 0.89750 mm. Four designs remain qualified in all 27 scenarios: the sinusoid V00 and NURBS candidates V01, V07 and V08. The nominal minimum-stress choice V02 and nominal normalized knee V03 are rejected, with scenario minimum radii 0.87860 and 0.88926 mm. A knee chosen only in the nominal objective plane therefore does not automatically provide a defensible design margin.
+
+\begin{figure*}[t]
+\centering\includegraphics[width=.98\textwidth]{scenario_qualification.pdf}
+\caption{Finite-scenario qualification. Left: nominal mesh-24 responses move to the minimum-potential/maximum-stress coordinates over 27 scenarios; green identifies complete geometric qualification. The two extrema may occur in different scenarios. Right: minimum radius after axial and joint enrichment. V05 also violates the separately checked monotonicity condition.}\label{fig:scenario}
+\end{figure*}
+
+All four qualified candidates are nondominated within this finite shortlist. Table~\ref{tab:qualified_main} gives their sampled extrema. V01 retains 7.91\% greater minimum potential than the sine, with 3.38\% greater maximum stress utilization. V08 offers 2.97\% lower maximum utilization, with 12.20\% less minimum potential. V07 trades response for a substantially larger radius margin. The result is a qualified menu of engineering choices, rather than one preference-independent optimum.
+
+\begin{table*}[t]
+\centering\small
+\caption{Qualified designs over the enriched 27-scenario set, evaluated at mesh 24. Material variation is part of the sensitivity study; nominal resource is matched.}\label{tab:qualified_main}
+\begin{tabular}{llrrrr}
+\toprule ID & Role & Minimum $R$ [mm] & Minimum $\ua$ [J\,m$^{-2}$] & Maximum $\om$ & Nominal $\ua$ [J\,m$^{-2}$]\\\midrule
+V00 & Sinusoidal reference & 0.96675 & 10.35180 & 0.58173 & 12.69798\\
+V01 & NURBS energy extreme & 0.93598 & 11.17054 & 0.60141 & 13.68619\\
+V07 & Largest-radius NURBS & 1.57747 & 9.30197 & 0.57172 & 11.42222\\
+V08 & Qualified low-stress alternative & 0.99724 & 9.08890 & 0.56443 & 11.15943\\\bottomrule
+\end{tabular}
+\end{table*}
+
+The varied medium resource ranges from 0.25405 to 0.28350 mm across the scenarios. This is recorded explicitly because re-adjusting thickness to restore nominal material after a manufacturing perturbation would define a different uncertainty problem. Minimum potential and maximum stress generally occur in different scenarios. Their pairing in Eq.~\eqref{eq:robust} deliberately represents two finite-set extrema, not one physically realized state.
+
+\begin{figure*}[t]
+\centering\includegraphics[width=.98\textwidth]{qualified_profiles.pdf}
+\caption{Qualified examples under the same nominal initial resource and envelope. Dashed lines show reference geometry; solid lines show the mesh-24 deformed centreline colored by longitudinal extreme-fibre stress. Reaction plots show nominal response and the full 27-scenario range. V07 is the normalized finite-scenario knee within the qualified NURBS shortlist.}\label{fig:profiles}
+\end{figure*}
+
+\subsection{Numerical resolution and full evaluation cost}
+\input{resolution_results}

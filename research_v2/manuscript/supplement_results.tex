@@ -1,0 +1,17 @@
+The solver ledger contains 764 comparative/qualification attempts: 449 nominal paths, 270 scenario paths, 39 default-limit refinement paths and six high-resolution retries. Six of the 39 default refinement paths were rejected at mesh 64. All six retries passed with the primary iteration cap increased to 6000; tolerances and the acceptance predicate were unchanged. Three timing/geometry pilot calls are additional to this total.
+
+Figure~\ref{fig:resolution} shows nominal response sensitivity for the two profiles used in the interpreted energy comparison. The inspected fine results retain the energy advantage and stress cost of V01, but the magnitude is mesh-dependent. Since only selected scenarios were refined, the mesh-64 values are not new worst-case coordinates over the full 27-scenario set.
+\begin{figure}[ht]
+\centering\includegraphics[width=\textwidth]{resolution_sensitivity.pdf}
+\caption{Accepted nominal-state results relative to mesh 24. Mesh 64 uses the separately recorded successful retries. Failed default-limit paths are excluded.}\label{fig:resolution}
+\end{figure}
+\begin{table}[ht]\centering\small
+\caption{Accepted mesh-64 responses at the nominal and two originally extremal scenarios. S11 minimizes potential and S24 maximizes stress in the original mesh-24 qualification of both listed designs.}
+\resizebox{\textwidth}{!}{\input{table_mesh64}}
+\end{table}
+
+At mesh 24, the maximum normalized projected gradient in the 270 scenario paths is $1.500\times10^{-5}$, below the prescribed $5\times10^{-4}$ acceptance threshold. The largest upper--lower reaction imbalance is 0.01988 N, or $6.095\times10^{-5}$ of the yield-force scale. These residual checks assess numerical equilibrium, not an experimentally observed configuration or global minimizer.
+
+Independent dense geometry verification reproduces all 270 scenario classifications. It finds 32 radius violations and seven half-period monotonicity violations, with no overlap. Maximum relative radius discrepancy is $1.678\times10^{-7}$ against 8193 points per smooth span. The seven monotonicity failures concern V05; its largest envelope overshoot is 0.00133 mm. The nominal resource deficit caused by polygonal discretization is at most 0.758\% for the 449 mesh-16 candidates and 0.335\% for scenario mesh-24 curves. These values and the larger local force sensitivity prevent a blanket mesh-convergence claim for all candidates.
+
+The initially fixed refinement rule was extended only after V01's observed mesh-32 reaction sensitivity. The extensions and their reasons are stored in \texttt{additional\_refinement\_plan.json}, \texttt{final\_mesh\_check\_plan.json} and \texttt{fine\_retry\_plan.json}. The nominal selection, scenario vectors and geometric admissibility rules were unchanged. The campaign ended after the six documented retries.

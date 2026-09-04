@@ -1,0 +1,377 @@
+{
+  "version": "v2",
+  "date": "2026-09-04",
+  "remote_base": "9144fee32a0d98be2fc6229b5a94f3658807d0d6",
+  "python": "3.12.13 (main, Aug  7 2026, 02:25:39) [Clang 22.1.3 ]",
+  "packages": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3",
+    "matplotlib": "3.10.8"
+  },
+  "source_sha256": {
+    "research_v2/code/archive_audit.py": "96d9b2581637594afbf020558e424cdff1993a313511926c23c0ca987b458486",
+    "research_v2/code/build_outputs.py": "1121b2a9b67bcbeb00d028a3a8b7815967db119718bbb32bf3d1ee7bf27da1d8",
+    "research_v2/code/compression_v2.py": "a49fe22ce4fbeda655decc54e3c0d7fda2f48601f97017f1ceb339a3b4b9d7b9",
+    "research_v2/code/finish_report.py": "8dd0b6ea8d87b644d69a537d8308e509ce3c20f29c6cd07ce8466d8ff6d02f1f",
+    "research_v2/code/geometry_v2.py": "012aae174daa35e2dacc3627591ff43681a0aa184d8a4449de9618f3e1200548",
+    "research_v2/code/retry_fine_mesh.py": "6e6813e53cb29c8cc25b53b3ff1c2985911891b16e1360b447df6853b8a35c09",
+    "research_v2/code/run_additional_refinement.py": "d8553275afe2edc8130d0263dbb5943b1106040a03dde950688e5f063ec8c49f",
+    "research_v2/code/run_final_mesh_check.py": "1d4e6ad18b8d66496d449e71ae7c1b1731bc1e41829ddad147fa148d40ec67d3",
+    "research_v2/code/run_fixed_resource.py": "b38ee2ec3897de1b2fc25f224d889721c977630c24655b1c0cc2f4c973dea796",
+    "research_v2/code/run_scenarios.py": "1428fb2abce20f9cc7d99b7bfb8fffd7a8ae7616dda74a557022d7c2d8dcb06d",
+    "research_v2/code/verify_evidence.py": "c98a1995c33bbb6beb1ef46725860ae6f15d02430e28fc2676b1ecf42b5dfcaa",
+    "research_v2/code/verify_geometry.py": "6b83ca7b010e4987d125ab092b50cac7e4eedc3ac4334befec1e78a7de17bf08",
+    "research_v2/code/verify_scenarios.py": "8f02f4e08deeea2658e2e2b72fed38364fe0d9b140e5d455c56e59bc4b91852d"
+  },
+  "frozen_protocol_sha256": "2753e8015cdd8aeb09c7e92e3b9a03066c171504b86739c520ab4139c1f5fbdf",
+  "scientific_summary": {
+    "nominal_calls": 449,
+    "nominal_successful": 449,
+    "shortlist_designs": 10,
+    "scenario_calls": 270,
+    "scenario_successful": 270,
+    "axial_qualified": [
+      "V00",
+      "V01",
+      "V07",
+      "V08",
+      "V09"
+    ],
+    "enriched_qualified": [
+      "V00",
+      "V01",
+      "V07",
+      "V08"
+    ],
+    "axial_robust_front": [
+      "V00",
+      "V01",
+      "V07",
+      "V08",
+      "V09"
+    ],
+    "enriched_robust_front": [
+      "V00",
+      "V01",
+      "V07",
+      "V08"
+    ],
+    "scenario_radius_failures": 32,
+    "scenario_geometry_failures": 39,
+    "scenario_monotonicity_failures": 7,
+    "scenario_solver_failures": 0,
+    "nominal_max_relative_discrete_resource_deficit": 0.007582681583925277,
+    "scenario_max_relative_discrete_resource_deficit": 0.003346806151527937,
+    "nominal_thickness_interval_mm": [
+      0.1891945838298587,
+      0.209553279367816
+    ],
+    "scenario_medium_resource_interval_mm": [
+      0.2540457904955663,
+      0.2835000000000001
+    ],
+    "paired_hv_relative_difference_nsga_over_sobol_percent": {
+      "4101": 1.1001876939512378,
+      "4102": -4.63842310438306,
+      "4103": -1.0604948346175647
+    },
+    "nurbs_mean_hv": {
+      "NSGA-II": 0.539063465764703,
+      "Sobol": 0.5475910807340846
+    },
+    "nominal_extremes_versus_sine_percent": {
+      "V01": {
+        "U": 7.785572463469159,
+        "Omega": 3.913287533436005
+      },
+      "V02": {
+        "U": -22.921118176586152,
+        "Omega": -10.481100912015396
+      },
+      "V03": {
+        "U": -2.095603194629081,
+        "Omega": -0.339346400473195
+      },
+      "V04": {
+        "U": 0.6624239998523684,
+        "Omega": 0.08626496989885268
+      },
+      "V05": {
+        "U": -5.808054041118115,
+        "Omega": -2.490884972821217
+      },
+      "V06": {
+        "U": -2.5617285753522956,
+        "Omega": -0.6290208219269844
+      }
+    },
+    "nominal_solver_gradient_max": 1.4999607443641618e-05,
+    "scenario_solver_gradient_max": 1.499793495197646e-05,
+    "scenario_reaction_imbalance_force_fraction_max": 6.09491613692969e-05,
+    "scenario_reaction_imbalance_N_max": 0.0198784766335222,
+    "refinement_calls": 39,
+    "refinement_successful": 33,
+    "mesh32_calls": 21,
+    "load9_calls": 6,
+    "mesh24_to32_max_relative_change": {
+      "target_potential_energy_Nmm": 0.011994044201994791,
+      "stress_pnorm_utilization": 0.0033444319943467526,
+      "target_reaction_N": 0.06354204198399005
+    },
+    "load5_to9_max_relative_change": {
+      "target_potential_energy_Nmm": 9.784480270447204e-07,
+      "stress_pnorm_utilization": 0.0002534180035446143,
+      "target_reaction_N": 0.002896175578550708
+    },
+    "mesh40_calls": 6,
+    "mesh64_default_calls": 6,
+    "mesh64_default_failures": 6,
+    "mesh64_retry_calls": 6,
+    "mesh64_retry_accepted": 6,
+    "total_comparative_and_qualification_attempts": 764,
+    "total_rejected_solver_paths": 6,
+    "mesh32_to40_max_relative_change": {
+      "target_potential_energy_Nmm": 0.023710201202100656,
+      "stress_pnorm_utilization": 0.010877371122983481,
+      "target_reaction_N": 0.026100094027139198
+    },
+    "mesh40_to64_max_relative_change": {
+      "target_potential_energy_Nmm": 0.018545464700599368,
+      "stress_pnorm_utilization": 0.008914528906084573,
+      "target_reaction_N": 0.007685565244259562
+    },
+    "mesh64_v01_versus_sine_potential_percent": {
+      "S00": 13.813599254846952,
+      "S11": 14.330274782266894,
+      "S24": 13.112598801976084
+    },
+    "mesh64_v01_versus_sine_stress_percent": {
+      "S00": 5.921575344488805,
+      "S11": 6.073541845542918,
+      "S24": 4.87144663374548
+    }
+  },
+  "verification": {
+    "status": "passed",
+    "checks": 51,
+    "verification": [
+      {
+        "check": "frozen protocol SHA-256",
+        "passed": true
+      },
+      {
+        "check": "supplied v1 files unchanged",
+        "passed": true,
+        "files": 37
+      },
+      {
+        "check": "archived FEM input hashes unchanged",
+        "passed": true
+      },
+      {
+        "check": "572 archived paths and 16 analytic radius violations",
+        "passed": true
+      },
+      {
+        "check": "conditional C038 reclassification 31 to 1",
+        "passed": true
+      },
+      {
+        "check": "sole corrected C038 member equals S6",
+        "passed": true
+      },
+      {
+        "check": "449 accepted nominal paths",
+        "passed": true
+      },
+      {
+        "check": "nominal equal continuous resources and height/pitch",
+        "passed": true
+      },
+      {
+        "check": "areal medium resource identity",
+        "passed": true
+      },
+      {
+        "check": "paired seed 4101: budgets and 16 identical initial designs",
+        "passed": true
+      },
+      {
+        "check": "paired seed 4101: initial responses agree",
+        "passed": true
+      },
+      {
+        "check": "paired seed 4102: budgets and 16 identical initial designs",
+        "passed": true
+      },
+      {
+        "check": "paired seed 4102: initial responses agree",
+        "passed": true
+      },
+      {
+        "check": "paired seed 4103: budgets and 16 identical initial designs",
+        "passed": true
+      },
+      {
+        "check": "paired seed 4103: initial responses agree",
+        "passed": true
+      },
+      {
+        "check": "shortlist source hash unchanged",
+        "passed": true
+      },
+      {
+        "check": "complete 10 by 27 scenario grid",
+        "passed": true
+      },
+      {
+        "check": "dense geometry checks preserve every classification",
+        "passed": true
+      },
+      {
+        "check": "axial: qualification count",
+        "passed": true
+      },
+      {
+        "check": "axial/V00: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V01: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V02: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V03: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V04: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V05: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V06: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V07: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V08: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "axial/V09: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched: qualification count",
+        "passed": true
+      },
+      {
+        "check": "enriched/V00: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V01: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V02: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V03: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V04: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V05: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V06: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V07: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V08: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "enriched/V09: all-scenario extrema and acceptance",
+        "passed": true
+      },
+      {
+        "check": "refinement ledger retains six failed default mesh64 paths",
+        "passed": true
+      },
+      {
+        "check": "six distinct 6000-iteration retries accepted",
+        "passed": true
+      },
+      {
+        "check": "resolution comparison contains only accepted paths",
+        "passed": true
+      },
+      {
+        "check": "V00/S00: resolution uses accepted retry values",
+        "passed": true
+      },
+      {
+        "check": "V00/S11: resolution uses accepted retry values",
+        "passed": true
+      },
+      {
+        "check": "V01/S24: resolution uses accepted retry values",
+        "passed": true
+      },
+      {
+        "check": "V00/S24: resolution uses accepted retry values",
+        "passed": true
+      },
+      {
+        "check": "V01/S00: resolution uses accepted retry values",
+        "passed": true
+      },
+      {
+        "check": "V01/S11: resolution uses accepted retry values",
+        "passed": true
+      },
+      {
+        "check": "764 attempt records each have matching saved state evidence",
+        "passed": true,
+        "accepted": 758,
+        "rejected": 6
+      },
+      {
+        "check": "all six rejected paths preserved in default refinement directory",
+        "passed": true,
+        "paths": [
+          "research_v2/results/refinement/V00_S00_m64.json",
+          "research_v2/results/refinement/V00_S11_m64.json",
+          "research_v2/results/refinement/V01_S24_m64.json",
+          "research_v2/results/refinement/V00_S24_m64.json",
+          "research_v2/results/refinement/V01_S00_m64.json",
+          "research_v2/results/refinement/V01_S11_m64.json"
+        ]
+      }
+    ],
+    "mechanics_calls_performed_by_this_check": 0
+  }
+}

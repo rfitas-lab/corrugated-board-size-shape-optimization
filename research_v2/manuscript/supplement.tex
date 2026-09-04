@@ -1,0 +1,152 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=24mm]{geometry}
+\emergencystretch=2em
+\usepackage{lmodern,microtype,amsmath,amssymb,graphicx,booktabs,longtable,tabularx,array,url,xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{figures/}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\title{Supplementary material\\Resource-consistent shape optimization of formed corrugated media}
+\author{Ricardo Fitas, S\'ergio Manuel Oliveira Tavares, Oliver Weeger}
+\date{Version 2 research manuscript, 4 September 2026}
+\begin{document}
+\raggedbottom
+\maketitle
+\noindent This supplement defines the executable geometry, scenario protocol, numerical evidence and provenance of Paper A v2. It accompanies the main manuscript; the supplied v1 sources remain unchanged in the evidence package.
+
+\section{Baseline and revision boundary}
+The public baseline repository commit is:
+\begin{center}\texttt{9144fee32a0d98be2fc6229b5a94f3658807d0d6}\end{center}
+The author-supplied manuscript and figures used as v1 are preserved separately in \path{research_v2/v1_supplied}, with SHA-256 hashes in \path{v1_manifest.json}. The new branch and result paths preserve the historical campaign. Existing C001--C039 atlas figures are provenance material, not 39 independent new experiments.
+
+The v1 geometric benchmark reported ten 4000-evaluation runs per algorithm, Wilcoxon $W=11$, $p=0.10546875$, and a 70/256 radius-screen count under the historical evaluator. Those observations do not prove optimizer equivalence or a process yield. The present revision does not reinterpret that 256-design screening count as an analytic-radius result. It audits the independently available 572-geometry nonlinear ledger using the analytic method and runs a separate direct-mechanics experiment.
+
+The archive reclassification changes reported coordinates without recomputing the stored FEM response. This is appropriate for algebraic resource corrections, but it does not refine the archived mechanics. All new fixed-resource, scenario and targeted refinement calculations are actual fresh FEM solves. A timing pilot comprised a uniform-spacing NURBS shape, a sine and the identical zero-coefficient Fourier shape at 16 elements; those three calls are documented separately and do not enter the 449-call comparison.
+
+\section{Full NURBS construction}
+The degree-two rational basis is
+\begin{equation}
+ R_{i,2}(u)=\frac{w_iN_{i,2}(u)}{\sum_j w_jN_{j,2}(u)},\qquad
+ \mathbf c(u)=\sum_iR_{i,2}(u)\mathbf P_i.
+\end{equation}
+For normalized positive spacings $d_i=x_i/\sum_{j=1}^{5}x_j$, the ten control points have ordinates
+\begin{equation}
+ Y=(0,0,1,1,0,0,1,1,0,0)
+\end{equation}
+and abscissae
+\begin{align}
+ X=(&0,d_1,d_1+d_2,d_1+d_2+d_3,\sum_{j=1}^4d_j,\nonumber\\
+ &1+d_1,1+d_1+d_2,1+d_1+d_2+d_3,1+\sum_{j=1}^4d_j,2).
+\end{align}
+Weights are
+\begin{equation}
+ \mathbf w=(1,r_1,r_1,r_2,r_2,r_1,r_1,r_2,r_2,1),\qquad
+ r_k=0.0103\exp(9.17\zeta_k)+0.1.
+\end{equation}
+The knot vector is $(0,0,0,1/8,2/8,3/8,4/8,5/8,6/8,7/8,1,1,1)$. The exact crown-to-crown parameter interval is $u\in[1/4,3/4]$, with its trough at $u=1/2$. Translation and independent coordinate scaling set $x(1/4)=0$, $x(3/4)=P$, $y(1/2)=0$ and $y(1/4)=y(3/4)=H$.
+
+The six unit-box search coordinates define $x_j=\exp[4(z_j-1/2)]$ for $j=1,\ldots,4$, $x_5=1$, and $(\zeta_1,\zeta_2)=(z_5,z_6)$. The four ratios vary over $[\exp(-2),\exp(2)]$ against the fifth spacing. This is a declared bounded search family. Multiplying all five spacings by a common positive constant leaves the geometry unchanged; the new map removes that redundant search direction.
+
+The exact arc length is obtained by adaptive quadrature of $\|\mathbf c'(u)\|$ over the four smooth spans, with absolute tolerance $10^{-10}$ mm and relative tolerance $10^{-11}$. The actual thickness used for nominal FEM is $t=0.27P/L_s$. The Fourier formula and its bounds are specified in the main paper. Both families preserve the exact reference extrema used to partition the FEM mesh.
+
+\section{Curvature extrema and verification}
+For a rational-quadratic span $\mathbf c=\mathbf N/w$, differentiation yields $\mathbf c'=\mathbf A/w^2$ and $\mathbf c''=(\mathbf A'w-2\mathbf Aw')/w^3$. Hence
+\begin{equation}
+ \kappa=\frac{w^2\det(\mathbf A,\mathbf A')}{(\mathbf A\cdot\mathbf A)^{3/2}}
+ =\frac{K}{D^{3/2}}.
+\end{equation}
+Differentiating gives the stationary polynomial $2K'D-3KD'$. The code constructs each quadratic homogeneous polynomial in a local $[0,1]$ coordinate from three exact spline evaluations, finds its real roots, and includes endpoints. This avoids smoothing and explicitly includes one-sided second derivatives at knots. Roots with imaginary part smaller than $10^{-7}$ and real part within $10^{-9}$ of the interval are treated as real candidates and clipped to the interval; these floating-point tolerances are reported rather than claimed as rigorous root enclosures.
+
+A coarse dense check uses 1025 points per span for all 572 archived curves. A targeted dense check uses 8193 points per span for 40 curves: all 16 changed radius classifications plus 24 sampled rows, seed 4199. Its maximum relative radius gap is $2.648\times10^{-8}$. Away from knots, centred coordinate differences with parameter step $10^{-6}$ agree with analytic derivatives to maximum relative $1.181\times10^{-10}$. The largest coordinate discrepancy against the archived construction is $8.882\times10^{-15}$ mm; common-spacing rescaling changes coordinates by at most $3.553\times10^{-15}$ mm. The periodic tangent mismatch is at most $2.132\times10^{-14}$ in the implemented coordinate units.
+
+For the trigonometric family and perturbed curves, the code retains analytic derivatives and refines sampled local curvature maxima independently on each smooth span. The finite trigonometric bandwidth makes dense comparison informative, but this procedure is still numerical extremum search. The final evidence package includes an enriched-density check of all qualified scenario radii.
+
+\section{Mechanical implementation details}
+Each node has horizontal displacement, vertical displacement and rotation. For element reference length $L_e$ and current length $l_e$, axial strain is $(l_e-L_e)/L_e$. With corotated end rotations $\varphi_1,\varphi_2$, curvature is $(\varphi_2-\varphi_1)/L_e$ and mean shear strain is $(\varphi_1+\varphi_2)/2$. Longitudinal fibre strain at through-thickness coordinate $z$ is $e(z)=e_0-\kappa z$. The potential integrates the main paper's $W(e)$ with five-point Gauss quadrature and adds
+\begin{equation}
+ U_{s,e}=\frac12\frac56GbtL_e\left(\frac{\varphi_1+\varphi_2}{2}\right)^2.
+\end{equation}
+The longitudinal stress law is
+\begin{equation}
+ \sigma(e)=hEe+(1-h)\frac{Ee}{\sqrt{1+(Ee/\sigma_y)^2}}.
+\end{equation}
+The eighth-order stress norm uses initial element-length weights and the maximum absolute longitudinal stress at $z=\pm t/2$. Raw maximum stress and the 99th weighted percentile remain in the ledger, but the eighth-order norm is the design objective.
+
+The boundary model persistently attaches the exact trough and both periodic crowns vertically to their respective rigid surfaces. The two crown rotations are tied, the first crown is fixed horizontally, and the second crown is free horizontally. Other nodes have unilateral vertical bounds. This retains a free horizontal pitch response. The resource denominator is always the initial area $bP$, not the deformed projected area. The reference medium is stress-free and has no recorded forming history.
+
+The geometry adapter derives from the unchanged archived evaluator. It replaces only the geometric curve and resource/radius descriptors at the solver interface; the inherited constitutive potential, attachment constraints, continuation and acceptance logic are retained. It additionally resamples analytic curves directly. Element counts are allocated in proportion to the crown--trough arc lengths, preserving exact contact nodes. Polygonal initial element length is shorter than continuous arc length, so the discrete volume per footprint is also recorded. This discretization discrepancy is assessed with refinement, rather than hidden by renormalizing thickness at every mesh.
+
+The solver's requested gradient tolerance is $\max(10^{-6},0.03\times5\times10^{-4}\sigma_ybt)$ N, and the final acceptance threshold is normalized projected gradient at most $5\times10^{-4}$. The primary iteration cap is 1800. Its inherited fallback and subdivision sequence (2, 4 and 8 subdivisions) are preserved, with raw messages and all attempted substeps in JSON diagnostics. A failed accepted-state test is not removed from the call budget. Saved NPZ files contain reference nodes, nodal displacements, element stress, strain, reaction and potential at every nominal state.
+
+\section{Comparison ledger and candidate selection}
+The frozen protocol is stored as \texttt{results/protocol\_frozen.json}, SHA-256
+\begin{center}\small\texttt{2753e8015cdd8aeb09c7e92e3b9a03066c171504b86739c520ab4139c1f5fbdf}.\end{center}
+The pilot sine value fixes the hypervolume energy scale $U_{\rm sine,16}=2.530711193024368$ Nmm. The reference point is $(2,1)$ in $(U_{\rm sine,16}/U,\Omega_8)$ coordinates. Only geometrically feasible designs are sent to FEM. Both methods use identical feasible initial populations for each seed; all subsequent Sobol proposals and every evolutionary geometric rejection are counted. NSGA-II uses rank/crowding tournament mating, SBX index 15, polynomial mutation index 20, box projection and elitist selection. All evaluated accepted designs, not only terminal populations, enter the reported pooled-candidate front.
+
+\begin{table}[ht]
+\centering\small
+\caption{New direct-search comparison. Each row has exactly 64 expensive path calls. Times include geometric proposals and bookkeeping and were measured with two concurrent single-thread workers; they are descriptive elapsed times.}
+\resizebox{\textwidth}{!}{\input{table_budget}}
+\end{table}
+
+The separate Fourier comparison has 64 Sobol calls with seed 4110. It is a simpler shape-family reference, not a paired optimizer replicate in the six-dimensional NURBS domain. One sine reference completes the nominal total of 449 calls. The three pilot calls, 270 scenario paths and targeted refinements are charged separately in the final execution manifest.
+
+The shortlist selects each family's two objective extremes and normalized Euclidean knee, the maximum-radius NURBS design, the sinusoid and four members evenly spread along the pooled front's energy coordinate. Duplicate family/parameter vectors are retained once. It contains ten designs, whose original identifiers map to every saved state and scenario row.
+\begin{table}[ht]
+\centering\small
+\caption{Nominal mesh-16 shortlist at $P=7.9$ mm, $H=3.0$ mm and continuous medium volume/area 0.27 mm.}
+\resizebox{\textwidth}{!}{\input{table_shortlist}}
+\end{table}
+
+\section{Perturbations and enriched qualification}
+Let $\mathbf s\in[-1,1]^5$ denote the normalized scenario coordinates. Height, thickness, modulus and nominal yield parameter change by factors $1+0.03s_1$, $1+0.05s_2$, $1+0.10s_3$ and $1+0.10s_4$, respectively. Shear modulus retains $G/E=1/55$. The fifth coordinate gives shape ripple $\eta=0.02s_5$ in the smooth perturbation defined below.
+
+\noindent The ripple is $\eta H\sin^2(2\pi q)$, with normalized period coordinate $q$. Nominal coordinates and ten signed coordinate-axis vectors form the 11-scenario axial set. Sixteen additional joint vectors are a scrambled five-dimensional Sobol net (seed 4151), mapped from $[0,1]^5$ to $[-1,1]^5$. All 27 vectors are stored in \texttt{scenarios\_frozen.json}. Their ranges are a sensitivity specification; neither probabilities nor a reliability target are attached to them.
+
+Every design/scenario combination receives a fresh 24-element path, including cases failing the geometric radius screen. This separates a geometrically inadmissible candidate from a solver failure. A design is qualified only when all scenario paths and all geometry checks pass. A failed case cannot acquire an optimistic robust objective by being omitted. For qualified designs, minimum potential and maximum stress are formed over the same scenario set and Pareto-ranked within the shortlist.
+
+\begin{table}[ht]
+\centering\small
+\caption{Enriched 27-scenario qualification at mesh 24. A front flag refers only to the qualified shortlist.}
+\resizebox{\textwidth}{!}{\input{table_qualification}}
+\end{table}
+
+The refinement rule includes the sine, nominal energy and stress extremes of both families, and a normalized robust knee per family when one exists. For each selected design, the nominal, minimum-potential and maximum-stress scenarios are checked at 32 elements, with duplicate scenarios removed. Nominal paths are also repeated with nine instead of five loading states at mesh 24. This targeted rule checks the response values most directly used in selection, while leaving untested fine-mesh candidates clearly identifiable.
+
+\section{Additional numerical results}
+\input{supplement_results}
+
+\section{Executable reproduction}
+The package retains the baseline solver at \path{project/src/cbfem} and the bundled automatic-differentiation dependency at \path{project/vendor/autograd}. New code resides in \path{research_v2/code}. From the repository root, set the thread variables and run:
+\begin{verbatim}
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+python research_v2/code/archive_audit.py
+python research_v2/code/verify_geometry.py
+python research_v2/code/run_fixed_resource.py --workers 2
+python research_v2/code/run_scenarios.py --workers 2
+python research_v2/code/run_scenarios.py --workers 2 --refine
+python research_v2/code/run_additional_refinement.py
+python research_v2/code/run_final_mesh_check.py
+python research_v2/code/retry_fine_mesh.py
+python research_v2/code/verify_scenarios.py
+python research_v2/code/build_outputs.py
+python research_v2/code/finish_report.py
+python research_v2/code/verify_evidence.py
+\end{verbatim}
+Completed result files are reused transparently; each new calculation is saved separately before the next call. To repeat all FEM computations from scratch, use a fresh checkout and move the v2 result directory aside while retaining the frozen protocol and source inputs. The protocol, independent input hashes and final manifest make the distinction between reuse and fresh computation explicit.
+
+The manuscript folder is self-contained for compilation:
+\begin{verbatim}
+latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+latexmk -pdf -interaction=nonstopmode -halt-on-error supplement.tex
+\end{verbatim}
+The final PDFs are rendered to page images for visual inspection. The evidence manifest records software versions, source and output hashes, per-phase call counts, observed failures and executed commands. It links the statistical summaries to the complete row-level ledgers and saved states.
+
+\section{Scope of cross-paper interpretation}
+Paper B's specimen-level external work and load-loss observations establish experimental events within its acquired window. They do not identify this medium's constitutive law or manufacturing perturbation distribution. Paper C studies continuous states, exact reduced energy and computational qualification under its own mechanics. Its speedups require their stated denominator and cannot be assumed for the present meshes. Paper C2 studies finite sets of elastica equilibria with nonzero committed history and different span constraints; close reactions do not ensure close geometry. The present v2 qualification samples geometric/material perturbations along its own deterministic continuation. No companion branch range is inserted into these objectives, and no reused specimen set is counted as independent experimental validation.
+\end{document}
